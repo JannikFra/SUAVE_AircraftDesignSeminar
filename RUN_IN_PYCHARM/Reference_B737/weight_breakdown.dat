@@ -1,0 +1,57 @@
+Output file with weight breakdown
+
+ DESIGN WEIGHTS 
+ Maximum Takeoff Weight ......... :    79016 kg
+ Maximum Zero Fuel Weight ....... :    71114 kg
+
+ ASSUMPTIONS FOR WEIGHT ESTIMATION 
+ Airplane type .................. : MEDIUM RANGE
+ Flight Controls type ........... : FULLY POWERED
+
+ EMPTY WEIGHT BREAKDOWN 
+ ........ EMPTY WEIGHT .......... :   33865 kg
+ Structural Weight Breakdown 
+ Total structural weight......... :   15423 kg
+ 	Wing ........................ :    3993 kg
+ 	Horizontal tail ............. :    1235 kg
+ 	Vertical tail ............... :    1086 kg
+ 	Fuselage .................... :    5949 kg
+ 	Main landing gear ........... :    2845 kg
+ 	Nose landing gear ........... :     316 kg
+ 	Nacelle ..................... :       0 kg
+ 	Paint ....................... :       0 kg
+ Propulsion Weight Breakdown 
+ Total propulsion weight......... :    6838 kg
+ 	Engines ..................... :       0 kg
+ 	Thrust reversers ............ :       0 kg
+ 	Miscellaneous ............... :       0 kg
+ 	Fuel system ................. :       0 kg
+ System Weight Breakdown 
+ Total system weight............. :   11603 kg
+ 	Control systems ............. :    1305 kg
+ 	Apu ......................... :     540 kg
+ 	Electrical .................. :    1002 kg
+ 	Avionics .................... :     408 kg
+ 	Hydraulics .................. :     396 kg
+ 	Furnish ..................... :    6432 kg
+ 	Air conditioner ............. :    1157 kg
+ 	Instruments ................. :     363 kg
+
+ OPERATING EMPTY WEIGHT BREAKDOWN 
+ .... OPERATING EMPTY WEIGHT .... :   36827 kg
+ Operational Items Weight Breakdown 
+ Total operational items weight.. :    2962 kg
+ 	Operating items less crew ... :    2159 kg
+ 	Flight crew ................. :     327 kg
+ 	Flight attendants ........... :     476 kg
+
+ ZERO FUEL WEIGHT BREAKDOWN 
+ ...... ZERO FUEL WEIGHT ........ :   64177 kg
+ Payload Weight Breakdown 
+ Total payload weight............ :   27350 kg
+ 	Passengers .................. :   15037 kg
+ 	Baggage ..................... :    2313 kg
+ 	Cargo ....................... :   10000 kg
+
+-------------------------------------------
+ Friday, 20. October 2023 11:25:00 PM
