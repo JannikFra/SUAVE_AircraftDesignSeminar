@@ -315,7 +315,11 @@ class AVL(Stability):
             Cm_alpha_1D = Cm_alpha.reshape([len(AoA)*len(Mach),1])  
             Cn_beta_1D  = Cn_beta.reshape([len(AoA)*len(Mach),1])         
             NP_1D       = NP.reshape([len(AoA)*len(Mach),1])
-            np.savetxt(geometry.tag+'_stability_data.txt',np.hstack([CM_1D,Cm_alpha_1D, Cn_beta_1D,NP_1D ]),fmt='%10.8f',header='   CM       Cm_alpha       Cn_beta       NP ')
+            if self.settings.aero_data_folder:
+                np.savetxt(self.settings.aero_data_folder+'/'+geometry.tag+'_stability_data.txt',np.hstack([CM_1D,Cm_alpha_1D, Cn_beta_1D,NP_1D ]),fmt='%10.8f',header='   CM       Cm_alpha       Cn_beta       NP ')
+            else:
+                np.savetxt(geometry.tag+'_stability_data.txt',np.hstack([CM_1D,Cm_alpha_1D, Cn_beta_1D,NP_1D ]),fmt='%10.8f',header='   CM       Cm_alpha       Cn_beta       NP ')
+
         
         # Store training data
         # Save the data for regression

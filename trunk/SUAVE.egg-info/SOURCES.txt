@@ -242,6 +242,7 @@ SUAVE/Components/Energy/Networks/PyCycle.py
 SUAVE/Components/Energy/Networks/Ramjet.py
 SUAVE/Components/Energy/Networks/Scramjet.py
 SUAVE/Components/Energy/Networks/Serial_Hybrid_Ducted_Fan.py
+SUAVE/Components/Energy/Networks/Simple_Propulsor.py
 SUAVE/Components/Energy/Networks/Solar.py
 SUAVE/Components/Energy/Networks/Solar_Low_Fidelity.py
 SUAVE/Components/Energy/Networks/Turboelectric_HTS_Ducted_Fan.py

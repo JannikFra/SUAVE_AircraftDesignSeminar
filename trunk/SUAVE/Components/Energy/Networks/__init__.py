@@ -25,3 +25,4 @@ from .PyCycle                                      import PyCycle
 from .Network                                      import Network
 from .Turboelectric_HTS_Ducted_Fan                 import Turboelectric_HTS_Ducted_Fan
 from .Turboelectric_HTS_Dynamo_Ducted_Fan          import Turboelectric_HTS_Dynamo_Ducted_Fan
+from .Simple_Propulsor                             import Simple_Propulsor

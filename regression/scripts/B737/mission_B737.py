@@ -1,4 +1,4 @@
-# mission_B737.py
+# Reference_Aircraft.py
 # 
 # Created:  Aug 2014, SUAVE Team
 # Modified: Jun 2016, T. MacDonald

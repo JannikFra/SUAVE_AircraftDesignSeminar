@@ -1,6 +1,6 @@
-# Boeing_737.py
+# vehicle_setup.py
 #
-# Created:  Feb 2017, M. Vegh (taken from data originally in B737/mission_B737.py, noise_optimization/Vehicles.py, and Boeing 737 tutorial script
+# Created:  Feb 2017, M. Vegh (taken from data originally in B737/Reference_Aircraft.py, noise_optimization/Vehicles.py, and Boeing 737 tutorial script
 # Modified: Jul 2017, M. Clarke
 #           Mar 2020, M. Clarke
 #           Oct 2021, M. Clarke

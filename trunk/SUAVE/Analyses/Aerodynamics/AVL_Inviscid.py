@@ -306,8 +306,11 @@ class AVL_Inviscid(Aerodynamics):
             # convert from 2D to 1D
             CL_1D = CL.reshape([len_AoA*len_Mach,1]) 
             CD_1D = CD.reshape([len_AoA*len_Mach,1])  
-            e_1D  = e.reshape([len_AoA*len_Mach,1]) 
-            np.savetxt(geometry.tag+'_aero_data.txt',np.hstack([CL_1D,CD_1D,e_1D]),fmt='%10.8f',header='  CL      CD      e  ')
+            e_1D  = e.reshape([len_AoA*len_Mach,1])
+            if self.settings.aero_data_folder:
+                np.savetxt(self.settings.aero_data_folder+'/'+geometry.tag+'_aero_data.txt',np.hstack([CL_1D,CD_1D,e_1D]),fmt='%10.8f',header='  CL      CD      e  ')
+            else:
+                np.savetxt(geometry.tag+'_aero_data.txt',np.hstack([CL_1D,CD_1D,e_1D]),fmt='%10.8f',header='  CL      CD      e  ')
           
         # Save the data for regression
         training_data = np.zeros((3,len_AoA,len_Mach))

@@ -62,6 +62,8 @@ class Settings(Data):
                 self.flow_symmetry                       = Data()
                 self.discretization                      = Data()
                 self.number_control_surfaces             = 0
+
+                self.aero_data_folder                    = 'aero_data'
                 
                 self.filenames.avl_bin_name              = 'avl' # to call avl from command line. If avl is not on the system path, include absolute path to the avl binary i.e. '/your/path/to/avl'
                 self.filenames.run_folder                = 'avl_files'
