@@ -1,7 +1,7 @@
  ---------------------------------------------------------------
  Vortex Lattice Output -- Total Forces
 
- Configuration: takeoff                                                     
+ Configuration: landing                                                     
      # Surfaces =   7
      # Strips   = 170
      # Vortices =1700
@@ -28,7 +28,7 @@
   CYff  =   0.00000         e =    0.5300    | Plane  
 
    slat            =  25.00000
-   flap            =  20.00000
+   flap            =  30.00000
    aileron         =   0.00000
    elevator        =   0.00000
 
