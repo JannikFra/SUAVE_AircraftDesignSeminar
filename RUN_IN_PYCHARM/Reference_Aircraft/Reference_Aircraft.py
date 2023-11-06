@@ -126,7 +126,7 @@ def base_analysis(vehicle):
     file_path = Path(tool_path, "AVL", sys.platform, "avl")
     avl_files_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/avl_files")
     aero_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data")
-    stability_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data/")
+    stability_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data/base_stability_data.txt")
 
     aerodynamics = SUAVE.Analyses.Aerodynamics.AVL()
     aerodynamics.geometry                            = vehicle
@@ -138,7 +138,7 @@ def base_analysis(vehicle):
     stability.settings.number_spanwise_vortices = 30
     stability.settings.keep_files = True
 
-    run_new_regression = True
+    run_new_regression = False
     if run_new_regression:
         # append AVL aerodynamic analysis
         aerodynamics.settings.regression_flag = False
