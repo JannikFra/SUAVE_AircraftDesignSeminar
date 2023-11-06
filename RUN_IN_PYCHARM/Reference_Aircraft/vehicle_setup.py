@@ -90,6 +90,8 @@ def vehicle_setup():
     wing.symmetric               = True
     wing.high_lift               = True
 
+    wing.flap_ratio = 0.3
+
     wing.dynamic_pressure_ratio  = 1.0
 
 

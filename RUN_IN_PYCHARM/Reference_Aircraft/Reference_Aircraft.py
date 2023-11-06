@@ -203,7 +203,7 @@ def simple_sizing(configs, analyses):
     # weight analysis
     #need to put here, otherwise it won't be updated
     weights = analyses.configs.base.weights
-    breakdown = weights.evaluate(method='New SUAVE')
+    breakdown = weights.evaluate(method='Raymer')
     
     #compute centers of gravity
     #need to put here, otherwise, results won't be stored
