@@ -82,7 +82,7 @@ def mission_setup(analyses):
 
     segment.altitude = 10.668 * Units.km  # small jump to test altitude updating
     segment.air_speed = 230.412 * Units['m/s']
-    segment.distance = (3933.65 + 770 - 92.6) * Units.km
+    segment.distance = 10_500 * Units['nautical_mile'] - 92.6 * Units.km
 
     segment.state.numerics.number_control_points = 10
 
