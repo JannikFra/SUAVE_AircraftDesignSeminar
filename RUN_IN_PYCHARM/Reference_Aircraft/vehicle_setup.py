@@ -538,8 +538,6 @@ def vehicle_setup():
     propulsor.sealevel_static_thrust = propulsor.max_thrust
     propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf * 0.69
 
-    print(propulsor.sfc)
-
     vehicle.append_component(propulsor)
 
     # ------------------------------------------------------------------
