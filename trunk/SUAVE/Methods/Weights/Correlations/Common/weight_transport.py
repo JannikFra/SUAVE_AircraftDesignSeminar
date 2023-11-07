@@ -173,7 +173,7 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     
     
     for prop in vehicle.networks: 
-        if isinstance(prop, Nets.Turbofan) or isinstance(prop, Nets.Turbojet_Super) or isinstance(prop, Nets.Propulsor_Surrogate):
+        if isinstance(prop, Nets.Turbofan) or isinstance(prop, Nets.Turbojet_Super) or isinstance(prop, Nets.Propulsor_Surrogate) or isinstance(prop, Nets.Simple_Propulsor):
             
             if not isinstance(prop.wing_mounted,list):
                 prop.wing_mounted = [prop.wing_mounted] * int(prop.number_of_engines)

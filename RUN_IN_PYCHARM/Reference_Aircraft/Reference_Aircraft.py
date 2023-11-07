@@ -44,8 +44,10 @@ def main():
     results = mission.evaluate()
 
     plot_aerodynamic_coefficients(results)
+    plot_fuel_use(results)
     plot_flight_conditions(results)
     plot_stability_coefficients(results)
+    plot_drag_components(results)
     plt.show(block=True)
     
     # print weights breakdown
@@ -55,7 +57,7 @@ def main():
     print_mission_breakdown(results, units='si')
 
     # plot vehicle 
-    plot_vehicle(configs.base,plot_control_points = False, axis_limits=15)
+    plot_vehicle(configs.base,plot_control_points = False, axis_limits=20)
     return
 
 
@@ -95,6 +97,8 @@ def analyses_setup(configs):
 
     # takeoff_analysis
     analyses.takeoff.aerodynamics.settings.drag_coefficient_increment = 0.0000
+    analyses.cruise.aerodynamics.settings.drag_coefficient_increment = -0.007
+
 
     # landing analysis
     aerodynamics = analyses.landing.aerodynamics
@@ -187,18 +191,6 @@ def base_analysis(vehicle):
 def simple_sizing(configs, analyses):
     base = configs.base
     base.pull_base()
-
-    # zero fuel weight
-    base.mass_properties.max_zero_fuel = 0.9 * base.mass_properties.max_takeoff 
-
-    # wing areas
-    for wing in base.wings:
-        wing.areas.wetted   = 2.0 * wing.areas.reference
-        wing.areas.exposed  = 0.8 * wing.areas.wetted
-        wing.areas.affected = 0.6 * wing.areas.wetted
-
-    # fuselage seats
-    # base.fuselages['fuselage'].number_coach_seats = base.passengers
     
     # weight analysis
     #need to put here, otherwise it won't be updated

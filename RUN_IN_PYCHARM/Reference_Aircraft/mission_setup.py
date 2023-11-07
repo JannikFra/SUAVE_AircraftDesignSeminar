@@ -32,7 +32,7 @@ def mission_setup(analyses):
     segment.analyses.extend(analyses.takeoff)
 
     segment.altitude_start = 0.0 * Units.km
-    segment.altitude_end = 3.0 * Units.km
+    segment.altitude_end = 5_000 * Units.ft
     segment.air_speed = 125.0 * Units['m/s']
     segment.climb_rate = 6.0 * Units['m/s']
 
@@ -48,7 +48,7 @@ def mission_setup(analyses):
 
     segment.analyses.extend(analyses.cruise)
 
-    segment.altitude_end = 8.0 * Units.km
+    segment.altitude_end = 15_000 * Units.ft
     segment.air_speed = 190.0 * Units['m/s']
     segment.climb_rate = 6.0 * Units['m/s']
 
@@ -64,7 +64,7 @@ def mission_setup(analyses):
 
     segment.analyses.extend(analyses.cruise)
 
-    segment.altitude_end = 10.5 * Units.km
+    segment.altitude_end = 31_000 * Units.ft
     segment.air_speed = 226.0 * Units['m/s']
     segment.climb_rate = 3.0 * Units['m/s']
 
@@ -80,11 +80,11 @@ def mission_setup(analyses):
 
     segment.analyses.extend(analyses.cruise)
 
-    segment.altitude = 10.668 * Units.km  # small jump to test altitude updating
-    segment.air_speed = 230.412 * Units['m/s']
+    segment.altitude = 31_000 * Units.ft
+    segment.air_speed = 301.852 * 0.82 * Units['m/s']
     segment.distance = 10_500 * Units['nautical_mile'] - 92.6 * Units.km
 
-    segment.state.numerics.number_control_points = 10
+    segment.state.numerics.number_control_points = 20
 
     # post-process aerodynamic derivatives in cruise
     # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
@@ -101,8 +101,8 @@ def mission_setup(analyses):
 
     segment.analyses.extend(analyses.cruise)
 
-    segment.altitude_start = 10.5 * Units.km  # small jump to test altitude updating
-    segment.altitude_end = 8.0 * Units.km
+    segment.altitude_start = 31_000 * Units.ft
+    segment.altitude_end = 22_000 * Units.ft
     segment.air_speed = 220.0 * Units['m/s']
     segment.descent_rate = 4.5 * Units['m/s']
 
@@ -120,7 +120,7 @@ def mission_setup(analyses):
 
     analyses.landing.aerodynamics.settings.spoiler_drag_increment = 0.00
 
-    segment.altitude_end = 6.0 * Units.km
+    segment.altitude_end = 15_000 * Units.ft
     segment.air_speed = 195.0 * Units['m/s']
     segment.descent_rate = 5.0 * Units['m/s']
 
@@ -138,7 +138,7 @@ def mission_setup(analyses):
 
     analyses.landing.aerodynamics.settings.spoiler_drag_increment = 0.00
 
-    segment.altitude_end = 4.0 * Units.km
+    segment.altitude_end = 10_000 * Units.ft
     segment.air_speed = 170.0 * Units['m/s']
     segment.descent_rate = 5.0 * Units['m/s']
 
@@ -156,7 +156,7 @@ def mission_setup(analyses):
 
     analyses.landing.aerodynamics.settings.spoiler_drag_increment = 0.00
 
-    segment.altitude_end = 2.0 * Units.km
+    segment.altitude_end = 5_000 * Units.ft
     segment.air_speed = 150.0 * Units['m/s']
     segment.descent_rate = 5.0 * Units['m/s']
 

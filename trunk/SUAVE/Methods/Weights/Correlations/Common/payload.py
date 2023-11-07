@@ -18,7 +18,7 @@ from SUAVE.Core import Units, Data
 # ----------------------------------------------------------------------
 
 ## @ingroup Methods-Weights-Correlations-Common 
-def payload(vehicle, wt_passenger=195 * Units.lbs, wt_baggage=30 * Units.lbs):
+def payload(vehicle, wt_passenger=80. * Units.kg, wt_baggage=20. * Units.kg):
     """ Calculate the weight of the payload and the resulting fuel mass
     
     Assumptions:

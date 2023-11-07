@@ -53,7 +53,8 @@ class Simple_Propulsor(Network):
         """            
 
         self.max_thrust        = 0.
-        self.fuel_flow         = 0. 
+        self.sealevel_static_thrust = 0.
+        self.sfc               = 0.
         self.nacelle_diameter  = None
         self.engine_length     = None
         self.number_of_engines = None
@@ -82,7 +83,7 @@ class Simple_Propulsor(Network):
         # unpack
         conditions  = state.conditions
         max_thrust  = self.max_thrust
-        fuel_flow   = self.fuel_flow
+        sfc         = self.sfc
         eta         = conditions.propulsion.throttle[:,0,None]  #beschreibt Stellung des Schubhebels
         
 #        eta[eta > 1.0] = 1.0
@@ -91,7 +92,7 @@ class Simple_Propulsor(Network):
         F    = eta * max_thrust * [1,0,0]  
 
         
-        mdot = eta*fuel_flow
+        mdot = eta * max_thrust * sfc
         
              
         conditions.propulsion.thrust = F
@@ -109,17 +110,7 @@ class Simple_Propulsor(Network):
             Avionics and payload weight should be included on the empty weight script 
         """
         
-        # List of which components' weights shall be calculated and included on the propulsive system weight
-        items_list = []
-        
-        # Initialize weight at zero
-        weight = 0
-        
-        # Run the list of items and calculate the weight for each one
-        # Add everything to come up with the total system weight
-        for i in items_list:
-            W = self[i].weight()
-            weight += W
+        weight = self.max_thrust / (70_000 * 4.448 * 2) * 20_000
         
         # Output the weight
         self.mass_properties.mass = weight

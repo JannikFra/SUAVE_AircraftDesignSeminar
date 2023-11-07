@@ -37,27 +37,26 @@ def vehicle_setup():
     # ------------------------------------------------------------------
 
     # mass properties
-    vehicle.mass_properties.max_takeoff               = 79015.8   # kg
-    vehicle.mass_properties.takeoff                   = 79015.8   # kg
-    vehicle.mass_properties.operating_empty           = 62746.4   # kg
-    vehicle.mass_properties.takeoff                   = 79015.8   # kg
-    vehicle.mass_properties.max_zero_fuel             = 62732.0   # kg
-    vehicle.mass_properties.cargo                     = 10000.  * Units.kilogram
+    vehicle.mass_properties.max_takeoff               = 279000.   # kg
+    vehicle.mass_properties.takeoff                   = 279000.   # kg
+    vehicle.mass_properties.operating_empty           = 130000.   # kg
+    vehicle.mass_properties.max_zero_fuel             = 180000.   # kg
+    vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     vehicle.mass_properties.center_of_gravity         = [[ 15.30987849,   0.        ,  -0.48023939]]
     vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
-    vehicle.design_mach_number                        = 0.78
-    vehicle.design_range                              = 3582 * Units.miles
-    vehicle.design_cruise_alt                         = 35000.0 * Units.ft
+    vehicle.design_mach_number                        = 0.82
+    vehicle.design_range                              = 10500 * Units['nautical_mile']
+    vehicle.design_cruise_alt                         = 31000.0 * Units.ft
 
     # envelope properties
     vehicle.envelope.ultimate_load = 3.75
     vehicle.envelope.limit_load    = 1.5
 
     # basic parameters
-    vehicle.reference_area         = 124.862
-    vehicle.passengers             = 170
+    vehicle.reference_area         = 490.6
+    vehicle.passengers             = 100.
     vehicle.systems.control        = "fully powered"
-    vehicle.systems.accessories    = "medium range"
+    vehicle.systems.accessories    = "longe range"
   
     # ------------------------------------------------------------------
     #   Main Wing
@@ -66,24 +65,25 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Main_Wing()
     wing.tag = 'main_wing'
 
-    wing.aspect_ratio            = 10.18
-    wing.sweeps.quarter_chord    = 25 * Units.deg
-    wing.thickness_to_chord      = 0.1
-    wing.taper                   = 0.1
+    wing.aspect_ratio            = 9.988
+    wing.sweeps.quarter_chord    = 29.7 * Units.deg
+    wing.thickness_to_chord      = 0.1525
+    wing.taper                   = 0.2893
 
-    wing.spans.projected         = 34.32
+    wing.spans.projected         = 70. * Units.meter
 
-    wing.chords.root             = 7.760 * Units.meter
-    wing.chords.tip              = 0.782 * Units.meter
-    wing.chords.mean_aerodynamic = 4.235 * Units.meter
+    wing.chords.root             = 12.459 * Units.meter
+    wing.chords.tip              = 2.850 * Units.meter
+    wing.chords.mean_aerodynamic = 8.439 * Units.meter
 
-    wing.areas.reference         = 124.862
-    wing.areas.wetted            = 225.08
+    wing.areas.reference         = 490.6
+    wing.areas.exposed           = wing.areas.reference - wing.chords.root * 2.777 * 2
+    wing.areas.wetted            = wing.areas.exposed * 2
     
     wing.twists.root             = 4.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
 
-    wing.origin                  = [[13.61,0,-0.93]]
+    wing.origin                  = [[22.408,0,-0.957]]
     wing.aerodynamic_center      = [0,0,0]   
 
     wing.vertical                = False
@@ -99,14 +99,25 @@ def vehicle_setup():
     root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
     root_airfoil.coordinate_file          = 'Airfoils/B737a.txt'
     segment                               = SUAVE.Components.Wings.Segment()
-    segment.tag                           = 'Root'
+    segment.tag                           = 'InsideFuselage'
     segment.percent_span_location         = 0.0
     segment.twist                         = 4. * Units.deg
     segment.root_chord_percent            = 1.
-    segment.thickness_to_chord            = 0.1
-    segment.dihedral_outboard             = 2.5 * Units.degrees
-    segment.sweeps.quarter_chord          = 28.225 * Units.degrees
-    segment.thickness_to_chord            = .1
+    segment.thickness_to_chord            = 0.1525
+    segment.dihedral_outboard             = 0. * Units.degrees
+    segment.sweeps.quarter_chord          = 0. * Units.degrees
+    segment.append_airfoil(root_airfoil)
+    wing.append_segment(segment)
+
+    # Wing Segments
+    segment = SUAVE.Components.Wings.Segment()
+    segment.tag = 'Root'
+    segment.percent_span_location = 2.777 / 35.035
+    segment.twist = 4. * Units.deg
+    segment.root_chord_percent = 1.
+    segment.thickness_to_chord = 0.1525
+    segment.dihedral_outboard = 7. * Units.degrees
+    segment.sweeps.quarter_chord = 26. * Units.degrees
     segment.append_airfoil(root_airfoil)
     wing.append_segment(segment)
 
@@ -114,13 +125,12 @@ def vehicle_setup():
     yehudi_airfoil.coordinate_file        = 'Airfoils/B737b.txt'
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Yehudi'
-    segment.percent_span_location         = 0.324
+    segment.percent_span_location         = (2.777 + 6.980) / 35.035
     segment.twist                         = 0.047193 * Units.deg
-    segment.root_chord_percent            = 0.5
-    segment.thickness_to_chord            = 0.1
-    segment.dihedral_outboard             = 5.5 * Units.degrees
-    segment.sweeps.quarter_chord          = 25. * Units.degrees
-    segment.thickness_to_chord            = .1
+    segment.root_chord_percent            = 8.729 / 12.459
+    segment.thickness_to_chord            = 0.1127
+    segment.dihedral_outboard             = 5. * Units.degrees
+    segment.sweeps.quarter_chord          = 29. * Units.degrees
     segment.append_airfoil(yehudi_airfoil)
     wing.append_segment(segment)
 
@@ -128,13 +138,12 @@ def vehicle_setup():
     mid_airfoil.coordinate_file           = 'Airfoils/B737c.txt'
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Section_2'
-    segment.percent_span_location         = 0.963
+    segment.percent_span_location         = (2.777 + 6.980 + 23.867) / 35.035
     segment.twist                         = 0.00258 * Units.deg
-    segment.root_chord_percent            = 0.220
-    segment.thickness_to_chord            = 0.1
-    segment.dihedral_outboard             = 5.5 * Units.degrees
-    segment.sweeps.quarter_chord          = 56.75 * Units.degrees
-    segment.thickness_to_chord            = .1
+    segment.root_chord_percent            = 2.852 / 12.459
+    segment.thickness_to_chord            = 0.099
+    segment.dihedral_outboard             = 5. * Units.degrees
+    segment.sweeps.quarter_chord          = 62. * Units.degrees
     segment.append_airfoil(mid_airfoil)
     wing.append_segment(segment)
 
@@ -144,8 +153,7 @@ def vehicle_setup():
     segment.tag                           = 'Tip'
     segment.percent_span_location         = 1.
     segment.twist                         = 0. * Units.degrees
-    segment.root_chord_percent            = 0.10077
-    segment.thickness_to_chord            = 0.1
+    segment.root_chord_percent            = 0.882 / 12.459
     segment.dihedral_outboard             = 0.
     segment.sweeps.quarter_chord          = 0.
     segment.thickness_to_chord            = .1
@@ -158,27 +166,27 @@ def vehicle_setup():
     # control surfaces -------------------------------------------
     slat                          = SUAVE.Components.Wings.Control_Surfaces.Slat()
     slat.tag                      = 'slat'
-    slat.span_fraction_start      = 0.2
-    slat.span_fraction_end        = 0.963
+    slat.span_fraction_start      = 4.042 / 35.035
+    slat.span_fraction_end        = 33.624 / 35.035
     slat.deflection               = 0.0 * Units.degrees
-    slat.chord_fraction           = 0.075
+    slat.chord_fraction           = 750 / 5800
     wing.append_control_surface(slat)
 
     flap                          = SUAVE.Components.Wings.Control_Surfaces.Flap()
     flap.tag                      = 'flap'
-    flap.span_fraction_start      = 0.2
-    flap.span_fraction_end        = 0.7
+    flap.span_fraction_start      = 2.777 / 35.035
+    flap.span_fraction_end        = 22.493 / 35.035
     flap.deflection               = 0.0 * Units.degrees
-    flap.configuration_type       = 'double_slotted'
+    flap.configuration_type       = 'single_slotted'
     flap.chord_fraction           = 0.30
     wing.append_control_surface(flap)
 
     aileron                       = SUAVE.Components.Wings.Control_Surfaces.Aileron()
     aileron.tag                   = 'aileron'
-    aileron.span_fraction_start   = 0.7
-    aileron.span_fraction_end     = 0.963
+    aileron.span_fraction_start   = 22.993 / 35.035
+    aileron.span_fraction_end     = 33.024 / 35.035
     aileron.deflection            = 0.0 * Units.degrees
-    aileron.chord_fraction        = 0.16
+    aileron.chord_fraction        = 0.30
     wing.append_control_surface(aileron)
     
 
@@ -194,24 +202,24 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Horizontal_Tail()
     wing.tag = 'horizontal_stabilizer'
 
-    wing.aspect_ratio            = 4.99
-    wing.sweeps.quarter_chord    = 28.2250 * Units.deg  
-    wing.thickness_to_chord      = 0.08
-    wing.taper                   = 0.3333 
+    wing.aspect_ratio            = 5.27
+    wing.sweeps.quarter_chord    = 30. * Units.deg
+    wing.thickness_to_chord      = 0.088
+    wing.taper                   = 0.378
 
-    wing.spans.projected         = 14.4
+    wing.spans.projected         = 19.404
 
-    wing.chords.root             = 4.2731 
-    wing.chords.tip              = 1.4243 
-    wing.chords.mean_aerodynamic = 8.0
+    wing.chords.root             = 4.567
+    wing.chords.tip              = 2.204
+    wing.chords.mean_aerodynamic = 3.932
 
-    wing.areas.reference         = 41.49
-    wing.areas.exposed           = 59.354    # Exposed area of the horizontal tail
-    wing.areas.wetted            = 71.81     # Wetted area of the horizontal tail
+    wing.areas.reference         = 71.4
+    wing.areas.exposed           = wing.areas.reference - wing.chords.root * 1.8    # Exposed area of the horizontal tail
+    wing.areas.wetted            = 2 * wing.areas.exposed     # Wetted area of the horizontal tail
     wing.twists.root             = 3.0 * Units.degrees
     wing.twists.tip              = 3.0 * Units.degrees
 
-    wing.origin                  = [[33.02,0,1.466]]
+    wing.origin                  = [[55.337, 0, 2.082]]
     wing.aerodynamic_center      = [0,0,0]
 
     wing.vertical                = False
@@ -226,19 +234,19 @@ def vehicle_setup():
     segment.percent_span_location  = 0.0
     segment.twist                  = 0. * Units.deg
     segment.root_chord_percent     = 1.0
-    segment.dihedral_outboard      = 8.63 * Units.degrees
-    segment.sweeps.quarter_chord   = 28.2250  * Units.degrees 
-    segment.thickness_to_chord     = .1
+    segment.dihedral_outboard      = 6.3 * Units.degrees
+    segment.sweeps.quarter_chord   = 30.  * Units.degrees
+    segment.thickness_to_chord     = 0.088
     wing.append_segment(segment)
 
     segment                        = SUAVE.Components.Wings.Segment()
     segment.tag                    = 'tip_segment'
     segment.percent_span_location  = 1.
     segment.twist                  = 0. * Units.deg
-    segment.root_chord_percent     = 0.3333               
+    segment.root_chord_percent     = 2.204 / 4.567
     segment.dihedral_outboard      = 0 * Units.degrees
     segment.sweeps.quarter_chord   = 0 * Units.degrees  
-    segment.thickness_to_chord     = .1
+    segment.thickness_to_chord     = 0.088
     wing.append_segment(segment)
     
     # Fill out more segment properties automatically
@@ -247,7 +255,7 @@ def vehicle_setup():
     # control surfaces -------------------------------------------
     elevator                       = SUAVE.Components.Wings.Control_Surfaces.Elevator()
     elevator.tag                   = 'elevator'
-    elevator.span_fraction_start   = 0.09
+    elevator.span_fraction_start   = 0.12
     elevator.span_fraction_end     = 0.92
     elevator.deflection            = 0.0  * Units.deg
     elevator.chord_fraction        = 0.3
@@ -264,25 +272,26 @@ def vehicle_setup():
     wing = SUAVE.Components.Wings.Vertical_Tail()
     wing.tag = 'vertical_stabilizer'
 
-    wing.aspect_ratio            = 1.98865
-    wing.sweeps.quarter_chord    = 31.2  * Units.deg   
-    wing.thickness_to_chord      = 0.08
-    wing.taper                   = 0.1183
+    wing.aspect_ratio            = 1.524
+    wing.sweeps.quarter_chord    = 40.  * Units.deg
+    wing.thickness_to_chord      = 0.11
+    wing.taper                   = 0.397
 
-    wing.spans.projected         = 8.33
+    wing.spans.projected         = 8.28
     wing.total_length            = wing.spans.projected 
     
-    wing.chords.root             = 10.1 
-    wing.chords.tip              = 1.20 
-    wing.chords.mean_aerodynamic = 4.0
+    wing.chords.root             = 7.936
+    wing.chords.tip              = 3.106
+    wing.chords.mean_aerodynamic = 5.788
 
-    wing.areas.reference         = 34.89
-    wing.areas.wetted            = 57.25 
+    wing.areas.reference         = 45.2
+    wing.areas.exposed           = wing.areas.reference
+    wing.areas.wetted            = 2 * wing.areas.exposed
     
     wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
 
-    wing.origin                  = [[26.944,0,1.54]]
+    wing.origin                  = [[52.2, 0, 3.59]]
     wing.aerodynamic_center      = [0,0,0]
 
     wing.vertical                = True
@@ -299,30 +308,20 @@ def vehicle_setup():
     segment.twist                         = 0. * Units.deg
     segment.root_chord_percent            = 1.
     segment.dihedral_outboard             = 0 * Units.degrees
-    segment.sweeps.quarter_chord          = 61.485 * Units.degrees  
-    segment.thickness_to_chord            = .1
+    segment.sweeps.quarter_chord          = 40. * Units.degrees
+    segment.thickness_to_chord            = 0.11
     wing.append_segment(segment)
 
     segment                               = SUAVE.Components.Wings.Segment()
-    segment.tag                           = 'segment_1'
-    segment.percent_span_location         = 0.2962
+    segment.tag                           = 'tip'
+    segment.percent_span_location         = 1.
     segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = 0.45
+    segment.root_chord_percent            = 3.106 / 7.936
     segment.dihedral_outboard             = 0. * Units.degrees
-    segment.sweeps.quarter_chord          = 31.2 * Units.degrees   
-    segment.thickness_to_chord            = .1
+    segment.sweeps.quarter_chord          = 0. * Units.degrees
+    segment.thickness_to_chord            = 0.11
     wing.append_segment(segment)
 
-    segment                               = SUAVE.Components.Wings.Segment()
-    segment.tag                           = 'segment_2'
-    segment.percent_span_location         = 1.0
-    segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = 0.1183 
-    segment.dihedral_outboard             = 0.0 * Units.degrees
-    segment.sweeps.quarter_chord          = 0.0    
-    segment.thickness_to_chord            = .1  
-    wing.append_segment(segment)
-    
     # Fill out more segment properties automatically
     wing = wing_segmented_planform(wing)        
 
@@ -340,28 +339,28 @@ def vehicle_setup():
     fuselage.number_coach_seats    = vehicle.passengers
     fuselage.seats_abreast         = 6
     fuselage.seat_pitch            = 31. * Units.inches
-    fuselage.fineness.nose         = 1.6
-    fuselage.fineness.tail         = 2.
+    fuselage.fineness.nose         = 9.502 / 5.82
+    fuselage.fineness.tail         = 18.7 / 5.82
 
-    fuselage.lengths.nose          = 6.4
-    fuselage.lengths.tail          = 8.0
-    fuselage.lengths.cabin         = 28.85
-    fuselage.lengths.total         = 38.02
+    fuselage.lengths.nose          = 9.502
+    fuselage.lengths.tail          = 18.7
+    fuselage.lengths.cabin         = 35.
+    fuselage.lengths.total         = fuselage.lengths.nose + fuselage.lengths.tail + fuselage.lengths.cabin
     fuselage.lengths.fore_space    = 6.
     fuselage.lengths.aft_space     = 5.
 
-    fuselage.width                 = 3.74
+    fuselage.width                 = 5.85
 
-    fuselage.heights.maximum       = 3.74
-    fuselage.heights.at_quarter_length          = 3.74
-    fuselage.heights.at_three_quarters_length   = 3.65
-    fuselage.heights.at_wing_root_quarter_chord = 3.74
+    fuselage.heights.maximum       = 5.787
+    fuselage.heights.at_quarter_length          = 5.787
+    fuselage.heights.at_three_quarters_length   = 5.7
+    fuselage.heights.at_wing_root_quarter_chord = 5.787
 
-    fuselage.areas.side_projected  = 142.1948
-    fuselage.areas.wetted          = 385.51
-    fuselage.areas.front_projected = 12.57
+    fuselage.areas.side_projected  = fuselage.heights.maximum * fuselage.lengths.total * 0.7
+    fuselage.areas.wetted          = np.pi * (fuselage.width+fuselage.heights.maximum)/2 * fuselage.lengths.total * 0.7
+    fuselage.areas.front_projected = np.pi * ((fuselage.width+fuselage.heights.maximum)/2)**2 / 4
 
-    fuselage.effective_diameter    = 3.74
+    fuselage.effective_diameter    = (fuselage.width+fuselage.heights.maximum)/2
 
     fuselage.differential_pressure = 5.0e4 * Units.pascal # Maximum differential pressure
 
@@ -370,8 +369,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_0'
     segment.percent_x_location                  = 0.0000
     segment.percent_z_location                  = -0.00144
-    segment.height                              = 0.0100
-    segment.width                               = 0.0100
+    segment.height                              = 0.0100 * 5.787 / 3.74
+    segment.width                               = 0.0100 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -379,8 +378,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_1'
     segment.percent_x_location                  = 0.00576
     segment.percent_z_location                  = -0.00144
-    segment.height                              = 0.7500
-    segment.width                               = 0.6500
+    segment.height                              = 0.7500 * 5.787 / 3.74
+    segment.width                               = 0.6500 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -388,8 +387,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_2'
     segment.percent_x_location                  = 0.02017
     segment.percent_z_location                  = 0.00000
-    segment.height                              = 1.52783
-    segment.width                               = 1.20043
+    segment.height                              = 1.52783 * 5.787 / 3.74
+    segment.width                               = 1.20043 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -397,8 +396,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_3'
     segment.percent_x_location                  = 0.03170
     segment.percent_z_location                  = 0.00000
-    segment.height                              = 1.96435
-    segment.width                               = 1.52783
+    segment.height                              = 1.96435 * 5.787 / 3.74
+    segment.width                               = 1.52783 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -406,8 +405,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_4'
     segment.percent_x_location                  = 0.04899
     segment.percent_z_location                  = 0.00431
-    segment.height                              = 2.72826
-    segment.width                               = 1.96435
+    segment.height                              = 2.72826 * 5.787 / 3.74
+    segment.width                               = 1.96435 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -415,8 +414,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_5'
     segment.percent_x_location                  = 0.07781
     segment.percent_z_location                  = 0.00861
-    segment.height                              = 3.49217
-    segment.width                               = 2.61913
+    segment.height                              = 3.49217 * 5.787 / 3.74
+    segment.width                               = 2.61913 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -424,8 +423,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_6'
     segment.percent_x_location                  = 0.10375
     segment.percent_z_location                  = 0.01005
-    segment.height                              = 3.70130
-    segment.width                               = 3.05565
+    segment.height                              = 3.70130 * 5.787 / 3.74
+    segment.width                               = 3.05565 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -433,8 +432,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_7'
     segment.percent_x_location                  = 0.16427
     segment.percent_z_location                  = 0.01148
-    segment.height                              = 3.92870
-    segment.width                               = 3.71043
+    segment.height                              = 3.92870 * 5.787 / 3.74
+    segment.width                               = 3.71043 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -442,8 +441,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_8'
     segment.percent_x_location                  = 0.22478
     segment.percent_z_location                  = 0.01148
-    segment.height                              = 3.92870
-    segment.width                               = 3.92870
+    segment.height                              = 3.92870 * 5.787 / 3.74
+    segment.width                               = 3.92870 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -451,8 +450,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_9'
     segment.percent_x_location                  = 0.69164
     segment.percent_z_location                  = 0.01292
-    segment.height                              = 3.81957
-    segment.width                               = 3.81957
+    segment.height                              = 3.81957 * 5.787 / 3.74
+    segment.width                               = 3.81957 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -460,8 +459,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_10'
     segment.percent_x_location                  = 0.71758
     segment.percent_z_location                  = 0.01292
-    segment.height                              = 3.81957
-    segment.width                               = 3.81957
+    segment.height                              = 3.81957 * 5.787 / 3.74
+    segment.width                               = 3.81957 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -469,8 +468,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_11'
     segment.percent_x_location                  = 0.78098
     segment.percent_z_location                  = 0.01722
-    segment.height                              = 3.49217
-    segment.width                               = 3.71043
+    segment.height                              = 3.49217 * 5.787 / 3.74
+    segment.width                               = 3.71043 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -478,8 +477,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_12'
     segment.percent_x_location                  = 0.85303
     segment.percent_z_location                  = 0.02296
-    segment.height                              = 3.05565
-    segment.width                               = 3.16478
+    segment.height                              = 3.05565 * 5.787 / 3.74
+    segment.width                               = 3.16478 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -487,8 +486,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_13'
     segment.percent_x_location                  = 0.91931
     segment.percent_z_location                  = 0.03157
-    segment.height                              = 2.40087
-    segment.width                               = 1.96435
+    segment.height                              = 2.40087 * 5.787 / 3.74
+    segment.width                               = 1.96435 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # Segment
@@ -496,8 +495,8 @@ def vehicle_setup():
     segment.tag                                 = 'segment_14'
     segment.percent_x_location                  = 1.00
     segment.percent_z_location                  = 0.04593
-    segment.height                              = 1.09130
-    segment.width                               = 0.21826
+    segment.height                              = 1.09130 * 5.787 / 3.74
+    segment.width                               = 0.21826 * 5.85 / 3.74
     fuselage.Segments.append(segment)
 
     # add to vehicle
@@ -506,22 +505,22 @@ def vehicle_setup():
     # ------------------------------------------------------------------
     #   Nacelles
     # ------------------------------------------------------------------ 
-    # nacelle                            = SUAVE.Components.Nacelles.Nacelle()
-    # nacelle.tag                        = 'nacelle_1'
-    # nacelle.length                     = 2.71
-    # nacelle.inlet_diameter             = 1.90
-    # nacelle.diameter                   = 2.05
-    # nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    # nacelle.origin                     = [[13.72, -4.86,-1.9]]
-    # nacelle.flow_through               = True
-    # nacelle.Airfoil.NACA_4_series_flag = True
-    # nacelle.Airfoil.coordinate_file    = '2410'
-    # nacelle_2                          = deepcopy(nacelle)
-    # nacelle_2.tag                      = 'nacelle_2'
-    # nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
-    #
-    # vehicle.append_component(nacelle)
-    # vehicle.append_component(nacelle_2)
+    nacelle                            = SUAVE.Components.Nacelles.Nacelle()
+    nacelle.tag                        = 'nacelle_1'
+    nacelle.length                     = 2.71
+    nacelle.inlet_diameter             = 1.90
+    nacelle.diameter                   = 2.05
+    nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
+    nacelle.origin                     = [[13.72, -4.86,-1.9]]
+    nacelle.flow_through               = True
+    nacelle.Airfoil.NACA_4_series_flag = True
+    nacelle.Airfoil.coordinate_file    = '2410'
+    nacelle_2                          = deepcopy(nacelle)
+    nacelle_2.tag                      = 'nacelle_2'
+    nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
+
+    vehicle.append_component(nacelle)
+    vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #   Propulsor
@@ -535,8 +534,11 @@ def vehicle_setup():
     propulsor.origin            = [[13.72, 4.86,-1.9],[13.72, -4.86,-1.9]]
     propulsor.engine_length = 2.
     propulsor.number_of_engines = 2
-    propulsor.max_thrust = 400e3
-    propulsor.fuel_flow = 1.
+    propulsor.max_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+    propulsor.sealevel_static_thrust = propulsor.max_thrust
+    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf * 0.69
+
+    print(propulsor.sfc)
 
     vehicle.append_component(propulsor)
 
