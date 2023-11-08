@@ -84,7 +84,7 @@ def mission_setup(analyses):
     segment.air_speed = 301.852 * 0.82 * Units['m/s']
     segment.distance = 10_500 * Units['nautical_mile'] - 92.6 * Units.km
 
-    segment.state.numerics.number_control_points = 20
+    segment.state.numerics.number_control_points = 10
 
     # post-process aerodynamic derivatives in cruise
     # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives

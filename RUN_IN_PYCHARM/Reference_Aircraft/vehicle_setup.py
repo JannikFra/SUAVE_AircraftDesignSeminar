@@ -31,6 +31,8 @@ def vehicle_setup():
 
     vehicle = SUAVE.Vehicle()
     vehicle.tag = 'Reference_Aircraft'
+    vehicle.systems.control = "fully powered"
+    vehicle.systems.accessories = "longe range"
 
     # ------------------------------------------------------------------
     #   Vehicle-level Properties
@@ -41,7 +43,9 @@ def vehicle_setup():
     vehicle.mass_properties.takeoff                   = 279000.   # kg
     vehicle.mass_properties.operating_empty           = 130000.   # kg
     vehicle.mass_properties.max_zero_fuel             = 180000.   # kg
+    vehicle.mass_properties.max_fuel                  = 125100.    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
+    vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     vehicle.mass_properties.center_of_gravity         = [[ 15.30987849,   0.        ,  -0.48023939]]
     vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
     vehicle.design_mach_number                        = 0.82
@@ -49,14 +53,12 @@ def vehicle_setup():
     vehicle.design_cruise_alt                         = 31000.0 * Units.ft
 
     # envelope properties
-    vehicle.envelope.ultimate_load = 3.75
-    vehicle.envelope.limit_load    = 1.5
+    vehicle.envelope.ultimate_load = 2.5 * 1.5
+    vehicle.envelope.limit_load    = 2.5
 
     # basic parameters
     vehicle.reference_area         = 490.6
     vehicle.passengers             = 100.
-    vehicle.systems.control        = "fully powered"
-    vehicle.systems.accessories    = "longe range"
   
     # ------------------------------------------------------------------
     #   Main Wing
@@ -80,7 +82,7 @@ def vehicle_setup():
     wing.areas.exposed           = wing.areas.reference - wing.chords.root * 2.777 * 2
     wing.areas.wetted            = wing.areas.exposed * 2
     
-    wing.twists.root             = 4.0 * Units.degrees
+    wing.twists.root             = 0.0 * Units.degrees
     wing.twists.tip              = 0.0 * Units.degrees
 
     wing.origin                  = [[22.408,0,-0.957]]
@@ -101,7 +103,7 @@ def vehicle_setup():
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'InsideFuselage'
     segment.percent_span_location         = 0.0
-    segment.twist                         = 4. * Units.deg
+    segment.twist                         = 0. * Units.deg
     segment.root_chord_percent            = 1.
     segment.thickness_to_chord            = 0.1525
     segment.dihedral_outboard             = 0. * Units.degrees
@@ -113,7 +115,7 @@ def vehicle_setup():
     segment = SUAVE.Components.Wings.Segment()
     segment.tag = 'Root'
     segment.percent_span_location = 2.777 / 35.035
-    segment.twist = 4. * Units.deg
+    segment.twist = 0. * Units.deg
     segment.root_chord_percent = 1.
     segment.thickness_to_chord = 0.1525
     segment.dihedral_outboard = 7. * Units.degrees
@@ -505,22 +507,22 @@ def vehicle_setup():
     # ------------------------------------------------------------------
     #   Nacelles
     # ------------------------------------------------------------------ 
-    nacelle                            = SUAVE.Components.Nacelles.Nacelle()
-    nacelle.tag                        = 'nacelle_1'
-    nacelle.length                     = 2.71
-    nacelle.inlet_diameter             = 1.90
-    nacelle.diameter                   = 2.05
-    nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    nacelle.origin                     = [[13.72, -4.86,-1.9]]
-    nacelle.flow_through               = True
-    nacelle.Airfoil.NACA_4_series_flag = True
-    nacelle.Airfoil.coordinate_file    = '2410'
-    nacelle_2                          = deepcopy(nacelle)
-    nacelle_2.tag                      = 'nacelle_2'
-    nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
-
-    vehicle.append_component(nacelle)
-    vehicle.append_component(nacelle_2)
+    # nacelle                            = SUAVE.Components.Nacelles.Nacelle()
+    # nacelle.tag                        = 'nacelle_1'
+    # nacelle.length                     = 2.71
+    # nacelle.inlet_diameter             = 1.90
+    # nacelle.diameter                   = 2.05
+    # nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
+    # nacelle.origin                     = [[13.72, -4.86,-1.9]]
+    # nacelle.flow_through               = True
+    # nacelle.Airfoil.NACA_4_series_flag = True
+    # nacelle.Airfoil.coordinate_file    = '2410'
+    # nacelle_2                          = deepcopy(nacelle)
+    # nacelle_2.tag                      = 'nacelle_2'
+    # nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
+    #
+    # vehicle.append_component(nacelle)
+    # vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #   Propulsor
@@ -536,7 +538,7 @@ def vehicle_setup():
     propulsor.number_of_engines = 2
     propulsor.max_thrust = 70_000 * 4.448 * propulsor.number_of_engines
     propulsor.sealevel_static_thrust = propulsor.max_thrust
-    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf * 0.69
+    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf * 0.71
 
     vehicle.append_component(propulsor)
 

@@ -10,7 +10,7 @@ base
 490.6      8.408301521531333     70.0
 
 #Xref    Yref    Zref   <meters>
-29.833034603974795      0.0     -0.2598955619229906
+29.948383997370545      0.0     -0.24643681472295031
 
 
 
@@ -18,7 +18,7 @@ base
 SURFACE
 main_wing
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         30      1.0
+10         1.0         80      1.0
 
 YDUPLICATE
 0.0
@@ -26,13 +26,13 @@ YDUPLICATE
 
 SECTION
 #Xle    Yle      Zle      Chord     Ainc  Nspanwise  Sspace
-22.408  0    -0.957    12.459    4.0     
+22.408  0    -0.957    12.459    0.0     
 AFILE
 B737a.dat
 
 SECTION
 #Xle    Yle      Zle      Chord     Ainc  Nspanwise  Sspace
-22.408  2.7742    -0.957    12.459    4.0     
+22.408  2.7742    -0.957    12.459    0.0     
 AFILE
 B737b.dat
 CONTROL
@@ -40,7 +40,7 @@ flap    1.0   0.7   0. 0. 0.  +1
 
 SECTION
 #Xle    Yle      Zle      Chord     Ainc  Nspanwise  Sspace
-23.1993  4.038    -0.8018    11.783    3.3816     
+23.1993  4.038    -0.8018    11.783    0.1066     
 AFILE
 B737b.dat
 CONTROL
@@ -103,7 +103,7 @@ B737d.dat
 SURFACE
 horizontal_stabilizer
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         30      1.0
+10         1.0         80      1.0
 
 YDUPLICATE
 0.0
@@ -134,7 +134,7 @@ SECTION
 SURFACE
 vertical_stabilizer
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         30      -1.1 
+10         1.0         80      -1.1 
 
 SECTION
 #Xle    Yle      Zle      Chord     Ainc  Nspanwise  Sspace

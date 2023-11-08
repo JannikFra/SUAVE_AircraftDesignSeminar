@@ -153,7 +153,8 @@ def read_results(avl_object):
             case_res.aerodynamics.wing_areas = wing_area 
             case_res.aerodynamics.wing_CLs   = wing_CL 
             case_res.aerodynamics.wing_CDs   = wing_CD
-            
+
+
         # Extract resulst from  strip forces result file
         with open(case.aero_result_filename_3,'r') as aero_res_file_2:
             aero_lines_2     = aero_res_file_2.readlines()

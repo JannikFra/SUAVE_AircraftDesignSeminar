@@ -49,7 +49,7 @@ def plot_altitude_sfc_weight(results, line_color = 'bo-', save_figure = False, s
     fig.set_size_inches(width, height)
     for segment in results.segments.values():
         time     = segment.conditions.frames.inertial.time[:,0] / Units.min
-        mass     = segment.conditions.weights.total_mass[:,0] / Units.lb
+        mass     = segment.conditions.weights.total_mass[:,0]
         altitude = segment.conditions.freestream.altitude[:,0] / Units.ft
         mdot     = segment.conditions.weights.vehicle_mass_rate[:,0]
         thrust   =  segment.conditions.frames.body.thrust_force_vector[:,0]
@@ -68,7 +68,7 @@ def plot_altitude_sfc_weight(results, line_color = 'bo-', save_figure = False, s
 
         axes = plt.subplot(3,1,2)
         axes.plot( time , mass , 'ro-' )
-        axes.set_ylabel('Weight (lb)',axis_font)
+        axes.set_ylabel('Weight (kg)',axis_font)
         set_axes(axes)
 
     plt.tight_layout()

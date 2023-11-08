@@ -48,6 +48,7 @@ def main():
     plot_flight_conditions(results)
     plot_stability_coefficients(results)
     plot_drag_components(results)
+    plot_altitude_sfc_weight(results)
     plt.show(block=True)
     
     # print weights breakdown
@@ -134,12 +135,12 @@ def base_analysis(vehicle):
 
     aerodynamics = SUAVE.Analyses.Aerodynamics.AVL()
     aerodynamics.geometry                            = vehicle
-    aerodynamics.settings.number_spanwise_vortices = 30
+    aerodynamics.settings.number_spanwise_vortices = 80
     aerodynamics.settings.keep_files = True
 
     stability = SUAVE.Analyses.Stability.AVL()
     stability.geometry = vehicle
-    stability.settings.number_spanwise_vortices = 30
+    stability.settings.number_spanwise_vortices = 80
     stability.settings.keep_files = True
 
     run_new_regression = False
@@ -151,6 +152,7 @@ def base_analysis(vehicle):
         aerodynamics.settings.save_regression_results = True
         stability.settings.regression_flag = False
         stability.settings.save_regression_results = True
+        stability.training_file = stability_training_path
         stability.settings.filenames.avl_bin_name = file_path
         stability.settings.filenames.run_folder = avl_files_path
     else:
@@ -160,8 +162,8 @@ def base_analysis(vehicle):
         aerodynamics.process.compute.lift.inviscid.settings.filenames.avl_bin_name = file_path
         aerodynamics.process.compute.lift.inviscid.settings.filenames.run_folder = avl_files_path
         stability.settings.regression_flag = True
-        stability.settings.save_regression_results = False
-        stability.training_file                         = stability_training_path
+        stability.settings.save_regression_results = True
+        stability.training_file = stability_training_path
         stability.settings.filenames.avl_bin_name = file_path
         stability.settings.filenames.run_folder = avl_files_path
 

@@ -3,25 +3,27 @@ Output file with weight breakdown
  DESIGN WEIGHTS 
  Maximum Takeoff Weight ......... :   279000 kg
  Maximum Zero Fuel Weight ....... :   180000 kg
+ Maximum Fuel Weight ............ :   125100 kg
+ Maximum Payload Weight ......... :    50000 kg
 
  ASSUMPTIONS FOR WEIGHT ESTIMATION 
  Airplane type .................. : LONGE RANGE
  Flight Controls type ........... : FULLY POWERED
 
  EMPTY WEIGHT BREAKDOWN 
- ........ EMPTY WEIGHT .......... :   99918 kg
+ ........ EMPTY WEIGHT .......... :   96519 kg
  Structural Weight Breakdown 
- Total structural weight......... :   62998 kg
+ Total structural weight......... :   61299 kg
  	Wing ........................ :   32471 kg
  	Horizontal tail ............. :    2376 kg
  	Vertical tail ............... :    1494 kg
  	Fuselage .................... :   19198 kg
  	Main landing gear ........... :    5019 kg
  	Nose landing gear ........... :     740 kg
- 	Nacelle ..................... :    1699 kg
+ 	Nacelle ..................... :       0 kg
  	Paint ....................... :       0 kg
  Propulsion Weight Breakdown 
- Total propulsion weight......... :   26147 kg
+ Total propulsion weight......... :   24448 kg
  	Engines ..................... :   23091 kg
  	Thrust reversers ............ :       0 kg
  	Miscellaneous ............... :     277 kg
@@ -38,7 +40,7 @@ Output file with weight breakdown
  	Instruments ................. :     124 kg
 
  OPERATING EMPTY WEIGHT BREAKDOWN 
- .... OPERATING EMPTY WEIGHT .... :  101691 kg
+ .... OPERATING EMPTY WEIGHT .... :   98292 kg
  Operational Items Weight Breakdown 
  Total operational items weight.. :    1774 kg
  	Operating items less crew ... :    1270 kg
@@ -46,7 +48,7 @@ Output file with weight breakdown
  	Flight attendants ........... :     286 kg
 
  ZERO FUEL WEIGHT BREAKDOWN 
- ...... ZERO FUEL WEIGHT ........ :  126191 kg
+ ...... ZERO FUEL WEIGHT ........ :  122792 kg
  Payload Weight Breakdown 
  Total payload weight............ :   24500 kg
  	Passengers .................. :    8000 kg
@@ -54,4 +56,4 @@ Output file with weight breakdown
  	Cargo ....................... :   14500 kg
 
 -------------------------------------------
- Tuesday, 07. November 2023 03:37:22 AM
+ Wednesday, 08. November 2023 02:02:26 AM
