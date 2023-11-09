@@ -23,7 +23,7 @@ from copy import deepcopy
 #   Define the Vehicle
 # ----------------------------------------------------------------------
 
-def vehicle_setup():
+def vehicle_setup(iteration_setup):
 
     # ------------------------------------------------------------------
     #   Initialize the Vehicle
@@ -39,15 +39,16 @@ def vehicle_setup():
     # ------------------------------------------------------------------
 
     # mass properties
-    vehicle.mass_properties.max_takeoff               = 279000.   # kg
-    vehicle.mass_properties.takeoff                   = 279000.   # kg
-    vehicle.mass_properties.operating_empty           = 130000.   # kg
-    vehicle.mass_properties.max_zero_fuel             = 180000.   # kg
+    vehicle.mass_properties.max_takeoff               = iteration_setup.weight_iter.TOW
+    vehicle.mass_properties.takeoff                   = iteration_setup.weight_iter.TOW
+    vehicle.mass_properties.operating_empty           = iteration_setup.weight_iter.BOW
+    vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
+                                                        + iteration_setup.weight_iter.Design_Payload
     vehicle.mass_properties.max_fuel                  = 125100.    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
-    vehicle.mass_properties.center_of_gravity         = [[ 15.30987849,   0.        ,  -0.48023939]]
-    vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
+    #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
+    #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
     vehicle.design_mach_number                        = 0.82
     vehicle.design_range                              = 10500 * Units['nautical_mile']
     vehicle.design_cruise_alt                         = 31000.0 * Units.ft
@@ -86,7 +87,10 @@ def vehicle_setup():
     wing.twists.tip              = 0.0 * Units.degrees
 
     wing.origin                  = [[22.408,0,-0.957]]
-    wing.aerodynamic_center      = [0,0,0]   
+    wing.aerodynamic_center      = [0,0,0]
+
+    wing.transition_x_upper = 0.15
+    wing.transition_x_lower = 0.15
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -224,6 +228,9 @@ def vehicle_setup():
     wing.origin                  = [[55.337, 0, 2.082]]
     wing.aerodynamic_center      = [0,0,0]
 
+    wing.transition_x_upper = 0.3
+    wing.transition_x_lower = 0.3
+
     wing.vertical                = False
     wing.symmetric               = True
 
@@ -295,6 +302,9 @@ def vehicle_setup():
 
     wing.origin                  = [[52.2, 0, 3.59]]
     wing.aerodynamic_center      = [0,0,0]
+
+    wing.transition_x_upper = 0.3
+    wing.transition_x_lower = 0.3
 
     wing.vertical                = True
     wing.symmetric               = False
@@ -538,7 +548,7 @@ def vehicle_setup():
     propulsor.number_of_engines = 2
     propulsor.max_thrust = 70_000 * 4.448 * propulsor.number_of_engines
     propulsor.sealevel_static_thrust = propulsor.max_thrust
-    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf * 0.71
+    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf
 
     vehicle.append_component(propulsor)
 

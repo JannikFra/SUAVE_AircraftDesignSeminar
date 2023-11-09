@@ -3,11 +3,11 @@
 
  Configuration: landing                                                     
      # Surfaces =   7
-     # Strips   = 420
-     # Vortices =4200
+     # Strips   = 370
+     # Vortices =3700
 
   Sref =  490.60       Cref =  8.4083       Bref =  70.000    
-  Xref =  29.948       Yref =  0.0000       Zref =-0.24644    
+  Xref =  0.0000       Yref =  0.0000       Zref =  0.0000    
 
  Standard axis orientation,  X fwd, Z down         
 
@@ -17,15 +17,15 @@
   Beta  =   0.00000     qc/2V =   0.00000
   Mach  =     0.450     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
-  CXtot =  -0.00274     Cltot =  -0.00000     Cl'tot =  -0.00000
-  CYtot =  -0.00000     Cmtot =   0.01397
-  CZtot =  -0.15377     Cntot =   0.00000     Cn'tot =   0.00000
+  CXtot =  -0.00293     Cltot =  -0.00000     Cl'tot =  -0.00000
+  CYtot =  -0.00000     Cmtot =  -0.56405
+  CZtot =  -0.16361     Cntot =   0.00000     Cn'tot =   0.00000
 
-  CLtot =   0.15377
-  CDtot =   0.00274
-  CDvis =   0.00000     CDind = 0.0027356
-  CLff  =   0.15358     CDff  = 0.0027314    | Trefftz
-  CYff  =  -0.00000         e =    0.2752    | Plane  
+  CLtot =   0.16361
+  CDtot =   0.00293
+  CDvis =   0.00000     CDind = 0.0029303
+  CLff  =   0.16340     CDff  = 0.0027064    | Trefftz
+  CYff  =  -0.00000         e =    0.3144    | Plane  
 
    flap            =  25.00000
    slat            =  30.00000
@@ -38,32 +38,32 @@
 
                              alpha                beta
                   ----------------    ----------------
- z' force CL |    CLa =   5.495817    CLb =  -0.000000
- y  force CY |    CYa =  -0.000000    CYb =  -0.326302
- x' mom.  Cl'|    Cla =   0.000000    Clb =  -0.117357
- y  mom.  Cm |    Cma =  -2.143814    Cmb =   0.000000
- z' mom.  Cn'|    Cna =  -0.000000    Cnb =   0.027954
+ z' force CL |    CLa =   5.495236    CLb =   0.000000
+ y  force CY |    CYa =  -0.000000    CYb =  -0.326472
+ x' mom.  Cl'|    Cla =  -0.000000    Clb =  -0.117382
+ y  mom.  Cm |    Cma = -21.725736    Cmb =  -0.000000
+ z' mom.  Cn'|    Cna =  -0.000000    Cnb =   0.167514
 
                      roll rate  p'      pitch rate  q'        yaw rate  r'
                   ----------------    ----------------    ----------------
- z' force CL |    CLp =  -0.000000    CLq =  11.467862    CLr =   0.000000
- y  force CY |    CYp =  -0.119514    CYq =   0.000000    CYr =   0.247091
- x' mom.  Cl'|    Clp =  -0.470893    Clq =   0.000000    Clr =   0.058091
- y  mom.  Cm |    Cmp =   0.000000    Cmq = -19.819092    Cmr =   0.000000
- z' mom.  Cn'|    Cnp =   0.004010    Cnq =  -0.000000    Cnr =  -0.090891
+ z' force CL |    CLp =   0.000000    CLq =  50.660549    CLr =  -0.000000
+ y  force CY |    CYp =  -0.114735    CYq =  -0.000000    CYr =   0.526801
+ x' mom.  Cl'|    Clp =  -0.469830    Clq =  -0.000000    Clr =   0.158251
+ y  mom.  Cm |    Cmp =  -0.000000    Cmq =-215.533870    Cmr =   0.000000
+ z' mom.  Cn'|    Cnp =   0.052141    Cnq =  -0.000000    Cnr =  -0.340111
 
                   flap         d01     slat         d02     aileron      d03     elevator     d04 
                   ----------------    ----------------    ----------------    ----------------
- z' force CL |   CLd01 =   0.002526   CLd02 =  -0.000391   CLd03 =   0.000000   CLd04 =   0.004857
- y  force CY |   CYd01 =  -0.000000   CYd02 =  -0.000000   CYd03 =   0.000460   CYd04 =  -0.000000
- x' mom.  Cl'|   Cld01 =   0.000000   Cld02 =  -0.000000   Cld03 =   0.003008   Cld04 =  -0.000000
- y  mom.  Cm |   Cmd01 =   0.001225   Cmd02 =   0.000193   Cmd03 =  -0.000000   Cmd04 =  -0.016496
- z' mom.  Cn'|   Cnd01 =  -0.000000   Cnd02 =  -0.000000   Cnd03 =   0.000060   Cnd04 =   0.000000
- Trefftz drag| CDffd01 =   0.000170 CDffd02 =  -0.000000 CDffd03 =  -0.000000 CDffd04 =   0.000074
- span eff.   |    ed01 =  -0.008106    ed02 =  -0.001350    ed03 =   0.000000    ed04 =   0.009852
+ z' force CL |   CLd01 =   0.002919   CLd02 =  -0.000390   CLd03 =  -0.000000   CLd04 =   0.004862
+ y  force CY |   CYd01 =  -0.000000   CYd02 =  -0.000000   CYd03 =   0.000460   CYd04 =   0.000000
+ x' mom.  Cl'|   Cld01 =   0.000000   Cld02 =  -0.000000   Cld03 =   0.003016   Cld04 =   0.000000
+ y  mom.  Cm |   Cmd01 =  -0.008983   Cmd02 =   0.001579   Cmd03 =   0.000000   Cmd04 =  -0.033832
+ z' mom.  Cn'|   Cnd01 =   0.000000   Cnd02 =   0.000000   Cnd03 =  -0.000135   Cnd04 =  -0.000000
+ Trefftz drag| CDffd01 =   0.000172 CDffd02 =  -0.000000 CDffd03 =  -0.000000 CDffd04 =   0.000082
+ span eff.   |    ed01 =  -0.008719    ed02 =  -0.001467    ed03 =   0.000000    ed04 =   0.009079
 
 
 
- Neutral point  Xnp =  33.228302
+ Neutral point  Xnp =  33.242713
 
- Clb Cnr / Clr Cnb  =   6.568649    (  > 1 if spirally stable )
+ Clb Cnr / Clr Cnb  =   1.505995    (  > 1 if spirally stable )

@@ -10,7 +10,7 @@ landing
 490.6      8.408301521531333     70.0
 
 #Xref    Yref    Zref   <meters>
-29.948383997370545      0.0     -0.24643681472295031
+0.0      0.0     0.0
 
 
 
@@ -18,7 +18,7 @@ landing
 SURFACE
 main_wing
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         80      1.0
+10         1.0         70      1.0
 
 YDUPLICATE
 0.0
@@ -103,7 +103,7 @@ B737d.dat
 SURFACE
 horizontal_stabilizer
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         80      1.0
+10         1.0         70      1.0
 
 YDUPLICATE
 0.0
@@ -134,7 +134,7 @@ SECTION
 SURFACE
 vertical_stabilizer
 #Nchordwise  Cspace   Nspanwise  Sspace
-10         1.0         80      -1.1 
+10         1.0         70      -1.1 
 
 SECTION
 #Xle    Yle      Zle      Chord     Ainc  Nspanwise  Sspace

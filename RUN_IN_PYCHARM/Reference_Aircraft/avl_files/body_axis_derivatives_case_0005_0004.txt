@@ -3,11 +3,11 @@
 
  Configuration: landing                                                     
      # Surfaces =   7
-     # Strips   = 420
-     # Vortices =4200
+     # Strips   = 370
+     # Vortices =3700
 
   Sref =  490.60       Cref =  8.4083       Bref =  70.000    
-  Xref =  29.948       Yref =  0.0000       Zref =-0.24644    
+  Xref =  0.0000       Yref =  0.0000       Zref =  0.0000    
 
  Standard axis orientation,  X fwd, Z down         
 
@@ -17,15 +17,15 @@
   Beta  =   0.00000     qc/2V =   0.00000
   Mach  =     0.650     rb/2V =  -0.00000     r'b/2V =  -0.00000
 
-  CXtot =   0.04250     Cltot =  -0.00000     Cl'tot =  -0.00000
-  CYtot =  -0.00000     Cmtot =  -0.19972
-  CZtot =  -0.69525     Cntot =  -0.00000     Cn'tot =  -0.00000
+  CXtot =   0.04305     Cltot =  -0.00000     Cl'tot =  -0.00000
+  CYtot =  -0.00000     Cmtot =  -2.70877
+  CZtot =  -0.70619     Cntot =   0.00000     Cn'tot =   0.00000
 
-  CLtot =   0.69631
-  CDtot =   0.01826
-  CDvis =   0.00000     CDind = 0.0182616
-  CLff  =   0.69555     CDff  = 0.0189977    | Trefftz
-  CYff  =  -0.00000         e =    0.8116    | Plane  
+  CLtot =   0.70725
+  CDtot =   0.01866
+  CDvis =   0.00000     CDind = 0.0186595
+  CLff  =   0.70643     CDff  = 0.0186669    | Trefftz
+  CYff  =  -0.00000         e =    0.8520    | Plane  
 
    flap            =  25.00000
    slat            =  30.00000
@@ -38,29 +38,29 @@
 
                     axial   vel. u     sideslip vel. v      normal  vel. w
                   ----------------    ----------------    ----------------
- x force CX  |    CXu =   0.002999    CXv =   0.000000    CXw =   0.940879
- y force CY  |    CYu =   0.000000    CYv =  -0.329405    CYw =  -0.000000
- z force CZ  |    CZu =  -0.867716    CZv =  -0.000000    CZw =  -6.036228
- x mom.  Cl  |    Clu =  -0.000000    Clv =  -0.200919    Clw =  -0.000000
- y mom.  Cm  |    Cmu =  -0.184041    Cmv =  -0.000000    Cmw =  -2.479539
- z mom.  Cn  |    Cnu =  -0.000000    Cnv =   0.014274    Cnw =  -0.000000
+ x force CX  |    CXu =   0.003334    CXv =   0.000000    CXw =   0.949833
+ y force CY  |    CYu =  -0.000000    CYv =  -0.329460    CYw =  -0.000000
+ z force CZ  |    CZu =  -0.889752    CZv =  -0.000000    CZw =  -6.035260
+ x mom.  Cl  |    Clu =  -0.000000    Clv =  -0.201060    Clw =  -0.000000
+ y mom.  Cm  |    Cmu =  -3.342856    Cmv =   0.000000    Cmw = -23.950213
+ z mom.  Cn  |    Cnu =   0.000000    Cnv =   0.155065    Cnw =  -0.000000
 
                       roll rate  p       pitch rate  q         yaw rate  r
                   ----------------    ----------------    ----------------
- x force CX  |    CXp =   0.000000    CXq =   0.829819    CXr =   0.000000
- y force CY  |    CYp =   0.082840    CYq =   0.000000    CYr =   0.272417
- z force CZ  |    CZp =  -0.000000    CZq = -12.386962    CZr =   0.000000
- x mom.  Cl  |    Clp =  -0.504713    Clq =   0.000000    Clr =   0.137191
- y mom.  Cm  |    Cmp =   0.000000    Cmq = -21.522011    Cmr =   0.000000
- z mom.  Cn  |    Cnp =  -0.111300    Cnq =  -0.000000    Cnr =  -0.091663
+ x force CX  |    CXp =   0.000000    CXq =   7.585945    CXr =  -0.000000
+ y force CY  |    CYp =   0.087857    CYq =  -0.000000    CYr =   0.554660
+ z force CZ  |    CZp =  -0.000000    CZq = -55.438876    CZr =  -0.000000
+ x mom.  Cl  |    Clp =  -0.503805    Clq =   0.000000    Clr =   0.308998
+ y mom.  Cm  |    Cmp =  -0.000000    Cmq =-236.460092    Cmr =  -0.000000
+ z mom.  Cn  |    Cnp =  -0.149821    Cnq =   0.000000    Cnr =  -0.341017
 
                   flap         d01     slat         d02     aileron      d03     elevator     d04 
                   ----------------    ----------------    ----------------    ----------------
- x force CX  |   CXd01 =   0.000027   CXd02 =  -0.000428   CXd03 =   0.000000   CXd04 =   0.000067
+ x force CX  |   CXd01 =   0.000037   CXd02 =  -0.000430   CXd03 =   0.000000   CXd04 =   0.000062
  y force CY  |   CYd01 =  -0.000000   CYd02 =  -0.000000   CYd03 =   0.000358   CYd04 =   0.000000
- z force CZ  |   CZd01 =  -0.002803   CZd02 =   0.000443   CZd03 =   0.000000   CZd04 =  -0.005168
- x mom.  Cl  |   Cld01 =  -0.000000   Cld02 =  -0.000000   Cld03 =   0.003206   Cld04 =   0.000000
- y mom.  Cm  |   Cmd01 =   0.001309   Cmd02 =   0.000284   Cmd03 =  -0.000000   Cmd04 =  -0.017751
- z mom.  Cn  |   Cnd01 =  -0.000000   Cnd02 =   0.000000   Cnd03 =   0.000215   Cnd04 =  -0.000000
+ z force CZ  |   CZd01 =  -0.003240   CZd02 =   0.000442   CZd03 =   0.000000   CZd04 =  -0.005174
+ x mom.  Cl  |   Cld01 =  -0.000000   Cld02 =  -0.000000   Cld03 =   0.003215   Cld04 =   0.000000
+ y mom.  Cm  |   Cmd01 =  -0.010025   Cmd02 =   0.001846   Cmd03 =   0.000000   Cmd04 =  -0.036197
+ z mom.  Cn  |   Cnd01 =   0.000000   Cnd02 =   0.000000   Cnd03 =   0.000064   Cnd04 =  -0.000000
 
 

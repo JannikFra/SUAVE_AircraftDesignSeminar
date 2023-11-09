@@ -1,6 +1,6 @@
 import SUAVE
 from SUAVE.Core import Units
-def mission_setup(analyses):
+def mission_setup(analyses, iteration_setup):
     # ------------------------------------------------------------------
     #   Initialize the Mission
     # ------------------------------------------------------------------
@@ -34,7 +34,7 @@ def mission_setup(analyses):
     segment.altitude_start = 0.0 * Units.km
     segment.altitude_end = 5_000 * Units.ft
     segment.air_speed = 125.0 * Units['m/s']
-    segment.climb_rate = 6.0 * Units['m/s']
+    segment.climb_rate = 4.0 * Units['m/s']
 
     # add to misison
     mission.append_segment(segment)
@@ -50,7 +50,7 @@ def mission_setup(analyses):
 
     segment.altitude_end = 15_000 * Units.ft
     segment.air_speed = 190.0 * Units['m/s']
-    segment.climb_rate = 6.0 * Units['m/s']
+    segment.climb_rate = 4.0 * Units['m/s']
 
     # add to mission
     mission.append_segment(segment)
@@ -66,25 +66,24 @@ def mission_setup(analyses):
 
     segment.altitude_end = 31_000 * Units.ft
     segment.air_speed = 226.0 * Units['m/s']
-    segment.climb_rate = 3.0 * Units['m/s']
+    segment.climb_rate = 2.0 * Units['m/s']
 
     # add to mission
     mission.append_segment(segment)
 
     # ------------------------------------------------------------------
-    #   Cruise Segment: Constant Speed Constant Altitude
+    #   1. Cruise Segment: Constant Speed Constant Altitude
     # ------------------------------------------------------------------
 
     segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
-    segment.tag = "cruise"
+    segment.tag = "cruise_1"
 
     segment.analyses.extend(analyses.cruise)
 
     segment.altitude = 31_000 * Units.ft
     segment.air_speed = 301.852 * 0.82 * Units['m/s']
-    segment.distance = 10_500 * Units['nautical_mile'] - 92.6 * Units.km
-
-    segment.state.numerics.number_control_points = 10
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.state.numerics.number_control_points = 8
 
     # post-process aerodynamic derivatives in cruise
     # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
@@ -92,6 +91,45 @@ def mission_setup(analyses):
     # add to mission
     mission.append_segment(segment)
 
+    # ------------------------------------------------------------------
+    #   2. Cruise Segment: Constant Speed Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "cruise_2"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude = 31_000 * Units.ft
+    segment.air_speed = 301.852 * 0.82 * Units['m/s']
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.state.numerics.number_control_points = 8
+
+    # post-process aerodynamic derivatives in cruise
+    # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
+
+    # add to mission
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   3. Cruise Segment: Constant Speed Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "cruise_3"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude = 31_000 * Units.ft
+    segment.air_speed = 301.852 * 0.82 * Units['m/s']
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.state.numerics.number_control_points = 8
+
+    # post-process aerodynamic derivatives in cruise
+    # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
+
+    # add to mission
+    mission.append_segment(segment)
     # ------------------------------------------------------------------
     #   First Descent Segment: Constant Speed Constant Rate
     # ------------------------------------------------------------------

@@ -13,6 +13,7 @@
 # ----------------------------------------------------------------------
 
 import SUAVE
+from SUAVE.Core import Data, Units
 from SUAVE.Plots.Performance.Mission_Plots import *
 from SUAVE.Plots.Geometry import * 
 import matplotlib.pyplot as plt  
@@ -32,10 +33,29 @@ sys.path.append('Vehicles')
 #   Main
 # ----------------------------------------------------------------------
 
-def main():
-    configs, analyses = full_setup()
+def main(iteration_setup):
+    configs, analyses = full_setup(iteration_setup)
 
-    simple_sizing(configs, analyses)
+    weights = analyses.configs.base.weights
+    breakdown = weights.evaluate(method="Raymer")
+
+    # deltacg = 2
+    # while abs(deltacg) > 1e-5:
+    #     compute_component_centers_of_gravity_variable_CG(configs.base)
+    #     oldcg = configs.base.mass_properties.center_of_gravity[0][0]
+    #     configs.base.center_of_gravity()  # CG @ TOM
+    #     configs.base.store_diff()
+    #
+    #     newcg = configs.base.mass_properties.center_of_gravity[0][0]
+    #     deltacg = newcg - oldcg
+
+    base = configs.base
+    base.pull_base()
+
+    compute_component_centers_of_gravity(base)
+    base.center_of_gravity()
+
+    # simple_sizing(configs, analyses)
     configs.finalize()
     analyses.finalize() 
  
@@ -43,6 +63,12 @@ def main():
     mission = analyses.missions.base
     results = mission.evaluate()
 
+    return mission, results, configs, analyses
+
+# ----------------------------------------------------------------------
+#   Analysis Setup
+# ----------------------------------------------------------------------
+def results_show(results):
     plot_aerodynamic_coefficients(results)
     plot_fuel_use(results)
     plot_flight_conditions(results)
@@ -50,32 +76,30 @@ def main():
     plot_drag_components(results)
     plot_altitude_sfc_weight(results)
     plt.show(block=True)
-    
+
     # print weights breakdown
     print_weight_breakdown(configs.cruise)
 
-    #print mission breakdown
+    # print mission breakdown
     print_mission_breakdown(results, units='si')
 
-    # plot vehicle 
-    plot_vehicle(configs.base,plot_control_points = False, axis_limits=20)
-    return
-
+    # plot vehicle
+    plot_vehicle(configs.base, plot_control_points=False, axis_limits=20)
 
 # ----------------------------------------------------------------------
 #   Analysis Setup
 # ----------------------------------------------------------------------
 
-def full_setup():
+def full_setup(iteration_setup):
     # vehicle data
-    vehicle  = vehicle_setup()
+    vehicle  = vehicle_setup(iteration_setup)
     configs  = configs_setup(vehicle)
 
     # vehicle analyses
     configs_analyses = analyses_setup(configs)
 
     # mission analyses
-    mission  = mission_setup(configs_analyses)
+    mission  = mission_setup(configs_analyses, iteration_setup)
     missions_analyses = missions_setup(mission)
 
     analyses = SUAVE.Analyses.Analysis.Container()
@@ -96,15 +120,6 @@ def analyses_setup(configs):
         analysis = base_analysis(config)
         analyses[tag] = analysis
 
-    # takeoff_analysis
-    analyses.takeoff.aerodynamics.settings.drag_coefficient_increment = 0.0000
-    analyses.cruise.aerodynamics.settings.drag_coefficient_increment = -0.007
-
-
-    # landing analysis
-    aerodynamics = analyses.landing.aerodynamics
-    # do something here eventually
-
     return analyses
 
 def base_analysis(vehicle):
@@ -123,6 +138,14 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
+    weights.settings.weight_reduction_factors.main_wing = 0.
+    weights.settings.weight_reduction_factors.empennage = 0.
+    weights.settings.weight_reduction_factors.fuselage = 0.
+    weights.settings.weight_reduction_factors.structural = 0.
+    weights.settings.weight_reduction_factors.systems = 0.
+    weights.settings.weight_reduction_factors.operating_items = 0.
+    weights.settings.weight_reduction_factors.landing_gear = 0.
+    weights.settings.weight_reduction_factors.propulsion = 0.
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -135,12 +158,16 @@ def base_analysis(vehicle):
 
     aerodynamics = SUAVE.Analyses.Aerodynamics.AVL()
     aerodynamics.geometry                            = vehicle
-    aerodynamics.settings.number_spanwise_vortices = 80
+    aerodynamics.settings.number_spanwise_vortices = 70
     aerodynamics.settings.keep_files = True
+    aerodynamics.recalculate_total_wetted_area = True
+    aerodynamics.settings.wing_parasite_drag_form_factor = 0.7 # 1.1
+    aerodynamics.settings.fuselage_parasite_drag_form_factor = 1.5 # 2.3
+    aerodynamics.settings.viscous_lift_dependent_drag_factor = 0.2 # 0.38
 
     stability = SUAVE.Analyses.Stability.AVL()
     stability.geometry = vehicle
-    stability.settings.number_spanwise_vortices = 80
+    stability.settings.number_spanwise_vortices = 70
     stability.settings.keep_files = True
 
     run_new_regression = False
@@ -167,6 +194,15 @@ def base_analysis(vehicle):
         stability.settings.filenames.avl_bin_name = file_path
         stability.settings.filenames.run_folder = avl_files_path
 
+    aerodynamics.settings.drag_coefficient_increment = Data()
+    aerodynamics.settings.drag_coefficient_increment.takeoff = 0
+    aerodynamics.settings.drag_coefficient_increment.base = 0.
+    aerodynamics.settings.drag_coefficient_increment.climb = 0.
+    aerodynamics.settings.drag_coefficient_increment.cruise = 0.
+    aerodynamics.settings.drag_coefficient_increment.descent = 0.
+    aerodynamics.settings.drag_coefficient_increment.landing = 0.
+
+
     analyses.append(aerodynamics)
     analyses.append(stability)
 
@@ -190,24 +226,24 @@ def base_analysis(vehicle):
     # done!
     return analyses    
 
-def simple_sizing(configs, analyses):
-    base = configs.base
-    base.pull_base()
-    
-    # weight analysis
-    #need to put here, otherwise it won't be updated
-    weights = analyses.configs.base.weights
-    breakdown = weights.evaluate(method='Raymer')
-    
-    #compute centers of gravity
-    #need to put here, otherwise, results won't be stored
-    compute_component_centers_of_gravity(base)
-    base.center_of_gravity()
-    
-    # diff the new data
-    base.store_diff()
-    # done!
-    return
+# def simple_sizing(configs, analyses):
+#     base = configs.base
+#     base.pull_base()
+#
+#     # weight analysis
+#     #need to put here, otherwise it won't be updated
+#     weights = analyses.configs.base.weights
+#     breakdown = weights.evaluate(method='Raymer')
+#
+#     #compute centers of gravity
+#     #need to put here, otherwise, results won't be stored
+#     compute_component_centers_of_gravity(base)
+#     base.center_of_gravity()
+#
+#     # diff the new data
+#     base.store_diff()
+#     # done!
+#     return
 
 def missions_setup(base_mission):
     missions = SUAVE.Analyses.Mission.Mission.Container()
@@ -215,8 +251,71 @@ def missions_setup(base_mission):
     return missions
 
 if __name__ == '__main__':
-    time0 = time.time()
-    main()
-    plt.show()
-    deltaT = time.time() - time0
-    print('total time = ', deltaT)
+    iteration_setup = Data()
+    iteration_setup.weight_iter = Data()
+    iteration_setup.mission_iter = Data()
+
+    iteration_setup.weight_iter.MTOW = 279_000 * Units.kg
+    iteration_setup.weight_iter.BOW = 130_000 * Units.kg
+    iteration_setup.weight_iter.Design_Payload = 24_500 * Units.kg
+    iteration_setup.weight_iter.FUEL = iteration_setup.weight_iter.MTOW - iteration_setup.weight_iter.BOW  \
+                                       - iteration_setup.weight_iter.Design_Payload
+
+    iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
+    iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
+
+    landing_weight = 0.0
+    block_distance = 0.0
+
+    error = 2.
+    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 1.0):
+        iteration_setup.weight_iter.TOW = iteration_setup.weight_iter.BOW + iteration_setup.weight_iter.Design_Payload \
+                                          + iteration_setup.weight_iter.FUEL
+
+        mission, results, configs, analyses = main(iteration_setup)
+
+        climb_segments = [key for key in results.segments.keys() if (('climb' in key) and ('reserve' not in key) and ('second_leg' not in key))]
+        first_climb_segment = climb_segments[0]
+        last_climb_segment = climb_segments[-1]
+        descent_segments = [key for key in results.segments.keys() if (('descent' in key) and ('reserve' not in key) and ('second_leg' not in key))]
+        first_descent_segment = descent_segments[0]
+        last_descent_segment = descent_segments[-1]
+
+        climb_distance = results.segments[last_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                          results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0]
+        cruise_distance = results.segments.cruise_3.conditions.frames.inertial.position_vector[-1][0] - \
+                           results.segments.cruise_1.conditions.frames.inertial.position_vector[0][0]
+        descent_distance = results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                            results.segments[first_descent_segment].conditions.frames.inertial.position_vector[0][0]
+
+        block_fuel = results.segments[first_climb_segment].conditions.weights.total_mass[0][0] - \
+                     results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
+
+        block_distance = results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                         results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0]
+
+        landing_weight = results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
+
+
+        iteration_setup.weight_iter.FUEL = block_fuel
+        error = abs(block_distance - iteration_setup.mission_iter.mission_distance) / Units['nautical_mile']
+
+        iteration_setup.mission_iter.cruise_distance = iteration_setup.mission_iter.mission_distance - (climb_distance + descent_distance)
+
+        iteration_setup.weight_iter.BOW = configs.base.mass_properties.operating_empty
+
+        deltaBOW = configs.base.mass_properties.operating_empty - iteration_setup.weight_iter.BOW
+        iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 0.5 * deltaBOW  # + 1650
+
+        deltaweight = landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload
+        # results_show(results)
+        print('Error: %.1f NM' % error)
+        print('delta weight: %.1f kg' % deltaweight)
+        print('TOW: %.1f kg' % iteration_setup.weight_iter.TOW)
+        print('BOW: %.1f kg' % iteration_setup.weight_iter.BOW)
+        print('PAYLOAD: %.1f kg' % iteration_setup.weight_iter.Design_Payload)
+        print('FUEL: %.1f kg' % iteration_setup.weight_iter.FUEL)
+        print('BLOCK DISTANCE: %.1f NM' % (block_distance / Units['nautical_mile']))
+        print('------------------------------')
+
+    results_show(results)
