@@ -57,7 +57,6 @@ def call_avl(avl_object,print_output):
     Properties Used:
         N/A
     """
-    print_output = True
     avl_regression_flag = avl_object.settings.regression_flag
     if avl_regression_flag:
         exit_status = 0 

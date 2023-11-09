@@ -108,6 +108,7 @@ class Weights_Transport(Weights):
 
         # updating empty weight
         vehicle.mass_properties.operating_empty = results.empty
+        vehicle.mass_properties.zero_fuel_weight = results.zero_fuel_weight
 
         # done!
         return results

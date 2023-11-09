@@ -1,4 +1,4 @@
-MASS base.mass
+MASS Reference_Aircraft.mass
 mset
 0
 PLOP
@@ -9,10 +9,10 @@ OPER
 1
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0
@@ -31,10 +31,10 @@ body_axis_derivatives_case_0001_0001.txt
 2
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0
@@ -53,10 +53,10 @@ body_axis_derivatives_case_0001_0002.txt
 3
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0
@@ -75,10 +75,10 @@ body_axis_derivatives_case_0001_0003.txt
 4
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0
@@ -97,10 +97,10 @@ body_axis_derivatives_case_0001_0004.txt
 5
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0
@@ -119,10 +119,10 @@ body_axis_derivatives_case_0001_0005.txt
 6
 D1
 D1
-25.0
+0.0
 D2
 D2
-30.0
+0.0
 D3
 D3
 0.0

@@ -26,6 +26,7 @@ import time
 from RUN_IN_PYCHARM.Reference_Aircraft.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Reference_Aircraft.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
+#äfrom Plots import plot_mission
 
 sys.path.append('Vehicles')
 
@@ -39,21 +40,22 @@ def main(iteration_setup):
     weights = analyses.configs.base.weights
     breakdown = weights.evaluate(method="Raymer")
 
-    # deltacg = 2
-    # while abs(deltacg) > 1e-5:
-    #     compute_component_centers_of_gravity_variable_CG(configs.base)
-    #     oldcg = configs.base.mass_properties.center_of_gravity[0][0]
-    #     configs.base.center_of_gravity()  # CG @ TOM
-    #     configs.base.store_diff()
+    deltacg = 2
+    while abs(deltacg) > 1e-5:
+        compute_component_centers_of_gravity(configs.base)
+        oldcg = configs.base.mass_properties.center_of_gravity[0][0]
+        configs.base.center_of_gravity()  # CG @ TOM
+        configs.base.store_diff()
+
+        newcg = configs.base.mass_properties.center_of_gravity[0][0]
+        deltacg = newcg - oldcg
+
+    # base = configs.base
+    # base.pull_base()
     #
-    #     newcg = configs.base.mass_properties.center_of_gravity[0][0]
-    #     deltacg = newcg - oldcg
-
-    base = configs.base
-    base.pull_base()
-
-    compute_component_centers_of_gravity(base)
-    base.center_of_gravity()
+    # compute_component_centers_of_gravity(base)
+    # base.center_of_gravity()
+    # base.store_diff()
 
     # simple_sizing(configs, analyses)
     configs.finalize()
@@ -75,6 +77,7 @@ def results_show(results):
     plot_stability_coefficients(results)
     plot_drag_components(results)
     plot_altitude_sfc_weight(results)
+    #plot_mission(results,configs.base)
     plt.show(block=True)
 
     # print weights breakdown
@@ -138,72 +141,97 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.
-    weights.settings.weight_reduction_factors.empennage = 0.
-    weights.settings.weight_reduction_factors.fuselage = 0.
+    weights.settings.weight_reduction_factors.main_wing = -0.25
+    weights.settings.weight_reduction_factors.empennage = -0.1
+    weights.settings.weight_reduction_factors.fuselage = -0.5
     weights.settings.weight_reduction_factors.structural = 0.
-    weights.settings.weight_reduction_factors.systems = 0.
-    weights.settings.weight_reduction_factors.operating_items = 0.
-    weights.settings.weight_reduction_factors.landing_gear = 0.
-    weights.settings.weight_reduction_factors.propulsion = 0.
+    weights.settings.weight_reduction_factors.systems = -1.
+    weights.settings.weight_reduction_factors.operating_items = -9.
+    weights.settings.weight_reduction_factors.landing_gear = -1.5
+    weights.settings.weight_reduction_factors.propulsion = 0.4
     analyses.append(weights)
 
     # ------------------------------------------------------------------
     #  Aerodynamics & Stability Analysis
-    tool_path = Path(__file__).resolve().parents[2]
-    file_path = Path(tool_path, "AVL", sys.platform, "avl")
-    avl_files_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/avl_files")
-    aero_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data")
-    stability_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data/base_stability_data.txt")
+    #
+    # --> AVL
+    #
+    # tool_path = Path(__file__).resolve().parents[2]
+    # file_path = Path(tool_path, "AVL", sys.platform, "avl")
+    # avl_files_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/avl_files")
+    # aero_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data")
+    # stability_training_path = os.path.join(tool_path, "RUN_IN_PYCHARM/Reference_Aircraft/aero_data/base_stability_data.txt")
+    #
+    # aerodynamics = SUAVE.Analyses.Aerodynamics.AVL()
+    # aerodynamics.geometry                            = vehicle
+    # aerodynamics.settings.number_spanwise_vortices = 80
+    # aerodynamics.settings.keep_files = True
+    # aerodynamics.settings.print_output = True
+    # aerodynamics.recalculate_total_wetted_area = True
+    # aerodynamics.settings.wing_parasite_drag_form_factor = 0.7 # 1.1
+    # aerodynamics.settings.fuselage_parasite_drag_form_factor = 1.5 # 2.3
+    # aerodynamics.settings.viscous_lift_dependent_drag_factor = 0.2 # 0.38
+    #
+    # stability = SUAVE.Analyses.Stability.AVL()
+    # stability.geometry = vehicle
+    # stability.settings.number_spanwise_vortices = 80
+    # stability.settings.keep_files = True
+    # stability.settings.print_output = True
+    #
+    # run_new_regression = True
+    # if run_new_regression:
+    #     # append AVL aerodynamic analysis
+    #     aerodynamics.settings.regression_flag = False
+    #     aerodynamics.process.compute.lift.inviscid.settings.filenames.avl_bin_name = file_path
+    #     aerodynamics.process.compute.lift.inviscid.settings.filenames.run_folder = avl_files_path
+    #     aerodynamics.settings.save_regression_results = True
+    #     stability.settings.regression_flag = False
+    #     stability.settings.save_regression_results = True
+    #     stability.training_file = stability_training_path
+    #     stability.settings.filenames.avl_bin_name = file_path
+    #     stability.settings.filenames.run_folder = avl_files_path
+    # else:
+    #     aerodynamics.settings.regression_flag = True
+    #     aerodynamics.settings.save_regression_results = False
+    #     aerodynamics.settings.training_file = aero_training_path
+    #     aerodynamics.process.compute.lift.inviscid.settings.filenames.avl_bin_name = file_path
+    #     aerodynamics.process.compute.lift.inviscid.settings.filenames.run_folder = avl_files_path
+    #     stability.settings.regression_flag = True
+    #     stability.settings.save_regression_results = True
+    #     stability.training_file = stability_training_path
+    #     stability.settings.filenames.avl_bin_name = file_path
+    #     stability.settings.filenames.run_folder = avl_files_path
+    #
+    # aerodynamics.settings.drag_coefficient_increment = Data()
+    # aerodynamics.settings.drag_coefficient_increment.takeoff = 0
+    # aerodynamics.settings.drag_coefficient_increment.base = 0.
+    # aerodynamics.settings.drag_coefficient_increment.climb = 0.
+    # aerodynamics.settings.drag_coefficient_increment.cruise = 0.
+    # aerodynamics.settings.drag_coefficient_increment.descent = 0.
+    # aerodynamics.settings.drag_coefficient_increment.landing = 0.
+    #
+    #
+    # analyses.append(aerodynamics)
+    # analyses.append(stability)
 
-    aerodynamics = SUAVE.Analyses.Aerodynamics.AVL()
-    aerodynamics.geometry                            = vehicle
-    aerodynamics.settings.number_spanwise_vortices = 70
-    aerodynamics.settings.keep_files = True
-    aerodynamics.recalculate_total_wetted_area = True
-    aerodynamics.settings.wing_parasite_drag_form_factor = 0.7 # 1.1
-    aerodynamics.settings.fuselage_parasite_drag_form_factor = 1.5 # 2.3
-    aerodynamics.settings.viscous_lift_dependent_drag_factor = 0.2 # 0.38
-
-    stability = SUAVE.Analyses.Stability.AVL()
-    stability.geometry = vehicle
-    stability.settings.number_spanwise_vortices = 70
-    stability.settings.keep_files = True
-
-    run_new_regression = False
-    if run_new_regression:
-        # append AVL aerodynamic analysis
-        aerodynamics.settings.regression_flag = False
-        aerodynamics.process.compute.lift.inviscid.settings.filenames.avl_bin_name = file_path
-        aerodynamics.process.compute.lift.inviscid.settings.filenames.run_folder = avl_files_path
-        aerodynamics.settings.save_regression_results = True
-        stability.settings.regression_flag = False
-        stability.settings.save_regression_results = True
-        stability.training_file = stability_training_path
-        stability.settings.filenames.avl_bin_name = file_path
-        stability.settings.filenames.run_folder = avl_files_path
-    else:
-        aerodynamics.settings.regression_flag = True
-        aerodynamics.settings.save_regression_results = False
-        aerodynamics.settings.training_file = aero_training_path
-        aerodynamics.process.compute.lift.inviscid.settings.filenames.avl_bin_name = file_path
-        aerodynamics.process.compute.lift.inviscid.settings.filenames.run_folder = avl_files_path
-        stability.settings.regression_flag = True
-        stability.settings.save_regression_results = True
-        stability.training_file = stability_training_path
-        stability.settings.filenames.avl_bin_name = file_path
-        stability.settings.filenames.run_folder = avl_files_path
-
+    aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
+    aerodynamics.geometry = vehicle
     aerodynamics.settings.drag_coefficient_increment = Data()
+    aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
-    aerodynamics.settings.drag_coefficient_increment.base = 0.
-    aerodynamics.settings.drag_coefficient_increment.climb = 0.
-    aerodynamics.settings.drag_coefficient_increment.cruise = 0.
-    aerodynamics.settings.drag_coefficient_increment.descent = 0.
-    aerodynamics.settings.drag_coefficient_increment.landing = 0.
+    aerodynamics.settings.drag_coefficient_increment.climb = 0
+    aerodynamics.settings.drag_coefficient_increment.cruise = -30e-4
+    aerodynamics.settings.drag_coefficient_increment.descent = 0
+    aerodynamics.settings.drag_coefficient_increment.landing = 0
 
+    aerodynamics.settings.oswald_efficiency_factor = 0.8
 
     analyses.append(aerodynamics)
+
+    # ------------------------------------------------------------------
+    #  Stability Analysis
+    stability = SUAVE.Analyses.Stability.Fidelity_Zero()
+    stability.geometry = vehicle
     analyses.append(stability)
 
     # ------------------------------------------------------------------

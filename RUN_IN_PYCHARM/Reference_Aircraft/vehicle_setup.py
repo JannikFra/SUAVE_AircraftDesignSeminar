@@ -87,7 +87,7 @@ def vehicle_setup(iteration_setup):
     wing.twists.tip              = 0.0 * Units.degrees
 
     wing.origin                  = [[22.408,0,-0.957]]
-    wing.aerodynamic_center      = [0,0,0]
+    #wing.aerodynamic_center      = [0,0,0]
 
     wing.transition_x_upper = 0.15
     wing.transition_x_lower = 0.15
@@ -226,7 +226,7 @@ def vehicle_setup(iteration_setup):
     wing.twists.tip              = 3.0 * Units.degrees
 
     wing.origin                  = [[55.337, 0, 2.082]]
-    wing.aerodynamic_center      = [0,0,0]
+    #wing.aerodynamic_center      = [0,0,0]
 
     wing.transition_x_upper = 0.3
     wing.transition_x_lower = 0.3
@@ -301,7 +301,7 @@ def vehicle_setup(iteration_setup):
     wing.twists.tip              = 0.0 * Units.degrees
 
     wing.origin                  = [[52.2, 0, 3.59]]
-    wing.aerodynamic_center      = [0,0,0]
+    #wing.aerodynamic_center      = [0,0,0]
 
     wing.transition_x_upper = 0.3
     wing.transition_x_lower = 0.3

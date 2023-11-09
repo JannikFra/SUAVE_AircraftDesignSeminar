@@ -155,6 +155,8 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
         wt_factors.fuselage     = 0.
         wt_factors.structural   = 0.
         wt_factors.systems      = 0.
+        wt_factors.operating_items = 0.
+        wt_factors.landing_gear = 0.
     else:
         wt_factors = settings.weight_reduction_factors
         if 'structural' in wt_factors and wt_factors.structural != 0.:
@@ -163,9 +165,10 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
             wt_factors.empennage    = 0.
             wt_factors.fuselage     = 0.
             wt_factors.systems      = 0.
-        else:
-            wt_factors.structural   = 0.
-            wt_factors.systems      = 0.
+            wt_factors.landing_gear = 0.
+        # else:
+        #     wt_factors.structural   = 0.
+        #     wt_factors.systems      = 0.
 
     # Prop weight (propulsion pod weight is calculated separately)
     wt_prop_total   = 0
