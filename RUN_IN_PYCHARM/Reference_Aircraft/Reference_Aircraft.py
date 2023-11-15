@@ -292,11 +292,20 @@ if __name__ == '__main__':
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
 
+    iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
+    iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
+    iteration_setup.mission_iter.reserve_hold_speed = 150 * Units['m/s']
+    iteration_setup.mission_iter.reserve_trip_pct = 0.03
+    iteration_setup.mission_iter.reserve_distance = 200. * Units.nautical_mile
+    iteration_setup.mission_iter.reserve_cruise_distance = 100. * Units.nautical_miles
+
     landing_weight = 0.0
     block_distance = 0.0
 
     error = 2.
-    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 1.0):
+    error_reserve = 2
+
+    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 1.0) or (error_reserve > 1.0):
         iteration_setup.weight_iter.TOW = iteration_setup.weight_iter.BOW + iteration_setup.weight_iter.Design_Payload \
                                           + iteration_setup.weight_iter.FUEL
 
@@ -309,41 +318,92 @@ if __name__ == '__main__':
         first_descent_segment = descent_segments[0]
         last_descent_segment = descent_segments[-1]
 
-        climb_distance = results.segments[last_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
-                          results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0]
-        cruise_distance = results.segments.cruise_3.conditions.frames.inertial.position_vector[-1][0] - \
-                           results.segments.cruise_1.conditions.frames.inertial.position_vector[0][0]
-        descent_distance = results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
-                            results.segments[first_descent_segment].conditions.frames.inertial.position_vector[0][0]
+        reserve_climb_segments = [key for key in results.segments.keys() if
+                                  (('climb' in key) and ('reserve' in key) and ('second_leg' not in key))]
+        n_reserve_climb_segments = len(reserve_climb_segments)
+        first_reserve_climb_segment = reserve_climb_segments[0]
+        last_reserve_climb_segment = reserve_climb_segments[-1]
+        reserve_descent_segments = [key for key in results.segments.keys() if
+                                    (('descent' in key) and ('reserve' in key) and ('second_leg' not in key))]
+        n_reserve_descent_segments = len(reserve_descent_segments)
+        first_reserve_descent_segment = reserve_descent_segments[0]
+        last_reserve_descent_segment = reserve_descent_segments[-1]
 
         block_fuel = results.segments[first_climb_segment].conditions.weights.total_mass[0][0] - \
                      results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
 
-        block_distance = results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
-                         results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0]
+        cruise_fuel = results.segments.cruise_1.conditions.weights.total_mass[0][0] - \
+                      results.segments.cruise_3.conditions.weights.total_mass[-1][0]
 
-        landing_weight = results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
+        alternate_fuel = results.segments[first_reserve_climb_segment].conditions.weights.total_mass[0][0] - \
+                         results.segments[last_reserve_descent_segment].conditions.weights.total_mass[-1][0]
 
+        reserve_cruise_fuel = results.segments.reserve_cruise.conditions.weights.total_mass[0][0] - \
+                              results.segments.reserve_cruise.conditions.weights.total_mass[-1][0]
 
-        iteration_setup.weight_iter.FUEL = block_fuel
+        hold_fuel = results.segments['hold'].conditions.weights.total_mass[0][0] - \
+                    results.segments['hold'].conditions.weights.total_mass[-1][0]
+
+        reserve_fuel_pct = block_fuel * iteration_setup.mission_iter.reserve_trip_pct
+
+        reserve_fuel = reserve_fuel_pct + alternate_fuel + hold_fuel
+
+        block_distance = (results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                          results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0])
+
+        climb_distance = (results.segments[last_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                          results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0])
+
+        cruise_distance = (results.segments.cruise_3.conditions.frames.inertial.position_vector[-1][0] - \
+                           results.segments.cruise_1.conditions.frames.inertial.position_vector[0][0])
+
+        descent_distance = (results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                            results.segments[first_descent_segment].conditions.frames.inertial.position_vector[0][0])
+
+        reserve_climb_distance = (results.segments[
+                                      last_reserve_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                                  results.segments[
+                                      first_reserve_climb_segment].conditions.frames.inertial.position_vector[0][0])
+
+        reserve_cruise_distance = (results.segments.reserve_cruise.conditions.frames.inertial.position_vector[-1][0] - \
+                                   results.segments.reserve_cruise.conditions.frames.inertial.position_vector[0][0])
+
+        reserve_descent_distance = (results.segments[
+                                        last_reserve_descent_segment].conditions.frames.inertial.position_vector[-1][
+                                        0] - \
+                                    results.segments[
+                                        first_reserve_descent_segment].conditions.frames.inertial.position_vector[0][
+                                        0])
+
+        landing_weight = results.segments['hold'].conditions.weights.total_mass[-1][0] - reserve_fuel_pct
+
+        iteration_setup.weight_iter.FUEL = block_fuel + reserve_fuel
         error = abs(block_distance - iteration_setup.mission_iter.mission_distance) / Units['nautical_mile']
+        error_reserve = abs(iteration_setup.mission_iter.reserve_distance - (reserve_climb_distance + reserve_cruise_distance + reserve_descent_distance)) / Units['nautical_mile']
 
         iteration_setup.mission_iter.cruise_distance = iteration_setup.mission_iter.mission_distance - (climb_distance + descent_distance)
+        iteration_setup.mission_iter.reserve_cruise_distance = iteration_setup.mission_iter.reserve_distance - (reserve_climb_distance + reserve_descent_distance)
 
-        iteration_setup.weight_iter.BOW = configs.base.mass_properties.operating_empty
-
+        # Konvergenzbeschleunigung
         deltaBOW = configs.base.mass_properties.operating_empty - iteration_setup.weight_iter.BOW
-        iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 0.5 * deltaBOW  # + 1650
+        if abs(deltaBOW) > 500.:
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1.6 * deltaBOW  # + 1650
+        elif abs(deltaBOW) > 50.:
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1.3 * deltaBOW  # + 1650
+        else:
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1. * deltaBOW  # + 1650
 
         deltaweight = landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload
-        # results_show(results)
         print('Error: %.1f NM' % error)
+        print('Error reserve: %.1f NM' % error_reserve)
         print('delta weight: %.1f kg' % deltaweight)
         print('TOW: %.1f kg' % iteration_setup.weight_iter.TOW)
         print('BOW: %.1f kg' % iteration_setup.weight_iter.BOW)
         print('PAYLOAD: %.1f kg' % iteration_setup.weight_iter.Design_Payload)
         print('FUEL: %.1f kg' % iteration_setup.weight_iter.FUEL)
         print('BLOCK DISTANCE: %.1f NM' % (block_distance / Units['nautical_mile']))
+        print('Landing weight: %.1f kg' % landing_weight)
         print('------------------------------')
+        # results_show(results)
 
     results_show(results)

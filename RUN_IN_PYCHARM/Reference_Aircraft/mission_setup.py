@@ -1,6 +1,10 @@
 import SUAVE
 from SUAVE.Core import Units
 def mission_setup(analyses, iteration_setup):
+
+    climb_throttle = 0.6
+    idle_throttle = 0.05
+
     # ------------------------------------------------------------------
     #   Initialize the Mission
     # ------------------------------------------------------------------
@@ -221,5 +225,262 @@ def mission_setup(analyses, iteration_setup):
     # ------------------------------------------------------------------
     #   Mission definition complete
     # ------------------------------------------------------------------
+
+
+    # ------------------------------------------------------------------
+    #   Reserve Mission
+    # ------------------------------------------------------------------
+
+
+    # ------------------------------------------------------------------
+    #   First Reserve Climb Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+    #
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment = Segments.Climb.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "reserve_climb_1"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 0.0 * Units.ft
+    segment.altitude_end = 10.0 * Units.ft
+    segment.air_speed = 160.0 * Units['m/s']
+    segment.throttle = climb_throttle
+    segment.state.numerics.number_control_points = 2
+    # segment.climb_rate     = 1850.  * Units.ft / Units.min
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Second Reserve Climb Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    #segment = Segments.Climb.Constant_Speed_Constant_Rate(base_segment)
+    segment.tag = "reserve_climb_2"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 1500.0 * Units.ft
+    segment.altitude_end = 4000.0 * Units.ft
+    segment.air_speed = 170.0 * Units['m/s']
+    segment.throttle = climb_throttle
+    #segment.climb_rate     = 1850.  * Units.ft / Units.min
+    # segment.climb_rate     = 915.   * Units['ft/min']
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Third Reserve Climb Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "reserve_climb_3"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 4000.0 * Units.ft
+    segment.altitude_end = 7000.0 * Units.ft
+    segment.air_speed = 180.0 * Units['m/s']
+    segment.throttle = climb_throttle
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Fourth Reserve Climb Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "reserve_climb_4"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 7000.0 * Units.ft
+    segment.altitude_end = 9000.0 * Units.ft
+    segment.air_speed = 190.0 * Units['m/s']
+    segment.throttle = climb_throttle
+
+    # add to misison
+    mission.append_segment(segment)
+    # ------------------------------------------------------------------
+    #   Fifth Reserve Climb Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "reserve_climb_5"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 9000.0 * Units.ft
+    segment.altitude_end = 11000.0 * Units.ft
+    segment.air_speed = 140. * Units['m/s']
+    segment.throttle = climb_throttle
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Reserve Cruise Segment: Constant Speed, Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "reserve_cruise"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.air_speed = 327.173 * 0.65 * Units['m/s']
+
+    reserve_cruise_distance = iteration_setup.mission_iter.reserve_cruise_distance
+    segment.distance = reserve_cruise_distance
+    segment.state.numerics.number_control_points = 4
+
+    # add to mission
+    mission.append_segment(segment)
+    #
+    #
+    # # ------------------------------------------------------------------
+    # #   Third Reserve Descent Segment: Constant Speed, Constant Rate
+    # # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Angle(base_segment)
+    segment.tag = "reserve_descent_3"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 11000.0 * Units.ft
+    segment.altitude_end = 9000.0 * Units.ft
+    segment.air_speed = 150 * Units['m/s']
+    segment.throttle = idle_throttle
+    #segment.descent_rate = 915. * Units['ft/min']
+    #segment.descent_angle = 3 * Units.deg
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   4# Reserve Descent Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Angle(base_segment)
+    segment.tag = "reserve_descent_4"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.landing)
+
+    segment.altitude_start = 9000.0 * Units.ft
+    segment.altitude_end = 7000.0 * Units.ft
+    segment.air_speed = 145.0 * Units['m/s']
+    segment.throttle = idle_throttle
+    #segment.descent_rate = 915. * Units['ft/min']
+    #segment.descent_angle = 3 * Units.deg
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   5# Reserve Descent Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Angle(base_segment)
+    segment.tag = "reserve_descent_5"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.landing)
+
+    segment.altitude_start = 7000.0 * Units.ft
+    segment.altitude_end = 4000.0 * Units.ft
+    segment.air_speed = 140.0 * Units['m/s']
+    segment.throttle = idle_throttle
+    #segment.descent_rate = 915. * Units['ft/min']
+    #segment.descent_angle = 3 * Units.deg
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   6# Reserve Descent Segment: Constant Speed, Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    #segment = Segments.Descent.Constant_Speed_Constant_Angle(base_segment)
+    segment.tag = "reserve_descent_6"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.landing)
+
+    segment.altitude_start = 4000.0 * Units.ft
+    segment.altitude_end = 1500.0 * Units.ft
+    segment.air_speed = 130.0 * Units['m/s']
+    #segment.throttle = 1.
+    #segment.descent_rate = 915. * Units['ft/min']
+    segment.throttle = idle_throttle
+
+    # add to misison
+    mission.append_segment(segment)
+
+    # # ------------------------------------------------------------------
+    # #   7# Reserve Descent Segment: Constant Speed, Constant Rate
+    # # ------------------------------------------------------------------
+    #
+    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment = Segments.Descent.Constant_Speed_Constant_Rate(base_segment)
+    # segment = Segments.Descent.Constant_Speed_Constant_Angle(base_segment)
+    # segment.tag = "reserve_descent_7"
+    #
+    # # connect vehicle configuration
+    # segment.analyses.extend(analyses.landing)
+    #
+    # segment.altitude_start = 1500.0 * Units.ft
+    # segment.altitude_end = 0.0 * Units.ft
+    # segment.air_speed = 130.0 * Units['m/s']
+    # # segment.throttle = 1.
+    # # segment.descent_rate = 915. * Units['ft/min']
+    # segment.descent_angle = 3 * Units.deg
+    # segment.state.numerics.number_control_points = 2
+    #
+    # # add to mission
+    # mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Reserve Hold Segment: Constant Speed, Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "hold"
+
+    # connect vehicle configuration
+    segment.analyses.extend(analyses.base)
+
+    reserve_hold_time = iteration_setup.mission_iter.reserve_hold_time
+    reserve_hold_speed = iteration_setup.mission_iter.reserve_hold_speed
+
+    reserve_hold_distance = reserve_hold_speed * reserve_hold_time
+
+    reserve_hold_altitude = iteration_setup.mission_iter.reserve_hold_altitude
+    segment.altitude = reserve_hold_altitude
+
+    segment.air_speed = reserve_hold_speed
+    segment.distance = reserve_hold_distance
+    segment.state.numerics.number_control_points = 8
+
+    # add to mission
+    mission.append_segment(segment)
 
     return mission
