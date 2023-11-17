@@ -36,13 +36,13 @@ def main():
         wing.areas.exposed  = 0.8 * wing.areas.wetted
         wing.areas.affected = 0.6 * wing.areas.wetted  
         
-        
+
     # initalize the aero model
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
     aerodynamics.settings.number_spanwise_vortices  = 5
     aerodynamics.settings.number_chordwise_vortices = 2
     aerodynamics.geometry = vehicle
-        
+
     aerodynamics.initialize()    
     
     

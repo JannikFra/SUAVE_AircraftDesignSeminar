@@ -89,8 +89,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[22.408,0,-0.957]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.15
-    wing.transition_x_lower = 0.15
+    wing.transition_x_upper = 0.08
+    wing.transition_x_lower = 0.08
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -228,8 +228,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[55.337, 0, 2.082]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.3
-    wing.transition_x_lower = 0.3
+    wing.transition_x_upper = 0.14
+    wing.transition_x_lower = 0.14
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -303,8 +303,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[52.2, 0, 3.59]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.3
-    wing.transition_x_lower = 0.3
+    wing.transition_x_upper = 0.14
+    wing.transition_x_lower = 0.14
 
     wing.vertical                = True
     wing.symmetric               = False
@@ -568,8 +568,8 @@ def vehicle_setup(iteration_setup):
     landing_gear.tag                      = "main_landing_gear"
     landing_gear.main_tire_diameter       = 1.12000 * Units.m
     landing_gear.nose_tire_diameter       = 0.6858 * Units.m
-    landing_gear.main_strut_length        = 1.8 * Units.m
-    landing_gear.nose_strut_length        = 1.3 * Units.m
+    landing_gear.main_strut_length        = 3.9 * Units.m
+    landing_gear.nose_strut_length        = 2.4 * Units.m
     landing_gear.main_units               = 1    #number of nose landing gear
     landing_gear.nose_units               = 1    #number of nose landing gear
     landing_gear.main_wheels              = 2    #number of wheels on the main landing gear
