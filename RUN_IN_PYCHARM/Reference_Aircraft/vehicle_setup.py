@@ -51,7 +51,7 @@ def vehicle_setup(iteration_setup):
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
     vehicle.design_mach_number                        = 0.82
     vehicle.design_range                              = 10500 * Units['nautical_mile']
-    vehicle.design_cruise_alt                         = 31000.0 * Units.ft
+    vehicle.design_cruise_alt                         = iteration_setup.mission_iter.design_cruise_altitude
 
     # envelope properties
     vehicle.envelope.ultimate_load = 2.5 * 1.5
@@ -546,9 +546,11 @@ def vehicle_setup(iteration_setup):
     propulsor.origin            = [[13.72, 4.86,-1.9],[13.72, -4.86,-1.9]]
     propulsor.engine_length = 2.
     propulsor.number_of_engines = 2
-    propulsor.max_thrust = 70_000 * 4.448 * propulsor.number_of_engines
-    propulsor.sealevel_static_thrust = propulsor.max_thrust
-    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf
+    sea_level_static_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+
+    propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
+                            iteration_setup.mission_iter.design_cruise_mach,
+                            sea_level_static_thrust)
 
     vehicle.append_component(propulsor)
 

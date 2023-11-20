@@ -296,7 +296,8 @@ if __name__ == '__main__':
 
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
-
+    iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
     iteration_setup.mission_iter.reserve_hold_speed = 150 * Units['m/s']

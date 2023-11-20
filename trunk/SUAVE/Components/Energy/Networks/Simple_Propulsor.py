@@ -14,7 +14,9 @@ import SUAVE
 # package imports
 import numpy as np
 from SUAVE.Components.Energy.Networks import Network
-
+import scipy.interpolate
+from pathlib import Path
+import os
 from SUAVE.Core import Data, Units
 
 # ----------------------------------------------------------------------
@@ -52,13 +54,104 @@ class Simple_Propulsor(Network):
             N/A
         """            
 
-        self.max_thrust        = 0.
         self.sealevel_static_thrust = 0.
-        self.sfc               = 0.
+        self.max_thrust_factor = 1.
+        self.tsfc_factor               = 1.
         self.nacelle_diameter  = None
         self.engine_length     = None
         self.number_of_engines = None
         self.tag               = 'network'
+
+        tool_path = Path(__file__).resolve().parents[3]
+
+        max_thrust_surrogate_path = os.path.join(tool_path, "Data_Files", "maxthrust.csv")
+        max_thrust_data = np.loadtxt(max_thrust_surrogate_path, delimiter=",", skiprows=1)
+
+        max_thrust_altitude_vector = np.unique(max_thrust_data[:, 0])
+        max_thrust_mach_vector = np.linspace(0, 0.9, 20)
+
+        max_thrust_over_all_altitudes_and_mach = np.array([])
+        for i, ALT in enumerate(max_thrust_altitude_vector):
+            if i == 0:
+                max_thrust_over_all_altitudes_and_mach = scipy.interpolate.interp1d(
+                    max_thrust_data[np.where(max_thrust_data[:, 0] == ALT)[0], 1],
+                    max_thrust_data[np.where(max_thrust_data[:, 0] == ALT)[0], 2],
+                    fill_value='extrapolate',
+                    kind='quadratic')(max_thrust_mach_vector)
+            else:
+                max_thrust_over_all_altitudes_and_mach = np.vstack((max_thrust_over_all_altitudes_and_mach,
+                                                                    scipy.interpolate.interp1d(
+                                                                        max_thrust_data[
+                                                                            np.where(max_thrust_data[:, 0] == ALT)[
+                                                                                0], 1],
+                                                                        max_thrust_data[
+                                                                            np.where(max_thrust_data[:, 0] == ALT)[
+                                                                                0], 2],
+                                                                        fill_value='extrapolate',
+                                                                        kind='quadratic')(max_thrust_mach_vector))
+                                                                   )
+        self.max_thrust_interp = scipy.interpolate.RegularGridInterpolator(
+            (max_thrust_altitude_vector, max_thrust_mach_vector), max_thrust_over_all_altitudes_and_mach, bounds_error=False, fill_value=70000)
+
+        tsfc_surrogate_path = os.path.join(tool_path, "Data_Files", "tsfc.csv")
+        tsfc_data = np.loadtxt(tsfc_surrogate_path, delimiter=",", skiprows=1)
+
+        tsfc_altitude_vector = np.unique(tsfc_data[:, 0])
+        tsfc_mach_vector = np.unique(tsfc_data[:, 1])
+        tsfc_throttle_vector = np.linspace(0, 1, 20)
+
+        for i, ALT in enumerate(tsfc_altitude_vector):
+            for j, MACH in enumerate(tsfc_mach_vector):
+                if j == 0:
+                    tsfc_data_alt_fit = tsfc_data[np.where(tsfc_data[:, 0] == ALT)]
+                    if MACH > max(tsfc_data_alt_fit[:, 1]):
+                        MACH = max(tsfc_data_alt_fit[:, 1])
+                    elif MACH < min(tsfc_data_alt_fit[:, 1]):
+                        MACH = min(tsfc_data_alt_fit[:, 1])
+
+                    points = np.array([ALT, MACH]).T
+                    max_thrust = self.max_thrust_interp(points)
+                    tsfc_thrust_vector = tsfc_throttle_vector * max_thrust
+                    tsfc_data_alt_and_mach_fit = tsfc_data_alt_fit[np.where(tsfc_data_alt_fit[:, 1] == MACH)]
+
+                    if np.ndim(tsfc_data_alt_and_mach_fit) == 2:
+                        tsfc_for_this_mach_total = scipy.interpolate.interp1d(
+                            tsfc_data_alt_and_mach_fit[:, 2],
+                            tsfc_data_alt_and_mach_fit[:, 3],
+                            fill_value='extrapolate',
+                            kind='linear')(tsfc_thrust_vector)
+                    else:
+                        tsfc_for_this_mach_total = 2 * np.ones_like(tsfc_thrust_vector)
+                else:
+                    tsfc_data_alt_fit = tsfc_data[np.where(tsfc_data[:, 0] == ALT)]
+                    if MACH > max(tsfc_data_alt_fit[:, 1]):
+                        MACH = max(tsfc_data_alt_fit[:, 1])
+                    elif MACH < min(tsfc_data_alt_fit[:, 1]):
+                        MACH = min(tsfc_data_alt_fit[:, 1])
+
+                    points = np.array([ALT, MACH]).T
+                    max_thrust = self.max_thrust_interp(points)
+                    tsfc_thrust_vector = tsfc_throttle_vector * max_thrust
+                    tsfc_data_alt_and_mach_fit = tsfc_data_alt_fit[np.where(tsfc_data_alt_fit[:, 1] == MACH)]
+
+                    if np.ndim(tsfc_data_alt_and_mach_fit) == 2:
+                        tsfc_for_this_mach_current = scipy.interpolate.interp1d(
+                            tsfc_data_alt_and_mach_fit[:, 2],
+                            tsfc_data_alt_and_mach_fit[:, 3],
+                            fill_value='extrapolate',
+                            kind='linear')(tsfc_thrust_vector)
+                    else:
+                        tsfc_for_this_mach_current = 2 * np.ones_like(tsfc_thrust_vector)
+
+                    tsfc_for_this_mach_total = np.vstack((tsfc_for_this_mach_total, tsfc_for_this_mach_current))
+
+            if i == 0:
+                tsfc_total = tsfc_for_this_mach_total
+            else:
+                tsfc_total = np.dstack((tsfc_total, tsfc_for_this_mach_total))
+
+        self.tsfc_interp = scipy.interpolate.RegularGridInterpolator(
+            (tsfc_mach_vector, tsfc_throttle_vector, tsfc_altitude_vector), tsfc_total, bounds_error=False, fill_value=0.55)
 
     
     # manage process with a driver function
@@ -82,41 +175,58 @@ class Simple_Propulsor(Network):
     
         # unpack
         conditions  = state.conditions
-        max_thrust  = self.max_thrust
-        sfc         = self.sfc
+
+        altitude        = conditions.freestream.altitude[:,0,None]
+        mach            = conditions.freestream.mach_number[:,0,None]
         eta         = conditions.propulsion.throttle[:,0,None]  #beschreibt Stellung des Schubhebels
         
 #        eta[eta > 1.0] = 1.0
-       
-        #Create the outputs
-        F    = eta * max_thrust * [1,0,0]  
+        max_thrust = self.get_max_thrust(altitude, mach)
+        tsfc = self.get_tsfc(altitude, mach, eta)
 
-        
-        mdot = eta * max_thrust * sfc
-        
-             
+        F = eta * max_thrust * [1,0,0] * self.number_of_engines
+        mdot = eta * max_thrust / 9.81 * tsfc * self.number_of_engines
+
         conditions.propulsion.thrust = F
-        
         results = Data()
         results.thrust_force_vector     = F
         results.vehicle_mass_rate       = mdot
         results.network_y_axis_rotation = conditions.ones_row(1) * 0.0
         return results
-    
-    def weight(self):
-        """ Calculates the weight of the propulsion system
-            Does not include battery weight, payload nor avionics.
-            Battery weight should be defined and calculated individually
-            Avionics and payload weight should be included on the empty weight script 
-        """
-        
-        weight = self.max_thrust / (70_000 * 4.448 * 2) * 20_000
-        
-        # Output the weight
-        self.mass_properties.mass = weight
-        
-        return weight
-    
+
+    def get_max_thrust(self, altitude, mach):
+        altitude = altitude / Units.ft
+        points = np.array([altitude, mach]).T
+        maxthrust = self.max_thrust_interp(points)
+        maxthrust = maxthrust.T * Units.lbf * self.max_thrust_factor
+        return maxthrust
+
+    def get_tsfc(self, altitude, mach, throttle):
+        altitude = altitude / Units.ft
+        points = np.array([mach, throttle, altitude]).T
+        tsfc = self.tsfc_interp(points)
+        tsfc = tsfc.T / 3600 * self.tsfc_factor
+        return tsfc
+
+    def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust):
+        sea_level_static_thrust_per_engine = sea_level_static_thrust / self.number_of_engines
+        surrogate_sea_level_static_thrust_per_engine = self.get_max_thrust(0, 0)
+        max_thrust_factor = sea_level_static_thrust_per_engine / surrogate_sea_level_static_thrust_per_engine
+
+        design_cruise_altitude = design_cruise_altitude / Units.ft
+        if design_cruise_altitude < 36000.:
+            ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * 0.533981
+        else:
+            ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * 0.533981
+        ref_sfc = ref_sfc + 0.006 * (design_cruise_mach-0.82)/0.01
+
+        ref_sfc = ref_sfc / 3600.
+        surrogate_sfc = self.get_tsfc(design_cruise_altitude*Units.ft, design_cruise_mach, 1.)
+        sfc_factor = ref_sfc / surrogate_sfc
+
+        self.sealevel_static_thrust = sea_level_static_thrust
+        self.max_thrust_factor = max_thrust_factor
+        self.tsfc_factor = sfc_factor
     
     def unpack_unknowns(self,segment,state):
         """ This is an extra set of unknowns which are unpacked from the mission solver and send to the network.
