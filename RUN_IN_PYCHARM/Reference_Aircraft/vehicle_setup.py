@@ -538,7 +538,7 @@ def vehicle_setup(iteration_setup):
     #   Propulsor
     # ------------------------------------------------------------------
 
-    propulsor = SUAVE.Components.Energy.Networks.Simple_Propulsor()
+    propulsor = SUAVE.Components.Energy.Networks.Turbofan_Raymer()
     propulsor.tag = 'turbofan'
 
     # setup

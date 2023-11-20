@@ -24,7 +24,7 @@ from SUAVE.Core import Data, Units
 # ----------------------------------------------------------------------
 
 ## @ingroup Components-Energy-Networks
-class Simple_Propulsor(Network):
+class Turbofan_Raymer(Network):
     """ A simple prpulsor network that just outputs thrust as a function of a Max Thrust and throttle settings.
         
         Unknowns:
@@ -209,6 +209,8 @@ class Simple_Propulsor(Network):
         return tsfc
 
     def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust):
+        self.tsfc_factor = 1.
+        self.max_thrust_factor = 1.
         sea_level_static_thrust_per_engine = sea_level_static_thrust / self.number_of_engines
         surrogate_sea_level_static_thrust_per_engine = self.get_max_thrust(0, 0)
         max_thrust_factor = sea_level_static_thrust_per_engine / surrogate_sea_level_static_thrust_per_engine
@@ -276,3 +278,56 @@ class Simple_Propulsor(Network):
         return        
             
     __call__ = evaluate_thrust
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    tf = Turbofan_Raymer()
+    tf.number_of_engines = 2.
+    design_altitudes = np.array([32000., 35000., 38000.]) * Units.ft
+    altitudes = np.linspace(30000., 40000, 100) * Units.ft
+    mach = 0.82
+
+    for i, DALT in enumerate(design_altitudes):
+        tf.scale_factors(DALT, mach, 140000 * Units.lbf)
+        print('DALT:', DALT, 'SFC_F:', tf.tsfc_factor)
+        machs = mach * np.ones_like(altitudes)
+        throttles = np.ones_like(altitudes)
+        tsfcs = tf.get_tsfc(altitudes, machs, throttles)
+        tsfcs = tsfcs * 3600.
+        plt.plot(altitudes/Units.ft, tsfcs, label=round(DALT/Units.ft,0))
+
+    ref_sfc = np.ones_like(altitudes)
+    for i, ALT in enumerate(altitudes):
+        ALT = ALT / Units.ft
+        if ALT < 36000.:
+            ref_sfc[i] = (1 + .003 * (abs(ALT - 36000.) / 1000)) * 0.533981
+        else:
+            ref_sfc[i] = (1 + .002 * (abs(ALT - 36000.) / 1000)) * 0.533981
+        ref_sfc[i] = ref_sfc[i] + 0.006 * (mach - 0.82) / 0.01
+    plt.plot(altitudes/Units.ft, ref_sfc, label='Airbus')
+    plt.legend()
+    plt.show()
+
+    design_machs = np.array([0.82, 0.85, 0.88])
+    machs = np.linspace(0.82, 0.88, 50)
+    DALT = 32000 * Units.ft
+
+    for i, DMACH in enumerate(design_machs):
+        tf.scale_factors(DALT, DMACH, 140000 * Units.lbf)
+        alts = DALT * np.ones_like(machs)
+        throttles = np.ones_like(machs)
+        tsfcs = tf.get_tsfc(alts, machs, throttles)
+        tsfcs = tsfcs * 3600.
+        plt.plot(machs, tsfcs, label=DMACH)
+
+    DALT = DALT / Units.ft
+    if DALT < 36000.:
+        ref_sfc = (1 + .003 * (abs(DALT - 36000.) / 1000)) * 0.533981
+    else:
+        ref_sfc = (1 + .002 * (abs(DALT - 36000.) / 1000)) * 0.533981
+    ref_sfc = ref_sfc + 0.006 * (machs - 0.82) / 0.01
+    plt.plot(machs, ref_sfc, label='Airbus')
+    plt.legend()
+    plt.show()
+
