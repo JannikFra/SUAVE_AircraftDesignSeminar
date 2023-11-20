@@ -550,7 +550,8 @@ def vehicle_setup(iteration_setup):
 
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
-                            sea_level_static_thrust)
+                            sea_level_static_thrust,
+                            iteration_setup.mission_iter.throttle_mid_cruise)
 
     vehicle.append_component(propulsor)
 

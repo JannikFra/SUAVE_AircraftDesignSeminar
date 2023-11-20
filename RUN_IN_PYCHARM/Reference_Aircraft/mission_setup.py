@@ -11,8 +11,9 @@ def mission_setup(analyses, iteration_setup):
     rho_cr1 = atmosphere.compute_values(cruise_1_alt).density
     cruise_1_ias = (rho_cr1 / rho0)**0.5 * cruise_1_tas
 
-    climb_throttle = 0.9
-    idle_throttle = 0.1
+    climb_throttle = 1.
+    idle_throttle = 0.06
+    climb_speed_factor = 1.
 
     # ------------------------------------------------------------------
     #   Initialize the Mission
@@ -48,7 +49,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_end = 5_000 * Units.ft
 
     rho = atmosphere.compute_values((segment.altitude_start+segment.altitude_end)/2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0)**0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0)**0.5 * climb_speed_factor
 
     segment.throttle = climb_throttle
 
@@ -67,7 +68,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 5_000.0 * Units.ft
     segment.altitude_end = 10_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -85,7 +86,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 10_000.0 * Units.ft
     segment.altitude_end = 15_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -103,7 +104,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 15_000.0 * Units.ft
     segment.altitude_end = 20_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -121,7 +122,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 20_000.0 * Units.ft
     segment.altitude_end = 25_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -139,7 +140,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 25_000.0 * Units.ft
     segment.altitude_end = 30_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -157,7 +158,7 @@ def mission_setup(analyses, iteration_setup):
     segment.altitude_start = 30_000.0 * Units.ft
     segment.altitude_end = iteration_setup.mission_iter.design_cruise_altitude
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
 
     # add to mission
@@ -365,21 +366,21 @@ def mission_setup(analyses, iteration_setup):
     #   First Reserve Climb Segment: Constant Speed, Constant Rate
     # ------------------------------------------------------------------
     #
-    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
-    segment.tag = "reserve_climb_1"
-
-    # connect vehicle configuration
-    segment.analyses.extend(analyses.cruise)
-
-    segment.altitude_start = 0.0 * Units.ft
-    segment.altitude_end = 5_000.0 * Units.ft
-    rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
-    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
-    segment.throttle = climb_throttle
-    segment.state.numerics.number_control_points = 2
-
-    # add to misison
-    mission.append_segment(segment)
+    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment.tag = "reserve_climb_1"
+    #
+    # # connect vehicle configuration
+    # segment.analyses.extend(analyses.cruise)
+    #
+    # segment.altitude_start = 0.0 * Units.ft
+    # segment.altitude_end = 5_000.0 * Units.ft
+    # rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
+    # segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    # segment.throttle = climb_throttle
+    # segment.state.numerics.number_control_points = 2
+    #
+    # # add to misison
+    # mission.append_segment(segment)
 
     # ------------------------------------------------------------------
     #   Second Reserve Climb Segment: Constant Speed, Constant Rate
@@ -548,8 +549,11 @@ def mission_setup(analyses, iteration_setup):
     reserve_hold_time = iteration_setup.mission_iter.reserve_hold_time
     reserve_hold_altitude = iteration_setup.mission_iter.reserve_hold_altitude
 
+    rho = atmosphere.compute_values(reserve_hold_altitude).density
+    reserve_hold_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    iteration_setup.mission_iter.reserve_hold_speed = reserve_hold_speed
+
     segment.altitude = reserve_hold_altitude
-    reserve_hold_speed = iteration_setup.mission_iter.reserve_hold_speed
 
     reserve_hold_distance = reserve_hold_speed * reserve_hold_time
 
