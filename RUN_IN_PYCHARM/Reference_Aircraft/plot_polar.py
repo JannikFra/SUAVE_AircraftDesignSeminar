@@ -31,18 +31,22 @@ import matplotlib.pyplot as plt
 def main():
     iteration_setup = Data()
     iteration_setup.weight_iter = Data()
+    iteration_setup.mission_iter = Data()
     iteration_setup.weight_iter.TOW = 279_000
     iteration_setup.weight_iter.BOW = 130_000
     iteration_setup.weight_iter.Design_Payload = 24_500
+    iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_mach = 0.82
+    iteration_setup.mission_iter.throttle_mid_cruise = 1.
 
     # initialize the vehicle
     vehicle = vehicle_setup(iteration_setup)
     configs = configs_setup(vehicle)
 
-    for wing in vehicle.wings:
-        wing.areas.wetted   = 2.0 * wing.areas.reference
-        wing.areas.exposed  = 0.8 * wing.areas.wetted
-        wing.areas.affected = 0.6 * wing.areas.wetted  
+    # for wing in vehicle.wings:
+    #     wing.areas.wetted   = 2.0 * wing.areas.reference
+    #     wing.areas.exposed  = 0.8 * wing.areas.wetted
+    #     wing.areas.affected = 0.6 * wing.areas.wetted
         
 
     # initalize the aero model
@@ -51,7 +55,7 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = 0
+    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -60,7 +64,7 @@ def main():
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 0.
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.796
+    aerodynamics.settings.oswald_efficiency_factor = 0.81
 
     aerodynamics.geometry = configs.cruise
 

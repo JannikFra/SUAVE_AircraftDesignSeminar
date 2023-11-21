@@ -517,22 +517,22 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
     #   Nacelles
     # ------------------------------------------------------------------ 
-    # nacelle                            = SUAVE.Components.Nacelles.Nacelle()
-    # nacelle.tag                        = 'nacelle_1'
-    # nacelle.length                     = 2.71
-    # nacelle.inlet_diameter             = 1.90
-    # nacelle.diameter                   = 2.05
-    # nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    # nacelle.origin                     = [[13.72, -4.86,-1.9]]
-    # nacelle.flow_through               = True
-    # nacelle.Airfoil.NACA_4_series_flag = True
-    # nacelle.Airfoil.coordinate_file    = '2410'
-    # nacelle_2                          = deepcopy(nacelle)
-    # nacelle_2.tag                      = 'nacelle_2'
-    # nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
+    nacelle                            = SUAVE.Components.Nacelles.Nacelle()
+    nacelle.tag                        = 'nacelle_1'
+    nacelle.length                     = 7.2
+    nacelle.inlet_diameter             = 3.6
+    nacelle.diameter                   = 3.8
+    nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
+    nacelle.origin                     = [[20.1, 10.8,-1.9]]
+    nacelle.flow_through               = True
+    nacelle.Airfoil.NACA_4_series_flag = True
+    nacelle.Airfoil.coordinate_file    = '2410'
+    nacelle_2                          = deepcopy(nacelle)
+    nacelle_2.tag                      = 'nacelle_2'
+    nacelle_2.origin                   = [[20.1, -10.8,-1.9]]
     #
-    # vehicle.append_component(nacelle)
-    # vehicle.append_component(nacelle_2)
+    vehicle.append_component(nacelle)
+    vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #   Propulsor
@@ -543,8 +543,8 @@ def vehicle_setup(iteration_setup):
 
     # setup
     # # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
-    propulsor.origin            = [[13.72, 4.86,-1.9],[13.72, -4.86,-1.9]]
-    propulsor.engine_length = 2.
+    propulsor.origin            = [[20.1, 10.8,-1.9],[20.1, -10.8,-1.9]]
+    propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
     sea_level_static_thrust = 70_000 * 4.448 * propulsor.number_of_engines
 
@@ -561,7 +561,7 @@ def vehicle_setup(iteration_setup):
     fuel                                  = SUAVE.Components.Physical_Component()
     vehicle.fuel                          = fuel
     fuel.mass_properties.mass             = vehicle.mass_properties.max_takeoff-vehicle.mass_properties.max_fuel
-    fuel.origin                           = vehicle.wings.main_wing.mass_properties.center_of_gravity
+    fuel.origin                           = vehicle.wings.main_wing.origin
     fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.aerodynamic_center
 
     # ------------------------------------------------------------------
