@@ -416,11 +416,11 @@ if __name__ == '__main__':
         # Konvergenzbeschleunigung
         deltaBOW = configs.base.mass_properties.operating_empty - iteration_setup.weight_iter.BOW
         if abs(deltaBOW) > 500.:
-            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1.6 * deltaBOW  # + 1650
-        elif abs(deltaBOW) > 50.:
-            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1.3 * deltaBOW  # + 1650
-        else:
             iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1. * deltaBOW  # + 1650
+        elif abs(deltaBOW) > 50.:
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1. * deltaBOW  # + 1650
+        else:
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 0.8 * deltaBOW  # + 1650
 
         deltaweight = landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload
         print('Error: %.1f NM' % error)

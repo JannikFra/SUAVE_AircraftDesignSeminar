@@ -62,7 +62,7 @@ def main():
     aerodynamics.settings.use_surrogate = False
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 0.
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 

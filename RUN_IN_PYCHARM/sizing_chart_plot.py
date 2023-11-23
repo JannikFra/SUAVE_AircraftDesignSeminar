@@ -10,7 +10,6 @@
 # Created:  Oct 2022, J. Mangold
 # Modified:
 
-
 import os
 import SUAVE
 import numpy as np
