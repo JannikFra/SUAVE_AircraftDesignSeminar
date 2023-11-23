@@ -1217,19 +1217,23 @@ def plot_stability_coefficients(results, line_color = 'bo-', save_figure = False
 
     for segment in results.segments.values():
         time     = segment.conditions.frames.inertial.time[:,0] / Units.min
-        cm       = segment.conditions.stability.static.CM[:,0]
+        #cm       = segment.conditions.stability.static.CM[:,0]
+        cn_beta = segment.conditions.stability.static.Cn_beta[:,0]
         cm_alpha = segment.conditions.stability.static.Cm_alpha[:,0]
+        percent_mac = segment.conditions.stability.static.percent_mac[:,0]
         SM       = segment.conditions.stability.static.static_margin[:,0]
-        aoa      = segment.conditions.aerodynamics.angle_of_attack[:,0] / Units.deg
+        #aoa      = segment.conditions.aerodynamics.angle_of_attack[:,0] / Units.deg
 
         axes = plt.subplot(2,2,1)
-        axes.plot( time , aoa, line_color )
-        axes.set_ylabel(r'$AoA$',axis_font)
+        #axes.plot( time , aoa, line_color )
+        axes.plot(time, cn_beta, line_color)
+        axes.set_ylabel(r'$C_N\beta$',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,2)
-        axes.plot( time , cm, line_color )
-        axes.set_ylabel(r'$C_M$',axis_font)
+        #axes.plot( time , cm, line_color )
+        axes.plot(time, percent_mac, line_color)
+        axes.set_ylabel('%MAC',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,3)
