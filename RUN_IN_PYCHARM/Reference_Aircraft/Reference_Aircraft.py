@@ -73,23 +73,14 @@ def main(iteration_setup):
 #   Analysis Setup
 # ----------------------------------------------------------------------
 def results_show(results):
-    # plot_aerodynamic_coefficients(results)
-    # plot_fuel_use(results)
-    # plot_flight_conditions(results)
-    # plot_stability_coefficients(results)
-    # plot_drag_components(results)
-    # plot_altitude_sfc_weight(results)
+    plot_aerodynamic_coefficients(results)
+    plot_fuel_use(results)
+    plot_flight_conditions(results)
+    plot_stability_coefficients(results)
+    plot_drag_components(results)
+    plot_altitude_sfc_weight(results)
     # plot_mission(results,configs.base)
-    # plt.show(block=True)
-
-
- #   plot_aerodynamic_coefficients(results)
- #   plot_fuel_use(results)
- #   plot_flight_conditions(results)
- #   plot_stability_coefficients(results)
- #   plot_drag_components(results)
- #   plt.show(block=True)
-    
+    plt.show(block=True)
 
     # print weights breakdown
     print_weight_breakdown(configs.cruise)
@@ -156,11 +147,11 @@ def base_analysis(vehicle):
     weights.settings.weight_reduction_factors.main_wing = 0
     weights.settings.weight_reduction_factors.empennage = 0
     weights.settings.weight_reduction_factors.fuselage = 0
-    weights.settings.weight_reduction_factors.structural = 0
+    weights.settings.weight_reduction_factors.structural = 0.03
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0
-    weights.settings.weight_reduction_factors.propulsion = 0
+    weights.settings.weight_reduction_factors.propulsion = 0.03
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -309,7 +300,7 @@ if __name__ == '__main__':
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
-    iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = 31_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
@@ -324,7 +315,7 @@ if __name__ == '__main__':
     error = 2.
     error_reserve = 2
 
-    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 1.0) or (error_reserve > 1.0):
+    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 10.0) or (error_reserve > 1.0):
         iteration_setup.weight_iter.TOW = iteration_setup.weight_iter.BOW + iteration_setup.weight_iter.Design_Payload \
                                           + iteration_setup.weight_iter.FUEL
 
