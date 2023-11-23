@@ -29,4 +29,8 @@ rho = 1.2250000002007604
 #
 #  mass     x     y     z    Ixx    Iyy    Izz   Component Name
 #   
+<<<<<<< Updated upstream
     279000  31.193962056846885  0.0  0.0  0.0  0.0  0.0 ! Reference_Aircraft
+=======
+    279000.0  29.762941189184357  0.0  -0.27436712724794343  3173074.17  3019041.443  5730017.433 ! Reference_Aircraft
+>>>>>>> Stashed changes

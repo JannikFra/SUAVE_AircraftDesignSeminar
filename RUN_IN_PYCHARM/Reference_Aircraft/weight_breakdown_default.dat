@@ -1,0 +1,59 @@
+Output file with weight breakdown
+
+ DESIGN WEIGHTS 
+ Maximum Takeoff Weight ......... :   241323 kg
+ Maximum Zero Fuel Weight ....... :   132961 kg
+ Maximum Fuel Weight ............ :   125200 kg
+ Maximum Payload Weight ......... :    50000 kg
+
+ ASSUMPTIONS FOR WEIGHT ESTIMATION 
+ Airplane type .................. : LONGE RANGE
+ Flight Controls type ........... : FULLY POWERED
+
+ EMPTY WEIGHT BREAKDOWN 
+ ........ EMPTY WEIGHT .......... :  108461 kg
+ Structural Weight Breakdown 
+ Total structural weight......... :   65877 kg
+ 	Wing ........................ :   30639 kg
+ 	Horizontal tail ............. :    1960 kg
+ 	Vertical tail ............... :     844 kg
+ 	Fuselage .................... :   24337 kg
+ 	Main landing gear ........... :    7435 kg
+ 	Nose landing gear ........... :     663 kg
+ 	Nacelle ..................... :       0 kg
+ 	Paint ....................... :       0 kg
+ Propulsion Weight Breakdown 
+ Total propulsion weight......... :   24068 kg
+ 	Engines ..................... :   23091 kg
+ 	Thrust reversers ............ :       0 kg
+ 	Miscellaneous ............... :     277 kg
+ 	Fuel system ................. :     700 kg
+ System Weight Breakdown 
+ Total system weight............. :   18516 kg
+ 	Control systems ............. :    1475 kg
+ 	Apu ......................... :     500 kg
+ 	Electrical .................. :    4006 kg
+ 	Avionics .................... :     971 kg
+ 	Hydraulics .................. :    1606 kg
+ 	Furnish ..................... :    8000 kg
+ 	Air conditioner ............. :    1733 kg
+ 	Instruments ................. :     225 kg
+
+ OPERATING EMPTY WEIGHT BREAKDOWN 
+ .... OPERATING EMPTY WEIGHT .... :  123461 kg
+ Operational Items Weight Breakdown 
+ Total operational items weight.. :   15000 kg
+ 	Operating items less crew ... :   14163 kg
+ 	Flight crew ................. :     279 kg
+ 	Flight attendants ........... :     558 kg
+
+ ZERO FUEL WEIGHT BREAKDOWN 
+ ...... ZERO FUEL WEIGHT ........ :  147961 kg
+ Payload Weight Breakdown 
+ Total payload weight............ :   24500 kg
+ 	Passengers .................. :    8000 kg
+ 	Baggage ..................... :    2000 kg
+ 	Cargo ....................... :   14500 kg
+
+-------------------------------------------
+ Thursday, 16. November 2023 05:47:56 PM

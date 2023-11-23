@@ -44,7 +44,7 @@ def vehicle_setup(iteration_setup):
     vehicle.mass_properties.operating_empty           = iteration_setup.weight_iter.BOW
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
                                                         + iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = 125100.    # kg
+    vehicle.mass_properties.max_fuel                  = 125200. * Units.kilogram   # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
@@ -290,7 +290,7 @@ def vehicle_setup(iteration_setup):
     wing.total_length            = wing.spans.projected 
     
     wing.chords.root             = 7.936
-    wing.chords.tip              = 3.106
+    wing.chords.tip              = wing.taper * wing.chords.root
     wing.chords.mean_aerodynamic = 5.788
 
     wing.areas.reference         = 45.2
@@ -328,9 +328,9 @@ def vehicle_setup(iteration_setup):
     segment.tag                           = 'tip'
     segment.percent_span_location         = 1.
     segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = 3.106 / 7.936
+    segment.root_chord_percent            = wing.taper
     segment.dihedral_outboard             = 0. * Units.degrees
-    segment.sweeps.quarter_chord          = 0. * Units.degrees
+    segment.sweeps.quarter_chord          = 40. * Units.degrees
     segment.thickness_to_chord            = 0.11
     wing.append_segment(segment)
 
@@ -517,21 +517,21 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
     #   Nacelles
     # ------------------------------------------------------------------ 
-    # nacelle                            = SUAVE.Components.Nacelles.Nacelle()
-    # nacelle.tag                        = 'nacelle_1'
-    # nacelle.length                     = 2.71
-    # nacelle.inlet_diameter             = 1.90
-    # nacelle.diameter                   = 2.05
-    # nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    # nacelle.origin                     = [[13.72, -4.86,-1.9]]
-    # nacelle.flow_through               = True
-    # nacelle.Airfoil.NACA_4_series_flag = True
-    # nacelle.Airfoil.coordinate_file    = '2410'
-    # nacelle_2                          = deepcopy(nacelle)
-    # nacelle_2.tag                      = 'nacelle_2'
-    # nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
-    #
-    # vehicle.append_component(nacelle)
+    nacelle                            = SUAVE.Components.Nacelles.Nacelle()
+    nacelle.tag                        = 'nacelle_1'
+    nacelle.length                     = 2.71
+    nacelle.inlet_diameter             = 1.90
+    nacelle.diameter                   = 2.05
+    nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
+    nacelle.origin                     = [[13.72, -4.86,-1.9]]
+    nacelle.flow_through               = True
+    nacelle.Airfoil.NACA_4_series_flag = True
+    nacelle.Airfoil.coordinate_file    = '2410'
+    nacelle_2                          = deepcopy(nacelle)
+    nacelle_2.tag                      = 'nacelle_2'
+    nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
+
+    vehicle.append_component(nacelle)
     # vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
@@ -542,11 +542,11 @@ def vehicle_setup(iteration_setup):
     propulsor.tag = 'turbofan'
 
     # setup
-    # # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
+    # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
     propulsor.origin            = [[13.72, 4.86,-1.9],[13.72, -4.86,-1.9]]
     propulsor.engine_length = 2.
     propulsor.number_of_engines = 2
-    propulsor.max_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+    propulsor.max_thrust = 70_000 * Units.lbf * propulsor.number_of_engines
     propulsor.sealevel_static_thrust = propulsor.max_thrust
     propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf
 
@@ -568,11 +568,11 @@ def vehicle_setup(iteration_setup):
     landing_gear.tag                      = "main_landing_gear"
     landing_gear.main_tire_diameter       = 1.12000 * Units.m
     landing_gear.nose_tire_diameter       = 0.6858 * Units.m
-    landing_gear.main_strut_length        = 1.8 * Units.m
-    landing_gear.nose_strut_length        = 1.3 * Units.m
-    landing_gear.main_units               = 1    #number of nose landing gear
+    landing_gear.main_strut_length        = 3.9 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.nose_strut_length        = 2.4 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.main_units               = 2    #number of main landing gear
     landing_gear.nose_units               = 1    #number of nose landing gear
-    landing_gear.main_wheels              = 2    #number of wheels on the main landing gear
+    landing_gear.main_wheels              = 4 * landing_gear.main_units    #number of wheels on the main landing gear
     landing_gear.nose_wheels              = 2    #number of wheels on the nose landing gear
     vehicle.landing_gear                  = landing_gear
 

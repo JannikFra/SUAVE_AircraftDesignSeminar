@@ -5,6 +5,7 @@
 # Modified: Feb 2014, A. Wendorff
 #           Feb 2016, E. Botero
 #           May 2020, W. Van Gijseghem
+#           Nov 2023, L. Bauer
 
 # ----------------------------------------------------------------------
 #  Imports
@@ -45,37 +46,32 @@ def operating_items(vehicle):
         Properties Used:
             N/A
     """
-    num_seats   = vehicle.passengers
-    ac_type     = vehicle.systems.accessories
-    if ac_type == "short-range":  # short-range domestic, austere accomodations
-        operitems_wt = 17.0 * num_seats * Units.lb
-    elif ac_type == "medium-range":  # medium-range domestic
-        operitems_wt = 28.0 * num_seats * Units.lb
-    elif ac_type == "long-range":  # long-range overwater
-        operitems_wt = 28.0 * num_seats * Units.lb
-    elif ac_type == "business":  # business jet
-        operitems_wt = 28.0 * num_seats * Units.lb
-    elif ac_type == "cargo":  # all cargo
-        operitems_wt = 56.0 * Units.lb
-    elif ac_type == "commuter":  # commuter
-        operitems_wt = 17.0 * num_seats * Units.lb
-    elif ac_type == "sst":  # sst
-        operitems_wt = 40.0 * num_seats * Units.lb
-    else:
-        operitems_wt = 28.0 * num_seats * Units.lb
+    # num_seats   = vehicle.passengers
+    # ac_type     = vehicle.systems.accessories
+    # if ac_type == "short-range":  # short-range domestic, austere accomodations
+    #     operitems_wt = 17.0 * num_seats * Units.lb
+    # elif ac_type == "medium-range":  # medium-range domestic
+    #     operitems_wt = 28.0 * num_seats * Units.lb
+    # elif ac_type == "long-range":  # long-range overwater
+    #     operitems_wt = 28.0 * num_seats * Units.lb
+    # elif ac_type == "business":  # business jet
+    #     operitems_wt = 28.0 * num_seats * Units.lb
+    # elif ac_type == "cargo":  # all cargo
+    #     operitems_wt = 56.0 * Units.lb
+    # elif ac_type == "commuter":  # commuter
+    #     operitems_wt = 17.0 * num_seats * Units.lb
+    # elif ac_type == "sst":  # sst
+    #     operitems_wt = 40.0 * num_seats * Units.lb
+    # else:
+    #     operitems_wt = 28.0 * num_seats * Units.lb
 
-    if vehicle.passengers >= 150:
-        flight_crew = 3  # FLOPS: NFLCR
-    else:
-        flight_crew = 2
+    flight_crew = 3         # number of pilots
+    flight_attendants = 6   # number of flight attendants
 
-    if vehicle.passengers < 51:
-        flight_attendants = 1  # FLOPS: NSTU
-    else:
-        flight_attendants = 1 + np.floor(vehicle.passengers / 40.)
+    wt_flight_attendants = flight_attendants * (175 + 30)  # Roskam
+    wt_flight_crew = flight_crew * (175 + 30)  # Roskam
 
-    wt_flight_attendants = flight_attendants * (170 + 40)  # FLOPS: WSTUAB
-    wt_flight_crew = flight_crew * (190 + 50)  # FLOPS: WFLCRB
+    operitems_wt = 15_000 - wt_flight_crew * Units.lbs - wt_flight_attendants * Units.lbs
 
     output                           = Data()
     output.operating_items_less_crew = operitems_wt

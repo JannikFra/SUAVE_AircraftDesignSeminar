@@ -50,18 +50,22 @@ def landing_gear_Raymer(vehicle):
     else:
         RFACT   = 0.00004
     DESRNG      = vehicle.design_range / Units.nmi  # Design range in nautical miles
-    WLDG        = vehicle.mass_properties.max_takeoff / Units.lbs * (1 - RFACT * DESRNG)
+    WLDG        = 0.7 * vehicle.mass_properties.max_takeoff / Units.lbs # * (1 - RFACT * DESRNG)
     Ngear       = 3  # gear load factor, usually around 3
     Nl          = Ngear * 1.5  # ultimate landing load factor
     Lm          = vehicle.landing_gear.main_strut_length / Units.inch
     Nmss        = 2  # number of main gear shock struts assumed to be 2
     Nmw         = vehicle.landing_gear.main_wheels * Nmss
-    Vstall      = 51 * Units.kts  # stall speed
+    Vstall      = 130 * Units.kts  # stall speed
     Knp         = 1  # assuming not a reciprocating engine
     Ln          = vehicle.landing_gear.nose_strut_length / Units.inch
     Nnw         = vehicle.landing_gear.nose_wheels
-    wt_main_landing_gear = 0.0106 * Kmp * WLDG ** 0.888 * Nl ** 0.25 * Lm ** 0.4 * Nmw ** 0.321 * Nmss ** (-0.5) * Vstall ** 0.1
-    wt_nose_landing_gear = 0.032 * Knp * WLDG ** 0.646 * Nl ** 0.2 * Ln ** 0.5 * Nnw ** 0.45
+
+    CALIBRATION = 0.802
+
+    wt_main_landing_gear = CALIBRATION * 0.0106 * Kmp * WLDG ** 0.888 * Nl ** 0.25 * Lm ** 0.4 * Nmw ** 0.321 * Nmss ** (
+        -0.5) * Vstall ** 0.1
+    wt_nose_landing_gear = CALIBRATION * 0.032 * Knp * WLDG ** 0.646 * Nl ** 0.2 * Ln ** 0.5 * Nnw ** 0.45
 
     output          = Data()
     output.main     = wt_main_landing_gear * Units.lbs

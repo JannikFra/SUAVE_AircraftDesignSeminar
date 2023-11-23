@@ -26,7 +26,7 @@ import time
 from RUN_IN_PYCHARM.Reference_Aircraft.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Reference_Aircraft.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
-#äfrom Plots import plot_mission
+#from Plots import plot_mission
 
 sys.path.append('Vehicles')
 
@@ -65,20 +65,30 @@ def main(iteration_setup):
     mission = analyses.missions.base
     results = mission.evaluate()
 
+
     return mission, results, configs, analyses
 
 # ----------------------------------------------------------------------
 #   Analysis Setup
 # ----------------------------------------------------------------------
 def results_show(results):
-    plot_aerodynamic_coefficients(results)
-    plot_fuel_use(results)
-    plot_flight_conditions(results)
-    plot_stability_coefficients(results)
-    plot_drag_components(results)
-    plot_altitude_sfc_weight(results)
-    #plot_mission(results,configs.base)
-    plt.show(block=True)
+    # plot_aerodynamic_coefficients(results)
+    # plot_fuel_use(results)
+    # plot_flight_conditions(results)
+    # plot_stability_coefficients(results)
+    # plot_drag_components(results)
+    # plot_altitude_sfc_weight(results)
+    # plot_mission(results,configs.base)
+    # plt.show(block=True)
+
+
+ #   plot_aerodynamic_coefficients(results)
+ #   plot_fuel_use(results)
+ #   plot_flight_conditions(results)
+ #   plot_stability_coefficients(results)
+ #   plot_drag_components(results)
+ #   plt.show(block=True)
+    
 
     # print weights breakdown
     print_weight_breakdown(configs.cruise)
@@ -88,6 +98,7 @@ def results_show(results):
 
     # plot vehicle
     plot_vehicle(configs.base, plot_control_points=False, axis_limits=20)
+    plt.show(block=True)
 
 # ----------------------------------------------------------------------
 #   Analysis Setup
@@ -141,14 +152,14 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = -0.25
-    weights.settings.weight_reduction_factors.empennage = -0.1
-    weights.settings.weight_reduction_factors.fuselage = -0.5
-    weights.settings.weight_reduction_factors.structural = 0.
-    weights.settings.weight_reduction_factors.systems = -1.
-    weights.settings.weight_reduction_factors.operating_items = -9.
-    weights.settings.weight_reduction_factors.landing_gear = -1.5
-    weights.settings.weight_reduction_factors.propulsion = 0.4
+    weights.settings.weight_reduction_factors.main_wing = 0
+    weights.settings.weight_reduction_factors.empennage = 0
+    weights.settings.weight_reduction_factors.fuselage = 0
+    weights.settings.weight_reduction_factors.structural = 0
+    weights.settings.weight_reduction_factors.systems = 0
+    weights.settings.weight_reduction_factors.operating_items = 0
+    weights.settings.weight_reduction_factors.landing_gear = 0
+    weights.settings.weight_reduction_factors.propulsion = 0
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -237,7 +248,7 @@ def base_analysis(vehicle):
     # ------------------------------------------------------------------
     #  Energy
     energy = SUAVE.Analyses.Energy.Energy()
-    energy.network = vehicle.networks #what is called throughout the mission (at every time step))
+    energy.network = vehicle.networks   #what is called throughout the mission (at every time step))
     analyses.append(energy)
 
     # ------------------------------------------------------------------
