@@ -315,7 +315,7 @@ if __name__ == '__main__':
     error = 2.
     error_reserve = 2
 
-    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 10.0) or (error_reserve > 1.0):
+    while (error > 2.0) or (abs(landing_weight - iteration_setup.weight_iter.BOW - iteration_setup.weight_iter.Design_Payload) > 1.0) or (error_reserve > 1.0):
         iteration_setup.weight_iter.TOW = iteration_setup.weight_iter.BOW + iteration_setup.weight_iter.Design_Payload \
                                           + iteration_setup.weight_iter.FUEL
 

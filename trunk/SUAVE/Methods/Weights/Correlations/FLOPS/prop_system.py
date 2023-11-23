@@ -235,7 +235,7 @@ def engine_FLOPS(vehicle, prop):
     ENOZ = 1        # nozzle weight scaling parameter
     THRSO = 70_000 * Units.lbf  # baseline thrust
     THRUST = prop.sealevel_static_thrust
-    WENGB = 8800   # baseline weight
+    WENGB = 8946   # baseline weight
     WINLB = 0 / Units.lbs
     WNOZB = 0 / Units.lbs
     WENGP = WENGB * (THRUST / THRSO) ** EEXP

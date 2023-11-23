@@ -361,8 +361,6 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
         output.propulsion_breakdown.nacelle             = wt_prop_data.nacelle
         output.propulsion_breakdown.thrust_reversers    = wt_prop_data.wt_thrust_reverser
         output.propulsion_breakdown.miscellaneous       = wt_prop_data.wt_engine_controls + wt_prop_data.wt_starter
-        output.propulsion_breakdown.fuel_system         = wt_prop_data.fuel_system      # TODO move to systems breakdown
-        # output.propulsion_breakdown.pylons              = wt_prop_data.wt_pyl           # TODO move to structure breakdown
 
     output.systems_breakdown                        = Data()
     output.systems_breakdown.control_systems        = 0
@@ -375,10 +373,12 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     output.systems_breakdown.instruments            = 0
     output.systems_breakdown.bleed_air              = 750   # TODO implement in Raymer method
     output.systems_breakdown.fire_protection        = 250   # TODO implement in Raymer method
+    output.systems_breakdown.fuel_system            = wt_prop_data.fuel_system
     output.systems_breakdown.total                  = output.systems_breakdown.control_systems + output.systems_breakdown.apu \
                                                     + output.systems_breakdown.electrical + output.systems_breakdown.bleed_air \
                                                     + output.systems_breakdown.hydraulics + output.systems_breakdown.furnish \
-                                                    + output.systems_breakdown.air_conditioner + output.systems_breakdown.fire_protection
+                                                    + output.systems_breakdown.air_conditioner + output.systems_breakdown.fire_protection \
+                                                    + output.systems_breakdown.fuel_system
 
     output.payload_breakdown = Data()
     output.payload_breakdown = payload

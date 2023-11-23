@@ -50,11 +50,11 @@ def total_prop_Raymer(vehicle,prop):
     WENG            = engine_FLOPS(vehicle, prop)
     WNAC            = nacelle_Raymer(vehicle, WENG)
     # WNAC = 0
-    WEC, WSTART     = misc_engine_Raymer(vehicle, prop, WENG)
+    WEC, WSTART     = 0, 0  # misc_engine_Raymer(vehicle, prop, WENG)
     WTHR            = 0
 
     WPYL            = 0.225 * (NENG * WENG + WEC + WSTART + WTHR + WNAC)
-    WPRO            = NENG * WENG + WFSYS + WEC + WSTART + WTHR + WNAC
+    WPRO            = NENG * WENG + WEC + WSTART + WTHR + WNAC
 
     output                      = Data()
     output.wt_prop              = WPRO
