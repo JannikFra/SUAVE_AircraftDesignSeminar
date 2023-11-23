@@ -300,7 +300,7 @@ if __name__ == '__main__':
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
-    iteration_setup.mission_iter.design_cruise_altitude = 31_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = 33_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
@@ -321,15 +321,19 @@ if __name__ == '__main__':
 
         mission, results, configs, analyses = main(iteration_setup)
 
-        climb_segments = [key for key in results.segments.keys() if (('climb' in key) and ('reserve' not in key) and ('second_leg' not in key))]
+        climb_segments = [key for key in results.segments.keys() if (('climb' in key) and ('reserve' not in key) and ('second_leg' not in key) and ('step' not in key))]
         first_climb_segment = climb_segments[0]
         last_climb_segment = climb_segments[-1]
         descent_segments = [key for key in results.segments.keys() if (('descent' in key) and ('reserve' not in key) and ('second_leg' not in key))]
         first_descent_segment = descent_segments[0]
         last_descent_segment = descent_segments[-1]
+        step_climb_segments = [key for key in results.segments.keys() if (('climb' in key) and ('reserve' not in key) and ('second_leg' not in key) and ('step' in key))]
+        cruise_segments = [key for key in results.segments.keys() if (('cruise' in key) and ('reserve' not in key) and ('second_leg' not in key))]
+        first_cruise_segment = cruise_segments[0]
+        last_cruise_segment = cruise_segments[-1]
 
         reserve_climb_segments = [key for key in results.segments.keys() if
-                                  (('climb' in key) and ('reserve' in key) and ('second_leg' not in key))]
+                                  (('climb' in key) and ('reserve' in key) and ('second_leg' not in key) and ('step' not in key))]
         n_reserve_climb_segments = len(reserve_climb_segments)
         first_reserve_climb_segment = reserve_climb_segments[0]
         last_reserve_climb_segment = reserve_climb_segments[-1]
@@ -348,8 +352,8 @@ if __name__ == '__main__':
         block_fuel = results.segments[first_climb_segment].conditions.weights.total_mass[0][0] - \
                      results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
 
-        cruise_fuel = results.segments.cruise_1.conditions.weights.total_mass[0][0] - \
-                      results.segments.cruise_3.conditions.weights.total_mass[-1][0]
+        cruise_fuel = results.segments[first_cruise_segment].conditions.weights.total_mass[0][0] - \
+                      results.segments[last_cruise_segment].conditions.weights.total_mass[-1][0]
 
         alternate_fuel = results.segments[first_reserve_climb_segment].conditions.weights.total_mass[0][0] - \
                          results.segments[last_reserve_descent_segment].conditions.weights.total_mass[-1][0]
@@ -370,8 +374,15 @@ if __name__ == '__main__':
         climb_distance = (results.segments[last_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
                           results.segments[first_climb_segment].conditions.frames.inertial.position_vector[0][0])
 
-        cruise_distance = (results.segments.cruise_3.conditions.frames.inertial.position_vector[-1][0] - \
-                           results.segments.cruise_1.conditions.frames.inertial.position_vector[0][0])
+        step_climb_distance = 0.
+        for step_climb_segment in step_climb_segments:
+            step_climb_distance += (results.segments[step_climb_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                              results.segments[step_climb_segment].conditions.frames.inertial.position_vector[0][0])
+
+        cruise_distance = 0.
+        for cruise_segment in cruise_segments:
+            cruise_distance += (results.segments[cruise_segment].conditions.frames.inertial.position_vector[-1][0] - \
+                               results.segments[cruise_segment].conditions.frames.inertial.position_vector[0][0])
 
         descent_distance = (results.segments[last_descent_segment].conditions.frames.inertial.position_vector[-1][0] - \
                             results.segments[first_descent_segment].conditions.frames.inertial.position_vector[0][0])
@@ -399,7 +410,7 @@ if __name__ == '__main__':
         error = abs(block_distance - iteration_setup.mission_iter.mission_distance) / Units['nautical_mile']
         error_reserve = abs(iteration_setup.mission_iter.reserve_distance - (reserve_climb_distance + reserve_cruise_distance + reserve_descent_distance)) / Units['nautical_mile']
 
-        iteration_setup.mission_iter.cruise_distance = iteration_setup.mission_iter.mission_distance - (climb_distance + descent_distance)
+        iteration_setup.mission_iter.cruise_distance = iteration_setup.mission_iter.mission_distance - (climb_distance + descent_distance + step_climb_distance)
         iteration_setup.mission_iter.reserve_cruise_distance = iteration_setup.mission_iter.reserve_distance - (reserve_climb_distance + reserve_descent_distance)
 
         # Konvergenzbeschleunigung
@@ -430,7 +441,7 @@ if __name__ == '__main__':
     print('Reserve fuel : %.1f kg' % reserve_fuel)
     results_show(results)
 
-    payload_range_run = True
+    payload_range_run = False
     if payload_range_run == True:
         payload_range = payload_range(configs.cruise, results, "cruise_2", reserves=reserve_fuel)
 
