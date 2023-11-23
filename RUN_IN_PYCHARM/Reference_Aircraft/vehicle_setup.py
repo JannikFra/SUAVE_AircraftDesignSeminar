@@ -39,14 +39,15 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
 
     # mass properties
+    vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     vehicle.mass_properties.max_takeoff               = iteration_setup.weight_iter.TOW
     vehicle.mass_properties.takeoff                   = iteration_setup.weight_iter.TOW
     vehicle.mass_properties.operating_empty           = iteration_setup.weight_iter.BOW
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
-                                                        + iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = 125100.    # kg
+                                                        + vehicle.mass_properties.max_payload
+                                                        #+ iteration_setup.weight_iter.Design_Payload
+    vehicle.mass_properties.max_fuel                  = 135_000    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
-    vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
     vehicle.design_mach_number                        = 0.82

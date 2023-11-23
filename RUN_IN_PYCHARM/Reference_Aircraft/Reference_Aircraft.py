@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 import os
 import time
+from SUAVE.Methods.Performance  import payload_range
 from RUN_IN_PYCHARM.Reference_Aircraft.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Reference_Aircraft.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
@@ -426,3 +427,8 @@ if __name__ == '__main__':
     print('Descent fuel : %.1f kg' % descent_fuel)
     print('Reserve fuel : %.1f kg' % reserve_fuel)
     results_show(results)
+
+    payload_range_run = True
+    if payload_range_run == True:
+        payload_range = payload_range(configs.cruise, results, "cruise_2", reserves=reserve_fuel)
+
