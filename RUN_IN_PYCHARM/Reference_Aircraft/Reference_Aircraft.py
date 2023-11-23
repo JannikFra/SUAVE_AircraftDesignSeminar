@@ -231,11 +231,16 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -30e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = 0
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
+    aerodynamics.settings.recalculate_total_wetted_area = False
+    aerodynamics.settings.use_surrogate = True
+    aerodynamics.settings.model_fuselage = True
+    aerodynamics.settings.model_nacelle = True
+    aerodynamics.settings.compressibility_drag_correction_factor = 0.
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.8
+    aerodynamics.settings.oswald_efficiency_factor = 0.796
 
     analyses.append(aerodynamics)
 

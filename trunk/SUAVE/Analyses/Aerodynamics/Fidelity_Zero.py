@@ -77,6 +77,7 @@ class Fidelity_Zero(Markup):
         settings.discretize_control_surfaces        = False
         settings.model_fuselage                     = False
         settings.model_nacelle                      = False
+        settings.compressibility_drag_correction_factor = 1.0
 
         # build the evaluation process
         compute = self.process.compute

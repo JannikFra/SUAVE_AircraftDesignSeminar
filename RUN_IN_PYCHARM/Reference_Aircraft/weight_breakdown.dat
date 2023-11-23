@@ -1,6 +1,6 @@
 Output file with weight breakdown
 
- DESIGN WEIGHTS 
+ DESIGN WEIGHTS
  Maximum Takeoff Weight ......... :   243466 kg
  Maximum Zero Fuel Weight ....... :   133287 kg
  Maximum Fuel Weight ............ :   125200 kg
@@ -10,7 +10,7 @@ Output file with weight breakdown
  Airplane type .................. : LONGE RANGE
  Flight Controls type ........... : FULLY POWERED
 
- EMPTY WEIGHT BREAKDOWN 
+ EMPTY WEIGHT BREAKDOWN
  ........ EMPTY WEIGHT .......... :  108787 kg
  Structural Weight Breakdown 
  Total structural weight......... :   72625 kg
@@ -50,8 +50,9 @@ Output file with weight breakdown
  	Flight crew ................. :     279 kg
  	Flight attendants ........... :     558 kg
 
- ZERO FUEL WEIGHT BREAKDOWN 
+ ZERO FUEL WEIGHT BREAKDOWN
  ...... ZERO FUEL WEIGHT ........ :  148287 kg
+
  Payload Weight Breakdown 
  Total payload weight............ :   24500 kg
  	Passengers .................. :    8000 kg
@@ -59,4 +60,6 @@ Output file with weight breakdown
  	Cargo ....................... :   14500 kg
 
 -------------------------------------------
+
  Monday, 20. November 2023 09:31:37 PM
+
