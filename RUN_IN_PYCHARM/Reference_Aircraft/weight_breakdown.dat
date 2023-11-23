@@ -1,58 +1,54 @@
 Output file with weight breakdown
 
- DESIGN WEIGHTS
- Maximum Takeoff Weight ......... :   243466 kg
- Maximum Zero Fuel Weight ....... :   133287 kg
- Maximum Fuel Weight ............ :   125200 kg
+ DESIGN WEIGHTS 
+ Maximum Takeoff Weight ......... :   279986 kg
+ Maximum Zero Fuel Weight ....... :   177639 kg
+ Maximum Fuel Weight ............ :   135000 kg
  Maximum Payload Weight ......... :    50000 kg
 
  ASSUMPTIONS FOR WEIGHT ESTIMATION 
  Airplane type .................. : LONGE RANGE
  Flight Controls type ........... : FULLY POWERED
 
- EMPTY WEIGHT BREAKDOWN
- ........ EMPTY WEIGHT .......... :  108787 kg
+ EMPTY WEIGHT BREAKDOWN 
+ ........ EMPTY WEIGHT .......... :  127639 kg
  Structural Weight Breakdown 
- Total structural weight......... :   72625 kg
- 	Wing ........................ :   30790 kg
- 	Horizontal tail ............. :    2020 kg
- 	Vertical tail ............... :    1199 kg
- 	Fuselage .................... :   23744 kg
- 	Main landing gear ........... :    9839 kg
- 	Nose landing gear ........... :     834 kg
- 	Pylons ...................... :    4199 kg
+ Total structural weight......... :   81651 kg
+ 	Wing ........................ :   40668 kg
+ 	Horizontal tail ............. :    2620 kg
+ 	Vertical tail ............... :    1647 kg
+ 	Fuselage .................... :   28848 kg
+ 	Main landing gear ........... :    6859 kg
+ 	Nose landing gear ........... :    1008 kg
+ 	Nacelle ..................... :       0 kg
  	Paint ....................... :       0 kg
  Propulsion Weight Breakdown 
- Total propulsion weight......... :   19362 kg
- 	Engines ..................... :   17716 kg
- 	Nacelle ..................... :     686 kg
+ Total propulsion weight......... :   24439 kg
+ 	Engines ..................... :   23091 kg
  	Thrust reversers ............ :       0 kg
- 	Miscellaneous ............... :     261 kg
- 	Fuel system ................. :     700 kg
+ 	Miscellaneous ............... :     277 kg
+ 	Fuel system ................. :    1072 kg
  System Weight Breakdown 
- Total system weight............. :   16800 kg
- 	Control systems ............. :       0 kg
- 	Apu ......................... :     500 kg
- 	Electrical .................. :    4006 kg
- 	Avionics .................... :       0 kg
- 	Hydraulics .................. :    1606 kg
- 	Furnish ..................... :    8000 kg
- 	Air conditioner ............. :    1687 kg
- 	Instruments ................. :       0 kg
- 	Bleed air ................... :     750 kg
- 	Fire protection ............. :     250 kg
+ Total system weight............. :   21549 kg
+ 	Control systems ............. :    2574 kg
+ 	Apu ......................... :     635 kg
+ 	Electrical .................. :    1402 kg
+ 	Avionics .................... :    1943 kg
+ 	Hydraulics .................. :     506 kg
+ 	Furnish ..................... :    8773 kg
+ 	Air conditioner ............. :    5469 kg
+ 	Instruments ................. :     249 kg
 
  OPERATING EMPTY WEIGHT BREAKDOWN 
- .... OPERATING EMPTY WEIGHT .... :  123787 kg
+ .... OPERATING EMPTY WEIGHT .... :  129413 kg
  Operational Items Weight Breakdown 
- Total operational items weight.. :   15000 kg
- 	Operating items less crew ... :   14163 kg
- 	Flight crew ................. :     279 kg
- 	Flight attendants ........... :     558 kg
+ Total operational items weight.. :    1774 kg
+ 	Operating items less crew ... :    1270 kg
+ 	Flight crew ................. :     218 kg
+ 	Flight attendants ........... :     286 kg
 
- ZERO FUEL WEIGHT BREAKDOWN
- ...... ZERO FUEL WEIGHT ........ :  148287 kg
-
+ ZERO FUEL WEIGHT BREAKDOWN 
+ ...... ZERO FUEL WEIGHT ........ :  153913 kg
  Payload Weight Breakdown 
  Total payload weight............ :   24500 kg
  	Passengers .................. :    8000 kg
@@ -60,6 +56,4 @@ Output file with weight breakdown
  	Cargo ....................... :   14500 kg
 
 -------------------------------------------
-
- Monday, 20. November 2023 09:31:37 PM
-
+ Thursday, 23. November 2023 03:43:44 AM

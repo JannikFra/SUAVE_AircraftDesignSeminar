@@ -39,19 +39,20 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
 
     # mass properties
+    vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     vehicle.mass_properties.max_takeoff               = iteration_setup.weight_iter.TOW
     vehicle.mass_properties.takeoff                   = iteration_setup.weight_iter.TOW
     vehicle.mass_properties.operating_empty           = iteration_setup.weight_iter.BOW
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
-                                                        + iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = 125200. * Units.kilogram   # kg
+                                                        + vehicle.mass_properties.max_payload
+                                                        #+ iteration_setup.weight_iter.Design_Payload
+    vehicle.mass_properties.max_fuel                  = 135_000    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
-    vehicle.mass_properties.max_payload               = 50000.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
     vehicle.design_mach_number                        = 0.82
     vehicle.design_range                              = 10500 * Units['nautical_mile']
-    vehicle.design_cruise_alt                         = 31000.0 * Units.ft
+    vehicle.design_cruise_alt                         = iteration_setup.mission_iter.design_cruise_altitude
 
     # envelope properties
     vehicle.envelope.ultimate_load = 2.5 * 1.5
@@ -519,36 +520,40 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------ 
     nacelle                            = SUAVE.Components.Nacelles.Nacelle()
     nacelle.tag                        = 'nacelle_1'
-    nacelle.length                     = 2.71
-    nacelle.inlet_diameter             = 1.90
-    nacelle.diameter                   = 2.05
+
+    nacelle.length                     = 7.2
+    nacelle.inlet_diameter             = 3.6
+    nacelle.diameter                   = 3.8
     nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    nacelle.origin                     = [[13.72, -4.86,-1.9]]
+    nacelle.origin                     = [[20.1, 10.8,-1.9]]
     nacelle.flow_through               = True
     nacelle.Airfoil.NACA_4_series_flag = True
     nacelle.Airfoil.coordinate_file    = '2410'
     nacelle_2                          = deepcopy(nacelle)
     nacelle_2.tag                      = 'nacelle_2'
-    nacelle_2.origin                   = [[13.72, 4.86,-1.9]]
-
+    nacelle_2.origin                   = [[20.1, -10.8,-1.9]]
+    #
     vehicle.append_component(nacelle)
-    # vehicle.append_component(nacelle_2)
+    vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #   Propulsor
     # ------------------------------------------------------------------
 
-    propulsor = SUAVE.Components.Energy.Networks.Simple_Propulsor()
+    propulsor = SUAVE.Components.Energy.Networks.Turbofan_Raymer()
     propulsor.tag = 'turbofan'
 
     # setup
-    # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
-    propulsor.origin            = [[13.72, 4.86,-1.9],[13.72, -4.86,-1.9]]
-    propulsor.engine_length = 2.
+    # # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
+    propulsor.origin            = [[20.1, 10.8,-1.9],[20.1, -10.8,-1.9]]
+    propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
-    propulsor.max_thrust = 70_000 * Units.lbf * propulsor.number_of_engines
-    propulsor.sealevel_static_thrust = propulsor.max_thrust
-    propulsor.sfc = 0.55 * Units.lb / Units.h / Units.lbf
+    sea_level_static_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+
+    propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
+                            iteration_setup.mission_iter.design_cruise_mach,
+                            sea_level_static_thrust,
+                            iteration_setup.mission_iter.throttle_mid_cruise)
 
     vehicle.append_component(propulsor)
 
@@ -558,7 +563,7 @@ def vehicle_setup(iteration_setup):
     fuel                                  = SUAVE.Components.Physical_Component()
     vehicle.fuel                          = fuel
     fuel.mass_properties.mass             = vehicle.mass_properties.max_takeoff-vehicle.mass_properties.max_fuel
-    fuel.origin                           = vehicle.wings.main_wing.mass_properties.center_of_gravity
+    fuel.origin                           = vehicle.wings.main_wing.origin
     fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.aerodynamic_center
 
     # ------------------------------------------------------------------

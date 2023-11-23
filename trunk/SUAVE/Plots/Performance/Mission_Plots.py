@@ -819,7 +819,7 @@ def plot_flight_conditions(results, line_color = 'bo-', save_figure = False, sav
 
     for segment in results.segments.values():
         time     = segment.conditions.frames.inertial.time[:,0] / Units.min
-        airspeed = segment.conditions.freestream.velocity[:,0] /   Units['mph']
+        airspeed = segment.conditions.freestream.velocity[:,0] /   Units['kts']
         theta    = segment.conditions.frames.body.inertial_rotations[:,1,None] / Units.deg
         Range    = segment.conditions.frames.inertial.aircraft_range[:,0]/ Units.nmi
         altitude = segment.conditions.freestream.altitude[:,0]/Units.feet
@@ -831,7 +831,7 @@ def plot_flight_conditions(results, line_color = 'bo-', save_figure = False, sav
 
         axes = plt.subplot(2,2,2)
         axes.plot( time , airspeed , line_color )
-        axes.set_ylabel('Airspeed (mph)',axis_font)
+        axes.set_ylabel('Airspeed (kts)',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,3)

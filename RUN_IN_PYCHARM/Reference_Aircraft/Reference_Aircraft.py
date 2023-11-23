@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 import os
 import time
+from SUAVE.Methods.Performance  import payload_range
 from RUN_IN_PYCHARM.Reference_Aircraft.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Reference_Aircraft.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
@@ -231,7 +232,7 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = 0
+    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = False
@@ -240,7 +241,7 @@ def base_analysis(vehicle):
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 0.
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.796
+    aerodynamics.settings.oswald_efficiency_factor = 0.81
 
     analyses.append(aerodynamics)
 
@@ -307,10 +308,12 @@ if __name__ == '__main__':
 
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
-
+    iteration_setup.mission_iter.throttle_mid_cruise = 1.
+    iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
-    iteration_setup.mission_iter.reserve_hold_speed = 150 * Units['m/s']
+    iteration_setup.mission_iter.reserve_hold_speed = 250 * Units['kts']
     iteration_setup.mission_iter.reserve_trip_pct = 0.03
     iteration_setup.mission_iter.reserve_distance = 200. * Units.nautical_mile
     iteration_setup.mission_iter.reserve_cruise_distance = 100. * Units.nautical_miles
@@ -344,6 +347,12 @@ if __name__ == '__main__':
         n_reserve_descent_segments = len(reserve_descent_segments)
         first_reserve_descent_segment = reserve_descent_segments[0]
         last_reserve_descent_segment = reserve_descent_segments[-1]
+
+        climb_fuel = results.segments[first_climb_segment].conditions.weights.total_mass[0][0] - \
+                     results.segments[last_climb_segment].conditions.weights.total_mass[-1][0]
+
+        descent_fuel = results.segments[first_descent_segment].conditions.weights.total_mass[0][0] - \
+                     results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
 
         block_fuel = results.segments[first_climb_segment].conditions.weights.total_mass[0][0] - \
                      results.segments[last_descent_segment].conditions.weights.total_mass[-1][0]
@@ -394,6 +403,8 @@ if __name__ == '__main__':
         landing_weight = results.segments['hold'].conditions.weights.total_mass[-1][0] - reserve_fuel_pct
 
         iteration_setup.weight_iter.FUEL = block_fuel + reserve_fuel
+        iteration_setup.mission_iter.throttle_mid_cruise = np.mean(results.segments['cruise_2'].conditions.propulsion.throttle[:][0])
+
         error = abs(block_distance - iteration_setup.mission_iter.mission_distance) / Units['nautical_mile']
         error_reserve = abs(iteration_setup.mission_iter.reserve_distance - (reserve_climb_distance + reserve_cruise_distance + reserve_descent_distance)) / Units['nautical_mile']
 
@@ -422,4 +433,13 @@ if __name__ == '__main__':
         print('------------------------------')
         # results_show(results)
 
+    print('Climb fuel : %.1f kg' % climb_fuel)
+    print('Cruise fuel : %.1f kg' % cruise_fuel)
+    print('Descent fuel : %.1f kg' % descent_fuel)
+    print('Reserve fuel : %.1f kg' % reserve_fuel)
     results_show(results)
+
+    payload_range_run = True
+    if payload_range_run == True:
+        payload_range = payload_range(configs.cruise, results, "cruise_2", reserves=reserve_fuel)
+
