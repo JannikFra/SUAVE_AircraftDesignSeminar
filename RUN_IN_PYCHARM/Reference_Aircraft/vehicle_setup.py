@@ -548,7 +548,7 @@ def vehicle_setup(iteration_setup):
     propulsor.origin            = [[20.1, 10.8,-1.9],[20.1, -10.8,-1.9]]
     propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
-    sea_level_static_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+    sea_level_static_thrust = 70_000 * Units.lbf * propulsor.number_of_engines
 
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,

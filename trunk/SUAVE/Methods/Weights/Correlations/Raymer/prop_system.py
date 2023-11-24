@@ -101,13 +101,14 @@ def nacelle_Raymer(vehicle, WENG):
     Nw              = ref_nacelle.diameter / Units.ft
     Kp              = 1.            # assuming no prop engine
     Ktr             = 1.            # assuming no thrust reverser, otherwise 1.18
-    Wec             = 2.331 * WENG ** 0.901 * Kp * Ktr
+    Wec             = 2.331 * (WENG/ Units.lbs) ** 0.901 * Kp * Ktr
     Sn              = 2 * np.pi * Nw/2 * Nlt + np.pi * Nw**2/2
 
     CALIBRATION_NAC = 1.
     WNAC = CALIBRATION_NAC * 0.6724 * Kng * Nlt ** 0.1 * Nw ** 0.294 * vehicle.envelope.ultimate_load ** 0.119 \
            * Wec ** 0.611 * NENG ** 0.984 * Sn ** 0.224
 
+    print('WNAC = ', WNAC * Units.lbs)
     return WNAC * Units.lbs
 
 ## @ingroup Methods-Weights-Correlations-Raymer

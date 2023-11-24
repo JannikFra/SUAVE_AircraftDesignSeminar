@@ -5,7 +5,7 @@ def mission_setup(analyses, iteration_setup):
     atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
     rho0 = 1.225
 
-    cruise_1_alt=iteration_setup.mission_iter.design_cruise_altitude
+    cruise_1_alt = iteration_setup.mission_iter.design_cruise_altitude
     cruise_1_tas = atmosphere.compute_values(cruise_1_alt).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
 
     rho_cr1 = atmosphere.compute_values(cruise_1_alt).density

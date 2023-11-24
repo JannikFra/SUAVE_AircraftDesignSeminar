@@ -230,12 +230,12 @@ def engine_FLOPS(vehicle, prop):
         Properties Used:
             N/A
     """
-    EEXP = 1.15     # engine weight scaling parameter
+    EEXP = 0.8     # engine weight scaling parameter
     EINL = 1        # inlet weight scaling parameter
     ENOZ = 1        # nozzle weight scaling parameter
     THRSO = 70_000 * Units.lbf  # baseline thrust
-    THRUST = prop.sealevel_static_thrust
-    WENGB = 8946   # baseline weight
+    THRUST = prop.sealevel_static_thrust / prop.number_of_engines
+    WENGB = 8145 / Units.lbs   # baseline weight
     WINLB = 0 / Units.lbs
     WNOZB = 0 / Units.lbs
     WENGP = WENGB * (THRUST / THRSO) ** EEXP

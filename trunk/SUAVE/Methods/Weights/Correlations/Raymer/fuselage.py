@@ -50,10 +50,10 @@ def fuselage_weight_Raymer(vehicle, fuse, settings):
     Sf      = np.pi * (L / D - 1.7) * D ** 2  # Fuselage wetted area, ft**2
     # Sf = fuselage.areas.wetted
     wing    = vehicle.wings['main_wing']
-    Kws     = 0.75 * (1 + 2 * wing.taper) / (1 + wing.taper) * (wing.spans.projected / Units.ft *
+    Kws     = 0.75 * ((1 + 2 * wing.taper) / (1 + wing.taper)) * (wing.spans.projected / Units.ft *
                                                             np.tan(wing.sweeps.quarter_chord)) / L
 
-    CALIBRATION = 1.253
+    CALIBRATION = 1.279
 
     weight_fuse = CALIBRATION * 0.328 * Kdoor * Klg * (DG * vehicle.envelope.ultimate_load) ** 0.5 * L ** 0.25 * \
                   Sf ** 0.302 * (1 + Kws) ** 0.04 * (L / D) ** 0.1

@@ -53,15 +53,14 @@ def wing_main_raymer(vehicle, wing):
     A       = wing.aspect_ratio
     tc_root = t_c_w
     taper   = taper
-    sweep   = sweep
-    Scsw    = Sw * .1
+    Scsw    = Sw * 0.1
 
     CALIBRATION = 1.023
 
-    if vehicle.systems.accessories == 'sst':
-        sweep = 0
-    Wwing = CALIBRATION * 0.0051 * (Wdg * Nz) ** .557 * Sw ** .649 * A ** .5 * tc_root ** -.4 * (1 + taper) ** .1 * np.cos(
-        sweep) ** -1. * Scsw ** .1
+    # if vehicle.systems.accessories == 'sst':
+    #     sweep = 0
+    Wwing = CALIBRATION * 0.0051 * (Wdg * Nz) ** 0.557 * Sw ** 0.649 * A ** 0.5 * tc_root ** -0.4 * (1 + taper) ** 0.1 * \
+            np.cos(sweep) ** -1. * Scsw ** 0.1
     weight = Wwing * Units.lb
 
     return weight

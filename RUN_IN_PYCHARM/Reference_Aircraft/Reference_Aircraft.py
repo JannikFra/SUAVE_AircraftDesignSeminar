@@ -147,11 +147,11 @@ def base_analysis(vehicle):
     weights.settings.weight_reduction_factors.main_wing = 0
     weights.settings.weight_reduction_factors.empennage = 0
     weights.settings.weight_reduction_factors.fuselage = 0
-    weights.settings.weight_reduction_factors.structural = 0.03
+    weights.settings.weight_reduction_factors.structural = 0.012
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0
-    weights.settings.weight_reduction_factors.propulsion = 0.03
+    weights.settings.weight_reduction_factors.propulsion = 0
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -300,7 +300,7 @@ if __name__ == '__main__':
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
-    iteration_setup.mission_iter.design_cruise_altitude = 33_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = 35_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
