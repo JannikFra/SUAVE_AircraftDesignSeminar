@@ -170,6 +170,8 @@ class Fidelity_Zero(Stability):
 
         if 'vertical_stabilizer' in geometry.wings:
             stability.static.Cn_beta  = taw_cnbeta(geometry,conditions,configuration)
+        elif abs(geometry.wings.horizontal_stabilizer.dihedral) > 0.1:
+            stability.static.Cn_beta = taw_cnbeta(geometry, conditions, configuration)
         else:
             stability.static.Cn_beta = np.zeros_like(mach)
 

@@ -34,6 +34,7 @@ def main():
     iteration_setup.mission_iter = Data()
     iteration_setup.weight_iter.TOW = 279_000
     iteration_setup.weight_iter.BOW = 130_000
+    iteration_setup.weight_iter.FUEL = 115_000
     iteration_setup.weight_iter.Design_Payload = 24_500
     iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
@@ -47,6 +48,9 @@ def main():
     #     wing.areas.wetted   = 2.0 * wing.areas.reference
     #     wing.areas.exposed  = 0.8 * wing.areas.wetted
     #     wing.areas.affected = 0.6 * wing.areas.wetted
+
+    t_c = vehicle.wings.main_wing.thickness_to_chord
+    print(t_c)
         
 
     # initalize the aero model
@@ -58,11 +62,12 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
+    aerodynamics.settings.maximum_lift_coefficient = 0.85
     aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = False
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.compressibility_drag_correction_factor = 0.
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 

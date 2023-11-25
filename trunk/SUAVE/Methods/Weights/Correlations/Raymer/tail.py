@@ -98,7 +98,8 @@ def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.25):
     """
     Kuht    = 1 # not a all-moving unit horizontal tail
     Fw      = vehicle.fuselages['fuselage'].width / Units.ft
-    Bh      = wing.spans.projected / Units.ft
+    #Bh      = wing.spans.projected / Units.ft
+    Bh      = wing.spans.total / Units.ft # Make it suitable for V-Tail
     DG      = vehicle.mass_properties.max_takeoff / Units.lbs
     Sht     = wing.areas.reference / Units.ft ** 2
     Lt      = (wing.origin[0][0] + wing.aerodynamic_center[0] - vehicle.wings['main_wing'].origin[0][0] -

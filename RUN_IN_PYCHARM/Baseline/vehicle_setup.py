@@ -3,7 +3,7 @@
 # Created:  Nov 2023, J. Frank
 # Modified:
 
-""" Setup File for the Aircraft Design Seminar 2023/24 Reference Aircraft
+""" Setup File for the Aircraft Design Seminar 2023/24 Baseline Aircraft
 """
 
 
@@ -15,7 +15,7 @@ import numpy as np
 import SUAVE
 from SUAVE.Core import Units
 from SUAVE.Methods.Propulsion.turbofan_sizing import turbofan_sizing
-from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_segmented_planform, create_tapered_wing, horizontal_tail_planform_raymer, vertical_tail_planform_raymer, fuselage_planform
+from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_planform, wing_segmented_planform, create_tapered_wing, wing_planform_v_tail, fuselage_planform
 
 from copy import deepcopy 
 
@@ -30,7 +30,7 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
 
     vehicle = SUAVE.Vehicle()
-    vehicle.tag = 'Reference_Aircraft'
+    vehicle.tag = 'Baseline_Aircraft'
     vehicle.systems.control = "fully powered"
     vehicle.systems.accessories = "longe range"
 
@@ -46,7 +46,7 @@ def vehicle_setup(iteration_setup):
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
                                                         + vehicle.mass_properties.max_payload
                                                         #+ iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = iteration_setup.weight_iter.FUEL    # kg
+    vehicle.mass_properties.max_fuel                  = iteration_setup.weight_iter.FUEL   # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
@@ -59,8 +59,8 @@ def vehicle_setup(iteration_setup):
     vehicle.envelope.limit_load    = 2.5
 
     # basic parameters
-    vehicle.reference_area         = 490.6
-    vehicle.passengers             = 100.
+    vehicle.reference_area         = vehicle.mass_properties.max_takeoff / iteration_setup.sizing_iter.wing_loading
+    vehicle.passengers             = 100
   
     # ------------------------------------------------------------------
     #   Main Wing
@@ -69,18 +69,7 @@ def vehicle_setup(iteration_setup):
     wing = SUAVE.Components.Wings.Main_Wing()
     wing.tag = 'main_wing'
 
-    wing.aspect_ratio            = 9.988
-    wing.sweeps.quarter_chord    = 29.7 * Units.deg
-    wing.thickness_to_chord      = 0.105
-    wing.taper                   = 0.2893
-
-    wing.spans.projected         = 70. * Units.meter
-
-    wing.chords.root             = 12.459 * Units.meter
-    wing.chords.tip              = 2.850 * Units.meter
-    wing.chords.mean_aerodynamic = 8.439 * Units.meter
-
-    wing.areas.reference         = 490.6
+    wing.areas.reference         = vehicle.reference_area
     wing.areas.exposed           = wing.areas.reference - wing.chords.root * 2.777 * 2
     wing.areas.wetted            = wing.areas.exposed * 2
     
@@ -98,7 +87,6 @@ def vehicle_setup(iteration_setup):
     wing.high_lift               = True
 
     wing.flap_ratio = 0.3
-
     wing.dynamic_pressure_ratio  = 1.0
 
 
@@ -168,7 +156,8 @@ def vehicle_setup(iteration_setup):
     wing.append_segment(segment)
     
     # Fill out more segment properties automatically
-    wing = wing_segmented_planform(wing)    
+    create_tapered_wing(wing, iteration_setup.sizing_iter.aspect_ratio, vehicle.reference_area)
+    wing_segmented_planform(wing, True)
 
     # control surfaces -------------------------------------------
     slat                          = SUAVE.Components.Wings.Control_Surfaces.Slat()
@@ -195,13 +184,15 @@ def vehicle_setup(iteration_setup):
     aileron.deflection            = 0.0 * Units.degrees
     aileron.chord_fraction        = 0.30
     wing.append_control_surface(aileron)
+    
+
 
     # add to vehicle
     vehicle.append_component(wing)
 
 
     # ------------------------------------------------------------------
-    #  Horizontal Stabilizer
+    #  V-Tail
     # ------------------------------------------------------------------
 
     wing = SUAVE.Components.Wings.Horizontal_Tail()
@@ -212,20 +203,8 @@ def vehicle_setup(iteration_setup):
     wing.thickness_to_chord      = 0.088
     wing.taper                   = 0.378
 
-    wing.spans.projected         = 19.404
-
-    wing.chords.root             = 4.567
-    wing.chords.tip              = 2.204
-    wing.chords.mean_aerodynamic = 3.932
-
-    wing.areas.reference         = 71.4
-    wing.areas.exposed           = wing.areas.reference - wing.chords.root * 1.8    # Exposed area of the horizontal tail
-    wing.areas.wetted            = 2 * wing.areas.exposed     # Wetted area of the horizontal tail
-    wing.twists.root             = 3.0 * Units.degrees
-    wing.twists.tip              = 3.0 * Units.degrees
-
     wing.origin                  = [[55.337, 0, 2.082]]
-    #wing.aerodynamic_center      = [0,0,0]
+    wing.aerodynamic_center      = [1,0,0]
 
     wing.transition_x_upper = 0.14
     wing.transition_x_lower = 0.14
@@ -235,30 +214,36 @@ def vehicle_setup(iteration_setup):
 
     wing.dynamic_pressure_ratio  = 0.9
 
+    # Tailplane sizing
+    deltaaerocenterhtp = 2
+    c_ht = 0.483 #0.483
+    c_vt = 0.035#0.035
+    while abs(deltaaerocenterhtp) > 1e-10:
+        oldaerocenter = wing.aerodynamic_center[0]
 
-    # Wing Segments
-    segment                        = SUAVE.Components.Wings.Segment()
-    segment.tag                    = 'root_segment'
-    segment.percent_span_location  = 0.0
-    segment.twist                  = 0. * Units.deg
-    segment.root_chord_percent     = 1.0
-    segment.dihedral_outboard      = 6.3 * Units.degrees
-    segment.sweeps.quarter_chord   = 30.  * Units.degrees
-    segment.thickness_to_chord     = 0.088
-    wing.append_segment(segment)
+        l_ht = wing.origin[0][0] + wing.aerodynamic_center[0] - (vehicle.wings.main_wing.origin[0][0] +
+                                                                 vehicle.wings.main_wing.aerodynamic_center[0])
 
-    segment                        = SUAVE.Components.Wings.Segment()
-    segment.tag                    = 'tip_segment'
-    segment.percent_span_location  = 1.
-    segment.twist                  = 0. * Units.deg
-    segment.root_chord_percent     = 2.204 / 4.567
-    segment.dihedral_outboard      = 0 * Units.degrees
-    segment.sweeps.quarter_chord   = 0 * Units.degrees  
-    segment.thickness_to_chord     = 0.088
-    wing.append_segment(segment)
-    
+        req_area_proj_x_y = vehicle.wings.main_wing.chords.mean_aerodynamic \
+                            * vehicle.wings.main_wing.areas.reference \
+                            * c_ht \
+                            / l_ht
+        req_area_proj_x_z = vehicle.wings.main_wing.spans.projected \
+                            * vehicle.wings.main_wing.areas.reference \
+                            * c_vt \
+                            / l_ht
+
+        #wing.areas.reference = (req_area_proj_x_y**2 + req_area_proj_x_z**2)**0.5
+        wing.areas.reference = req_area_proj_x_y + req_area_proj_x_z
+        wing.dihedral = np.arctan((req_area_proj_x_z / req_area_proj_x_y)**0.5)
+
+        wing = wing_planform_v_tail(wing)
+
+        newaerocenter = wing.aerodynamic_center[0]
+        deltaaerocenterhtp = oldaerocenter - newaerocenter
+
     # Fill out more segment properties automatically
-    wing = wing_segmented_planform(wing)        
+    # wing = wing_segmented_planform(wing)
 
     # control surfaces -------------------------------------------
     elevator                       = SUAVE.Components.Wings.Control_Surfaces.Elevator()
@@ -271,75 +256,6 @@ def vehicle_setup(iteration_setup):
 
     # add to vehicle
     vehicle.append_component(wing)
-
-
-    # ------------------------------------------------------------------
-    #   Vertical Stabilizer
-    # ------------------------------------------------------------------
-
-    wing = SUAVE.Components.Wings.Vertical_Tail()
-    wing.tag = 'vertical_stabilizer'
-
-    wing.aspect_ratio            = 1.524
-    wing.sweeps.quarter_chord    = 40.  * Units.deg
-    wing.thickness_to_chord      = 0.11
-    wing.taper                   = 0.397
-
-    wing.spans.projected         = 8.28
-    wing.total_length            = wing.spans.projected 
-    
-    wing.chords.root             = 7.936
-    wing.chords.tip              = wing.taper * wing.chords.root
-    wing.chords.mean_aerodynamic = 5.788
-
-    wing.areas.reference         = 45.2
-    wing.areas.exposed           = wing.areas.reference
-    wing.areas.wetted            = 2 * wing.areas.exposed
-    
-    wing.twists.root             = 0.0 * Units.degrees
-    wing.twists.tip              = 0.0 * Units.degrees
-
-    wing.origin                  = [[52.2, 0, 3.59]]
-    #wing.aerodynamic_center      = [0,0,0]
-
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
-
-    wing.vertical                = True
-    wing.symmetric               = False
-    wing.t_tail                  = False
-
-    wing.dynamic_pressure_ratio  = 1.0
-
-
-    # Wing Segments
-    segment                               = SUAVE.Components.Wings.Segment()
-    segment.tag                           = 'root'
-    segment.percent_span_location         = 0.0
-    segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = 1.
-    segment.dihedral_outboard             = 0 * Units.degrees
-    segment.sweeps.quarter_chord          = 40. * Units.degrees
-    segment.thickness_to_chord            = 0.11
-    wing.append_segment(segment)
-
-    segment                               = SUAVE.Components.Wings.Segment()
-    segment.tag                           = 'tip'
-    segment.percent_span_location         = 1.
-    segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = wing.taper
-    segment.dihedral_outboard             = 0. * Units.degrees
-    segment.sweeps.quarter_chord          = 40. * Units.degrees
-    segment.thickness_to_chord            = 0.11
-    wing.append_segment(segment)
-
-    # Fill out more segment properties automatically
-    wing = wing_segmented_planform(wing)        
-
-    # add to vehicle
-    vehicle.append_component(wing)
-
-
     # ------------------------------------------------------------------
     #  Fuselage
     # ------------------------------------------------------------------
@@ -512,27 +428,6 @@ def vehicle_setup(iteration_setup):
 
     # add to vehicle
     vehicle.append_component(fuselage)
-    
-    # ------------------------------------------------------------------
-    #   Nacelles
-    # ------------------------------------------------------------------ 
-    nacelle                            = SUAVE.Components.Nacelles.Nacelle()
-    nacelle.tag                        = 'nacelle_1'
-
-    nacelle.length                     = 7.2
-    nacelle.inlet_diameter             = 3.6
-    nacelle.diameter                   = 3.8
-    nacelle.areas.wetted               = 1.1*np.pi*nacelle.diameter*nacelle.length
-    nacelle.origin                     = [[20.1, 10.8,-1.9]]
-    nacelle.flow_through               = True
-    nacelle.Airfoil.NACA_4_series_flag = True
-    nacelle.Airfoil.coordinate_file    = '2410'
-    nacelle_2                          = deepcopy(nacelle)
-    nacelle_2.tag                      = 'nacelle_2'
-    nacelle_2.origin                   = [[20.1, -10.8,-1.9]]
-    #
-    vehicle.append_component(nacelle)
-    vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #   Propulsor
@@ -546,7 +441,7 @@ def vehicle_setup(iteration_setup):
     propulsor.origin            = [[20.1, 10.8,-1.9],[20.1, -10.8,-1.9]]
     propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
-    sea_level_static_thrust = 70_000 * Units.lbf * propulsor.number_of_engines
+    sea_level_static_thrust = iteration_setup.sizing_iter.thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
 
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
@@ -554,6 +449,27 @@ def vehicle_setup(iteration_setup):
                             iteration_setup.mission_iter.throttle_mid_cruise)
 
     vehicle.append_component(propulsor)
+
+    # ------------------------------------------------------------------
+    #   Nacelles
+    # ------------------------------------------------------------------
+    nacelle = SUAVE.Components.Nacelles.Nacelle()
+    nacelle.tag = 'nacelle_1'
+
+    nacelle.length = 7.2 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.inlet_diameter = 3.6 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.diameter = 3.8 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.areas.wetted = 1.1 * np.pi * nacelle.diameter * nacelle.length
+    nacelle.origin = [[20.1, 10.8, -1.9]]
+    nacelle.flow_through = True
+    nacelle.Airfoil.NACA_4_series_flag = True
+    nacelle.Airfoil.coordinate_file = '2410'
+    nacelle_2 = deepcopy(nacelle)
+    nacelle_2.tag = 'nacelle_2'
+    nacelle_2.origin = [[20.1, -10.8, -1.9]]
+    #
+    vehicle.append_component(nacelle)
+    vehicle.append_component(nacelle_2)
 
     # ------------------------------------------------------------------
     #  Fuel
