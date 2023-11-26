@@ -59,15 +59,17 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
-    aerodynamics.settings.maximum_lift_coefficient = 0.85
     aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = False
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 0.
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.mach_star = 0.891#0.921
+    aerodynamics.settings.compressiblity_constant_n = 12#2.5
+    aerodynamics.settings.compressiblity_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 

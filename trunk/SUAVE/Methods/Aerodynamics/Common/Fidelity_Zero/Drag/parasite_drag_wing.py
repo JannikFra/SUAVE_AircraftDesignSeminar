@@ -166,12 +166,12 @@ def parasite_drag_wing(state,settings,geometry):
         # compute parasite drag coef., form factor, skin friction coef., compressibility factor and reynolds number for wing
         wing_parasite_drag , k_w, cf_w_u, cf_w_l, k_comp_u, k_comp_l, k_reyn_u, k_reyn_l = compute_parasite_drag(re,mac_w,Mc,Tc,xtu,xtl,sweep_w,t_c_w,Sref,Swet,C)
 
-    cl_w = state.conditions.aerodynamics.lift_breakdown.compressible_wings[wing.tag]
-    cl_max = settings.maximum_lift_coefficient
-
-    for i in range(len(cl_w)):
-        if cl_w[i] > (cl_max - 0.5):
-            wing_parasite_drag[i] += (cl_w[i] - (cl_max - 0.5))**2.6# + (cl_w[i] - (cl_max - 0.5))**1. * 0.06
+    # cl_w = state.conditions.aerodynamics.lift_breakdown.compressible_wings[wing.tag]
+    # cl_max = settings.maximum_lift_coefficient
+    #
+    # for i in range(len(cl_w)):
+    #     if cl_w[i] > (cl_max - 0.5):
+    #         wing_parasite_drag[i] += (cl_w[i] - (cl_max - 0.5))**2.6# + (cl_w[i] - (cl_max - 0.5))**1. * 0.06
 
         # dump data to conditions
     wing_result = Data(
