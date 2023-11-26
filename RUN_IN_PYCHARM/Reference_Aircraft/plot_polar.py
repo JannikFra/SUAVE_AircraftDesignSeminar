@@ -67,9 +67,9 @@ def main():
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.891#0.921
-    aerodynamics.settings.compressiblity_constant_n = 12#2.5
-    aerodynamics.settings.compressiblity_constant_dM = 0.05
+    aerodynamics.settings.mach_star = 0.899#0.921
+    aerodynamics.settings.compressibility_constant_n = 20#2.5
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 
@@ -79,10 +79,10 @@ def main():
     
     
     #no of test points
-    test_num = 200
+    test_num = 50
     
     #specify the angle of attack
-    angle_of_attacks = np.linspace(-10.,20.,test_num)[:,None] * Units.deg
+    angle_of_attacks = np.linspace(-5.,10.,test_num)[:,None] * Units.deg
     
     
     # Cruise conditions (except Mach number)

@@ -79,8 +79,8 @@ class Fidelity_Zero(Markup):
         settings.model_nacelle                      = False
         settings.compressibility_drag_correction_factor = 1.0
         settings.mach_star = 0.921
-        settings.compressiblity_constant_n = 2.5
-        settings.compressiblity_constant_dM = 0.05
+        settings.compressibility_constant_n = 2.5
+        settings.compressibility_constant_dM = 0.05
 
         # build the evaluation process
         compute = self.process.compute

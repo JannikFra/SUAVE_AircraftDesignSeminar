@@ -58,8 +58,8 @@ def compressibility_drag_wing_torenbeek(state,settings,geometry):
     drag_breakdown = conditions.aerodynamics.drag_breakdown
 
     mach_star = settings.mach_star
-    n = settings.compressiblity_constant_n
-    dM = settings.compressiblity_constant_dM
+    n = settings.compressibility_constant_n
+    dM = settings.compressibility_constant_dM
 
     # unpack wing
     t_c_w   = wing.thickness_to_chord

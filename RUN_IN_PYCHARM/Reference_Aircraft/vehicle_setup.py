@@ -71,7 +71,7 @@ def vehicle_setup(iteration_setup):
 
     wing.aspect_ratio            = 9.988
     wing.sweeps.quarter_chord    = 29.7 * Units.deg
-    wing.thickness_to_chord      = 0.105
+    wing.thickness_to_chord      = 0.112
     wing.taper                   = 0.2893
 
     wing.spans.projected         = 70. * Units.meter
