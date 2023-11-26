@@ -230,7 +230,10 @@ def base_analysis(vehicle):
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 0.
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.mach_star = 0.891  # 0.921
+    aerodynamics.settings.compressiblity_constant_n = 12  # 2.5
+    aerodynamics.settings.compressiblity_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 

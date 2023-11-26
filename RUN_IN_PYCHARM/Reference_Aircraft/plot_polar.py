@@ -34,6 +34,7 @@ def main():
     iteration_setup.mission_iter = Data()
     iteration_setup.weight_iter.TOW = 279_000
     iteration_setup.weight_iter.BOW = 130_000
+    iteration_setup.weight_iter.FUEL = 115_000
     iteration_setup.weight_iter.Design_Payload = 24_500
     iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
@@ -47,6 +48,9 @@ def main():
     #     wing.areas.wetted   = 2.0 * wing.areas.reference
     #     wing.areas.exposed  = 0.8 * wing.areas.wetted
     #     wing.areas.affected = 0.6 * wing.areas.wetted
+
+    t_c = vehicle.wings.main_wing.thickness_to_chord
+    print(t_c)
         
 
     # initalize the aero model
@@ -55,7 +59,7 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -63,6 +67,9 @@ def main():
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.mach_star = 0.899#0.921
+    aerodynamics.settings.compressibility_constant_n = 20#2.5
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 
@@ -72,10 +79,10 @@ def main():
     
     
     #no of test points
-    test_num = 200
+    test_num = 50
     
     #specify the angle of attack
-    angle_of_attacks = np.linspace(-10.,20.,test_num)[:,None] * Units.deg
+    angle_of_attacks = np.linspace(-5.,10.,test_num)[:,None] * Units.deg
     
     
     # Cruise conditions (except Mach number)

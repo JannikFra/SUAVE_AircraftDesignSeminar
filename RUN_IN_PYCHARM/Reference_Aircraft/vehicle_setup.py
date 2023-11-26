@@ -15,7 +15,7 @@ import numpy as np
 import SUAVE
 from SUAVE.Core import Units
 from SUAVE.Methods.Propulsion.turbofan_sizing import turbofan_sizing
-from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_segmented_planform
+from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_segmented_planform, create_tapered_wing, horizontal_tail_planform_raymer, vertical_tail_planform_raymer, fuselage_planform
 
 from copy import deepcopy 
 
@@ -46,11 +46,11 @@ def vehicle_setup(iteration_setup):
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
                                                         + vehicle.mass_properties.max_payload
                                                         #+ iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = 135_000    # kg
+    vehicle.mass_properties.max_fuel                  = iteration_setup.weight_iter.FUEL    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
-    vehicle.design_mach_number                        = 0.82
+    vehicle.design_mach_number                        = iteration_setup.mission_iter.design_cruise_mach
     vehicle.design_range                              = 10500 * Units['nautical_mile']
     vehicle.design_cruise_alt                         = iteration_setup.mission_iter.design_cruise_altitude
 
@@ -71,7 +71,7 @@ def vehicle_setup(iteration_setup):
 
     wing.aspect_ratio            = 9.988
     wing.sweeps.quarter_chord    = 29.7 * Units.deg
-    wing.thickness_to_chord      = 0.1525
+    wing.thickness_to_chord      = 0.112
     wing.taper                   = 0.2893
 
     wing.spans.projected         = 70. * Units.meter
@@ -195,8 +195,6 @@ def vehicle_setup(iteration_setup):
     aileron.deflection            = 0.0 * Units.degrees
     aileron.chord_fraction        = 0.30
     wing.append_control_surface(aileron)
-    
-
 
     # add to vehicle
     vehicle.append_component(wing)
