@@ -48,7 +48,7 @@ def tail_vertical_Raymer(vehicle, wing):
     Svt         = wing.areas.reference / Units.ft ** 2
     sweep       = wing.sweeps.quarter_chord
     Av          = wing.aspect_ratio
-    t_c         = wing.thickness_to_chord
+    t_c         = wing.Segments.root.thickness_to_chord
     Nult        = vehicle.envelope.ultimate_load
 
     H = 0

@@ -45,7 +45,7 @@ def wing_main_raymer(vehicle, wing):
     taper   = wing.taper
     sweep   = wing.sweeps.quarter_chord
     area    = wing.areas.reference
-    t_c_w   = wing.thickness_to_chord
+    t_c_w   = wing.Segments.root.thickness_to_chord
 
     Wdg     = vehicle.mass_properties.max_takeoff / Units.lb
     Nz      = vehicle.envelope.ultimate_load
