@@ -3,7 +3,7 @@ clear
 clc
 
 %% User Inputs
-MTOM = 260000;  % in kg, ref = 279000
+MTOM = 230000;  % in kg, ref = 279000
 g = 9.81;
 
 % Operational
@@ -26,11 +26,11 @@ approachSpeed = 0.51444 * approachSpeed_kts;
 massRatioLanding = 0.70;    % MLM divided by MTOM, ref = 0.70
 
 % Aerodynamics
-AR = 20;     % wing aspect ratio, ref = 9.988
-oswald = 0.77;       % oswald factor, ref = 0.77 for low cL
+AR = 14;     % wing aspect ratio, ref = 9.988
+oswald = 0.81;       % oswald factor, ref = 0.77 for low cL
 LD_OEI = 14;         % L/D in climb configuration
-LD_cruise = 23;      % L/D in cruise configuration
-cL_max = 2.8;  % ref = 2.15
+LD_cruise = 26;      % L/D in cruise configuration
+cL_max = 2.9;  % ref = 2.15
 cL_max_TO = 0.8 * cL_max;
 cD0 = 0.0108;   % ref = 0.0108
 k = 1/(pi * AR * oswald);   % induced drag constant

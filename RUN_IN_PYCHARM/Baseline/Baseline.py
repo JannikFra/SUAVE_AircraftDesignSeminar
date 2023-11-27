@@ -223,14 +223,17 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = False
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 0.
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.0
+    aerodynamics.settings.mach_star = 0.891  # 0.921
+    aerodynamics.settings.compressiblity_constant_n = 12  # 2.5
+    aerodynamics.settings.compressiblity_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
 
@@ -290,7 +293,7 @@ def Baseline(parameters):
     iteration_setup = Data()
 
     iteration_setup.weight_iter = Data()
-    iteration_setup.weight_iter.MTOW = 279_000 * Units.kg
+    iteration_setup.weight_iter.MTOW = 240_000 * Units.kg
     iteration_setup.weight_iter.BOW = 130_000 * Units.kg
     iteration_setup.weight_iter.Design_Payload = 24_500 * Units.kg
     iteration_setup.weight_iter.FUEL = iteration_setup.weight_iter.MTOW - iteration_setup.weight_iter.BOW  \
@@ -300,7 +303,7 @@ def Baseline(parameters):
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
-    iteration_setup.mission_iter.design_cruise_altitude = 33_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = parameters.design_cruise_altitude
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
@@ -313,6 +316,7 @@ def Baseline(parameters):
     iteration_setup.sizing_iter.wing_loading = parameters.wing_loading
     iteration_setup.sizing_iter.thrust_loading = parameters.thrust_loading
     iteration_setup.sizing_iter.aspect_ratio = parameters.aspect_ratio
+    iteration_setup.sizing_iter.thickness_to_chord = parameters.thickness_to_chord
 
     landing_weight = 0.0
     block_distance = 0.0
@@ -455,20 +459,21 @@ def Baseline(parameters):
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 568.7
-    parameters.thrust_loading = 0.2275
-    parameters.aspect_ratio = 12
-
+    parameters.wing_loading = 750.
+    parameters.thrust_loading = 0.25
+    parameters.aspect_ratio = 18.
+    parameters.thickness_to_chord = 0.1
+    parameters.design_cruise_altitude = 33000. * Units.ft
     Baseline(parameters)
 
-    # aspect_ratios = np.linspace(7., 15., 10)
-    # fuel_burn = np.zeros_like(aspect_ratios)
-    # for i, AR in enumerate(aspect_ratios):
-    #     parameters.aspect_ratio = AR
+    #design_cruise_altitudes = np.linspace(31000., 33000., 2) * Units.ft
+    #fuel_burn = np.zeros_like(design_cruise_altitudes)
+    # for i, ALT in enumerate(design_cruise_altitudes):
+    #     parameters.design_cruise_altitude = ALT
     #     fuel_burn[i] = Baseline(parameters)
     #
     # import matplotlib.pyplot as plt
-    # plt.plot(aspect_ratios, fuel_burn)
+    # plt.plot(design_cruise_altitudes, fuel_burn)
     # plt.show()
 
 

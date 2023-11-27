@@ -208,7 +208,7 @@ class Turbofan_Raymer(Network):
         tsfc = tsfc.T / 3600 * self.tsfc_factor
         return tsfc
 
-    def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust, throttle_mid_cruise):
+    def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust, throttle_mid_cruise, bucket_sfc=0.533981):
         self.tsfc_factor = 1.
         self.max_thrust_factor = 1.
         sea_level_static_thrust_per_engine = sea_level_static_thrust / self.number_of_engines
@@ -217,9 +217,9 @@ class Turbofan_Raymer(Network):
 
         design_cruise_altitude = design_cruise_altitude / Units.ft
         if design_cruise_altitude < 36000.:
-            ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * 0.533981
+            ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * bucket_sfc
         else:
-            ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * 0.533981
+            ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * bucket_sfc
         ref_sfc = ref_sfc + 0.006 * (design_cruise_mach-0.82)/0.01
 
         ref_sfc = ref_sfc / 3600.

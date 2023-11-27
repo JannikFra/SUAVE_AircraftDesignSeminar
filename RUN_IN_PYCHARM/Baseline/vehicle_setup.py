@@ -89,6 +89,10 @@ def vehicle_setup(iteration_setup):
     wing.flap_ratio = 0.3
     wing.dynamic_pressure_ratio  = 1.0
 
+    wing.aspect_ratio = iteration_setup.sizing_iter.aspect_ratio
+    wing.sweeps.quarter_chord = 29.7 * Units.deg
+    wing.thickness_to_chord = iteration_setup.sizing_iter.thickness_to_chord
+    wing.taper = 0.2893
 
     # Wing Segments
     root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
@@ -98,7 +102,7 @@ def vehicle_setup(iteration_setup):
     segment.percent_span_location         = 0.0
     segment.twist                         = 0. * Units.deg
     segment.root_chord_percent            = 1.
-    segment.thickness_to_chord            = 0.1525
+    segment.thickness_to_chord            = 0.135 / 0.112 * iteration_setup.sizing_iter.thickness_to_chord
     segment.dihedral_outboard             = 0. * Units.degrees
     segment.sweeps.quarter_chord          = 0. * Units.degrees
     segment.append_airfoil(root_airfoil)
@@ -110,7 +114,7 @@ def vehicle_setup(iteration_setup):
     segment.percent_span_location = 2.777 / 35.035
     segment.twist = 0. * Units.deg
     segment.root_chord_percent = 1.
-    segment.thickness_to_chord = 0.1525
+    segment.thickness_to_chord = 0.135 / 0.112 * iteration_setup.sizing_iter.thickness_to_chord
     segment.dihedral_outboard = 7. * Units.degrees
     segment.sweeps.quarter_chord = 26. * Units.degrees
     segment.append_airfoil(root_airfoil)
@@ -123,7 +127,7 @@ def vehicle_setup(iteration_setup):
     segment.percent_span_location         = (2.777 + 6.980) / 35.035
     segment.twist                         = 0.047193 * Units.deg
     segment.root_chord_percent            = 8.729 / 12.459
-    segment.thickness_to_chord            = 0.1127
+    segment.thickness_to_chord            = 0.1127 / 0.112 * iteration_setup.sizing_iter.thickness_to_chord
     segment.dihedral_outboard             = 5. * Units.degrees
     segment.sweeps.quarter_chord          = 29. * Units.degrees
     segment.append_airfoil(yehudi_airfoil)
@@ -136,7 +140,7 @@ def vehicle_setup(iteration_setup):
     segment.percent_span_location         = (2.777 + 6.980 + 23.867) / 35.035
     segment.twist                         = 0.00258 * Units.deg
     segment.root_chord_percent            = 2.852 / 12.459
-    segment.thickness_to_chord            = 0.099
+    segment.thickness_to_chord            = 0.099 / 0.112 * iteration_setup.sizing_iter.thickness_to_chord
     segment.dihedral_outboard             = 5. * Units.degrees
     segment.sweeps.quarter_chord          = 62. * Units.degrees
     segment.append_airfoil(mid_airfoil)
@@ -151,7 +155,7 @@ def vehicle_setup(iteration_setup):
     segment.root_chord_percent            = 0.882 / 12.459
     segment.dihedral_outboard             = 0.
     segment.sweeps.quarter_chord          = 0.
-    segment.thickness_to_chord            = .1
+    segment.thickness_to_chord            = .1  / 0.112 * iteration_setup.sizing_iter.thickness_to_chord
     segment.append_airfoil(tip_airfoil)
     wing.append_segment(segment)
     
@@ -216,8 +220,8 @@ def vehicle_setup(iteration_setup):
 
     # Tailplane sizing
     deltaaerocenterhtp = 2
-    c_ht = 0.483 #0.483
-    c_vt = 0.035#0.035
+    c_ht = 0.483 * 2 #0.483
+    c_vt = 0.035 * 2#0.035
     while abs(deltaaerocenterhtp) > 1e-10:
         oldaerocenter = wing.aerodynamic_center[0]
 
@@ -442,11 +446,12 @@ def vehicle_setup(iteration_setup):
     propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
     sea_level_static_thrust = iteration_setup.sizing_iter.thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
-
+    bucket_sfc = 0.475
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
                             sea_level_static_thrust,
-                            iteration_setup.mission_iter.throttle_mid_cruise)
+                            iteration_setup.mission_iter.throttle_mid_cruise,
+                            bucket_sfc=bucket_sfc)
 
     vehicle.append_component(propulsor)
 

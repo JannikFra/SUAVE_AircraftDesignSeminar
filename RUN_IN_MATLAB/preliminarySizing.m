@@ -101,9 +101,9 @@ TW_climb_stack = min(TW_OEI, TW_ICAC_alt) .* ones(1,100);
 mS_stack = zeros(5,1);
 TW_stack = zeros(5,1);
 
-[mS_stack(1),TW_stack(1)] = polyxpoly(mS,TW_to,mS_stall_stack,y_ph);  % intersection takeoff-stall
-[mS_stack(2),TW_stack(2)] = polyxpoly(mS,TW_climb_stack,mS_stall_stack,y_ph);   % intersection climb-stall
-[mS_stack(3),TW_stack(3)] = polyxpoly(mS,TW_cruise,mS_stall_stack,y_ph);    % intersection cruise-stall
+% [mS_stack(1),TW_stack(1)] = polyxpoly(mS,TW_to,mS_stall_stack,y_ph);  % intersection takeoff-stall
+% [mS_stack(2),TW_stack(2)] = polyxpoly(mS,TW_climb_stack,mS_stall_stack,y_ph);   % intersection climb-stall
+% [mS_stack(3),TW_stack(3)] = polyxpoly(mS,TW_cruise,mS_stall_stack,y_ph);    % intersection cruise-stall
 % [mS_stack(4),TW_stack(4)] = polyxpoly(mS,TW_OEI_stack,mS_cruise_stack,y_ph);  % intersection climb-opt. cruise
 % [mS_stack(5),TW_stack(5)] = polyxpoly(mS,TW_cruise,mS_cruise_stack,y_ph); % intersection cruise-opt. cruise
 

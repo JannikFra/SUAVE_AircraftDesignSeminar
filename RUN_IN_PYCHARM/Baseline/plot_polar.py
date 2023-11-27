@@ -24,7 +24,7 @@ from SUAVE.Attributes.Gases.Air import Air
 import sys
 #import vehicle file
 from vehicle_setup import vehicle_setup
-from Reference_Aircraft import configs_setup
+from Baseline import configs_setup
 import matplotlib.pyplot as plt
 
 
@@ -32,13 +32,19 @@ def main():
     iteration_setup = Data()
     iteration_setup.weight_iter = Data()
     iteration_setup.mission_iter = Data()
-    iteration_setup.weight_iter.TOW = 279_000
+    iteration_setup.sizing_iter = Data()
+    iteration_setup.weight_iter.TOW = 230_000
     iteration_setup.weight_iter.BOW = 130_000
-    iteration_setup.weight_iter.FUEL = 115_000
+    iteration_setup.weight_iter.FUEL = 100_000
     iteration_setup.weight_iter.Design_Payload = 24_500
-    iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = 44_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
+    #iteration_setup.sizing_iter.wing_loading = 750.
+    iteration_setup.sizing_iter.wing_loading = 500.
+    iteration_setup.sizing_iter.thrust_loading = 0.2275
+    iteration_setup.sizing_iter.aspect_ratio = 19
+    iteration_setup.sizing_iter.thickness_to_chord = 0.08
 
     # initialize the vehicle
     vehicle = vehicle_setup(iteration_setup)
@@ -59,7 +65,7 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = 5e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -96,19 +102,20 @@ def main():
     alt = iteration_setup.mission_iter.design_cruise_altitude
 
     Mc = 0.82 * np.ones((test_num,1))
-
-    rho = atmosphere.compute_values(alt).density * np.ones((test_num, 1))
-
-    mu = atmosphere.compute_values(alt).dynamic_viscosity * np.ones((test_num, 1))  # 0.0000144446
-
-    T = atmosphere.compute_values(alt).temperature * np.ones((test_num, 1))
-
-    pressure = atmosphere.compute_values(alt).pressure * np.ones((test_num, 1))
+    
+    rho = atmosphere.compute_values(alt).density * np.ones((test_num,1))
+    
+    mu =  atmosphere.compute_values(alt).dynamic_viscosity * np.ones((test_num,1)) # 0.0000144446
+    
+    T = atmosphere.compute_values(alt).temperature * np.ones((test_num,1))
+    
+    pressure = atmosphere.compute_values(alt).pressure * np.ones((test_num,1))
 
     a = atmosphere.compute_values(alt).speed_of_sound
     
     re = rho*a*Mc/mu
 
+    cl_actual = iteration_setup.sizing_iter.wing_loading * 9.81 * 0.98 / (rho / 2 * (a * Mc)**2)
 
     state.conditions.freestream.mach_number = Mc
     state.conditions.freestream.density = rho
@@ -141,26 +148,28 @@ def main():
     # plt.show()
     cl_quad = np.linspace(0.0, 0.8, 100)
     cd_quad = 0.0108 + 1/(np.pi*0.796*vehicle.wings.main_wing.aspect_ratio) * cl_quad**2
-    plt.plot(cd_quad, cl_quad, label="quadratic")
+    #plt.plot(cd_quad, cl_quad, label="quadratic")
     plt.plot(cd_tot, cl, label="SUAVE")
     plt.plot(cd_c, cl, label="compressibility")
     plt.plot(cd_i, cl, label="induced")
-    plt.plot(cd_m, cl, label="miscellaneous")
-    plt.plot(cd_p_fuse, cl, label="parasite fuselage")
-    plt.plot(cd_p_wing, cl, label="parasite wing")
+    #plt.plot(cd_m, cl, label="miscellaneous")
+    #plt.plot(cd_p_fuse, cl, label="parasite fuselage")
+    #plt.plot(cd_p_wing, cl, label="parasite wing")
+    plt.hlines(cl_actual, 0, 1)
     cl_ref = np.array([0., 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6, 0.65, 0.7, 0.75])
     cd_ref = np.array([0.0108, 0.0123, 0.0132, 0.0143, 0.0156, 0.0171, 0.0188, 0.0208, 0.0238, 0.0246, 0.0254, 0.0264, 0.0274,
           0.0288, 0.0366, 0.0530, 0.0947])
     plt.scatter(cd_ref, cl_ref, label="Airbus")
     plt.grid('on')
-    plt.axis([0, 0.1, 0, 0.8])
+    plt.axis([0, 0.1, 0, 1.])
     plt.legend()
     plt.show()
 
     plt.plot(cl_ref, cl_ref/cd_ref, label="Airbus")
     plt.plot(cl, cl/cd_tot, label="SUAVE")
+    plt.vlines(cl_actual, 0, 50)
     plt.legend()
-    plt.axis([0., 1., 0., 25.])
+    plt.axis([0., 1., 0., 30.])
     plt.show()
 
 
