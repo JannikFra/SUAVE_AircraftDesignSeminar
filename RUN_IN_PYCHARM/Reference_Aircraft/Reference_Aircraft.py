@@ -223,19 +223,19 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
-    aerodynamics.settings.recalculate_total_wetted_area = False
+    aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.891  # 0.921
-    aerodynamics.settings.compressiblity_constant_n = 12  # 2.5
-    aerodynamics.settings.compressiblity_constant_dM = 0.05
+    aerodynamics.settings.mach_star = 0.919  # 0.921
+    aerodynamics.settings.compressibility_constant_n = 10  # 2.5
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.81
+    aerodynamics.settings.oswald_efficiency_factor = 0.84
 
     analyses.append(aerodynamics)
 
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     iteration_setup.mission_iter.mission_distance = 10_500 * Units['nautical_mile']
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
-    iteration_setup.mission_iter.design_cruise_altitude = 35_000 * Units.ft
+    iteration_setup.mission_iter.design_cruise_altitude = 33_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft

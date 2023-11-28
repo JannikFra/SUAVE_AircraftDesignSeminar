@@ -44,7 +44,7 @@ def main():
     iteration_setup.sizing_iter.wing_loading = 500.
     iteration_setup.sizing_iter.thrust_loading = 0.2275
     iteration_setup.sizing_iter.aspect_ratio = 19
-    iteration_setup.sizing_iter.thickness_to_chord = 0.08
+    iteration_setup.sizing_iter.thickness_to_chord = 0.09
 
     # initialize the vehicle
     vehicle = vehicle_setup(iteration_setup)
