@@ -144,10 +144,10 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0
-    weights.settings.weight_reduction_factors.empennage = 0
-    weights.settings.weight_reduction_factors.fuselage = 0
-    weights.settings.weight_reduction_factors.structural = 0.03
+    weights.settings.weight_reduction_factors.main_wing = 0.18
+    weights.settings.weight_reduction_factors.empennage = 0.03
+    weights.settings.weight_reduction_factors.fuselage = 0.03
+    weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0
@@ -223,21 +223,22 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -8e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = 0e-4#-12e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
-    aerodynamics.settings.recalculate_total_wetted_area = False
+    aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 1.0
-    aerodynamics.settings.mach_star = 0.891  # 0.921
-    aerodynamics.settings.compressiblity_constant_n = 12  # 2.5
-    aerodynamics.settings.compressiblity_constant_dM = 0.05
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.mach_star = 0.919  # 0.921
+    aerodynamics.settings.compressibility_constant_n = 10  # 2.5
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.81
+    aerodynamics.settings.oswald_efficiency_factor = 0.84
 
     analyses.append(aerodynamics)
+
 
     # ------------------------------------------------------------------
     #  Stability Analysis
@@ -304,7 +305,7 @@ def Baseline(parameters):
     iteration_setup.mission_iter.cruise_distance = 9_900 * Units['nautical_mile']
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
     iteration_setup.mission_iter.design_cruise_altitude = parameters.design_cruise_altitude
-    iteration_setup.mission_iter.design_cruise_mach = 0.82
+    iteration_setup.mission_iter.design_cruise_mach = parameters.design_cruise_mach
     iteration_setup.mission_iter.reserve_hold_time = 30 * Units.min
     iteration_setup.mission_iter.reserve_hold_altitude = 1500. * Units.ft
     iteration_setup.mission_iter.reserve_hold_speed = 250 * Units['kts']
@@ -425,9 +426,9 @@ def Baseline(parameters):
         # Konvergenzbeschleunigung
         deltaBOW = configs.base.mass_properties.operating_empty - iteration_setup.weight_iter.BOW
         if abs(deltaBOW) > 500.:
-            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1. * deltaBOW  # + 1650
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 2. * deltaBOW  # + 1650
         elif abs(deltaBOW) > 50.:
-            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1. * deltaBOW  # + 1650
+            iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 1.2 * deltaBOW  # + 1650
         else:
             iteration_setup.weight_iter.BOW = iteration_setup.weight_iter.BOW + 0.8 * deltaBOW  # + 1650
 
@@ -458,13 +459,35 @@ def Baseline(parameters):
 
 
 if __name__ == '__main__':
+    from SUAVE.Components.Energy.Networks.Turbofan_Raymer import Turbofan_Raymer
+
     parameters = Data()
-    parameters.wing_loading = 750.
-    parameters.thrust_loading = 0.25
-    parameters.aspect_ratio = 18.
-    parameters.thickness_to_chord = 0.1
-    parameters.design_cruise_altitude = 33000. * Units.ft
+    parameters.wing_loading = 550.
+    parameters.aspect_ratio = 19.
+    parameters.thickness_to_chord = 0.09
+    parameters.design_cruise_altitude = 42000. * Units.ft
+    parameters.design_cruise_mach = 0.82
+
+    atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
+    tf = Turbofan_Raymer()
+    altitude = parameters.design_cruise_altitude - 2_000 * Units.ft
+    mach = parameters.design_cruise_mach
+    temperature_deviation = 0
+    atmo_data = atmosphere.compute_values(altitude, temperature_deviation)
+    v_v_300 = 300 * Units.ft / Units.min
+    v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
+    LoD_initial_cruise_altitude = 26
+    m4_m0 = 0.98
+    rho_initial_cruise_altitude = atmo_data.density[0][0]
+    thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
+
+    F_m_TOC = m4_m0 * (v_v_300 / v_initial_cruise_altitude + 1 / LoD_initial_cruise_altitude) * thrust_ratio
+
+    print(F_m_TOC)
+    parameters.thrust_loading = F_m_TOC[0][0]
+
     Baseline(parameters)
+
 
     #design_cruise_altitudes = np.linspace(31000., 33000., 2) * Units.ft
     #fuel_burn = np.zeros_like(design_cruise_altitudes)
