@@ -179,8 +179,8 @@ def mission_setup(analyses, iteration_setup):
     segment.distance = iteration_setup.mission_iter.cruise_distance / 3
     segment.state.numerics.number_control_points = 8
 
-    rho_cr1 = atmosphere.compute_values(segment.altitude).density
-    cruise_1_ias = (rho_cr1 / rho0) * segment.air_speed
+    # rho_cr1 = atmosphere.compute_values(segment.altitude).density
+    # cruise_1_ias = (rho_cr1 / rho0) * segment.air_speed
 
     # post-process aerodynamic derivatives in cruise
     # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
