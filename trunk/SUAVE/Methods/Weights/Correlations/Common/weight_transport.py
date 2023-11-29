@@ -330,7 +330,6 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     output                                  = Data()
     output.structures                       = Data()
     output.structures.wing                  = wt_main_wing
-    print('wt_main_wing = ', wt_main_wing)
     output.structures.horizontal_tail       = wt_tail_horizontal
     output.structures.vertical_tail         = wt_tail_vertical
     output.structures.fuselage              = wt_fuse_total
@@ -364,14 +363,14 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
         output.propulsion_breakdown.miscellaneous       = wt_prop_data.wt_engine_controls + wt_prop_data.wt_starter
 
     output.systems_breakdown                        = Data()
-    output.systems_breakdown.control_systems        = 0
+    output.systems_breakdown.control_systems        = wt_sys.wt_flight_control
     output.systems_breakdown.apu                    = wt_sys.wt_apu
     output.systems_breakdown.electrical             = wt_sys.wt_elec
-    output.systems_breakdown.avionics               = 0
+    output.systems_breakdown.avionics               = wt_sys.wt_avionics
     output.systems_breakdown.hydraulics             = wt_sys.wt_hyd_pnu
     output.systems_breakdown.furnish                = wt_sys.wt_furnish
     output.systems_breakdown.air_conditioner        = wt_sys.wt_ac + wt_sys.wt_anti_ice # Anti-ice is sometimes included in ECS
-    output.systems_breakdown.instruments            = 0
+    output.systems_breakdown.instruments            = wt_sys.wt_instruments
     output.systems_breakdown.bleed_air              = 750   # TODO implement in Raymer method
     output.systems_breakdown.fire_protection        = 250   # TODO implement in Raymer method
     output.systems_breakdown.fuel_system            = wt_prop_data.fuel_system
@@ -379,7 +378,8 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
                                                     + output.systems_breakdown.electrical + output.systems_breakdown.bleed_air \
                                                     + output.systems_breakdown.hydraulics + output.systems_breakdown.furnish \
                                                     + output.systems_breakdown.air_conditioner + output.systems_breakdown.fire_protection \
-                                                    + output.systems_breakdown.fuel_system
+                                                    + output.systems_breakdown.fuel_system + output.systems_breakdown.instruments \
+                                                    + output.systems_breakdown.avionics
 
     output.payload_breakdown = Data()
     output.payload_breakdown = payload

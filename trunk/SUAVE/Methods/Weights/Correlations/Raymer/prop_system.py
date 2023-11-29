@@ -108,7 +108,6 @@ def nacelle_Raymer(vehicle, WENG):
     WNAC = CALIBRATION_NAC * 0.6724 * Kng * Nlt ** 0.1 * Nw ** 0.294 * vehicle.envelope.ultimate_load ** 0.119 \
            * Wec ** 0.611 * NENG ** 0.984 * Sn ** 0.224
 
-    print('WNAC = ', WNAC * Units.lbs)
     return WNAC * Units.lbs
 
 ## @ingroup Methods-Weights-Correlations-Raymer
@@ -167,6 +166,6 @@ def fuel_system_Raymer(vehicle, NENG):
     Vp = 0  # self-sealing "protected" tanks volume, gal
     Nt = 5  # number of fuel tanks
 
-    CALIBRATION_FSYS = 0.831
+    CALIBRATION_FSYS = 0.834
     WFSYS = CALIBRATION_FSYS * 2.405 * Vt ** 0.606 * (1 + Vi/Vt) ** (-1.0) * (1 + Vp/Vt) * Nt ** 0.5
     return WFSYS * Units.lbs

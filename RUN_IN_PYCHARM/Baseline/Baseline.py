@@ -147,11 +147,11 @@ def base_analysis(vehicle):
     weights.settings.weight_reduction_factors.main_wing = 0
     weights.settings.weight_reduction_factors.empennage = 0
     weights.settings.weight_reduction_factors.fuselage = 0
-    weights.settings.weight_reduction_factors.structural = 0.03
+    weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0
-    weights.settings.weight_reduction_factors.propulsion = 0.03
+    weights.settings.weight_reduction_factors.propulsion = 0
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -231,8 +231,8 @@ def base_analysis(vehicle):
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.0
-    aerodynamics.settings.mach_star = 0.891  # 0.921
-    aerodynamics.settings.compressiblity_constant_n = 12  # 2.5
+    aerodynamics.settings.mach_star = 0.921  # 0.921
+    aerodynamics.settings.compressiblity_constant_n = 20  # 2.5
     aerodynamics.settings.compressiblity_constant_dM = 0.05
 
     aerodynamics.settings.oswald_efficiency_factor = 0.81
@@ -293,7 +293,7 @@ def Baseline(parameters):
     iteration_setup = Data()
 
     iteration_setup.weight_iter = Data()
-    iteration_setup.weight_iter.MTOW = 240_000 * Units.kg
+    iteration_setup.weight_iter.MTOW = 279_000 * Units.kg
     iteration_setup.weight_iter.BOW = 130_000 * Units.kg
     iteration_setup.weight_iter.Design_Payload = 24_500 * Units.kg
     iteration_setup.weight_iter.FUEL = iteration_setup.weight_iter.MTOW - iteration_setup.weight_iter.BOW  \
@@ -459,11 +459,11 @@ def Baseline(parameters):
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 750.
-    parameters.thrust_loading = 0.25
-    parameters.aspect_ratio = 18.
-    parameters.thickness_to_chord = 0.1
-    parameters.design_cruise_altitude = 33000. * Units.ft
+    parameters.wing_loading = 700.
+    parameters.thrust_loading = 0.28
+    parameters.aspect_ratio = 20
+    parameters.thickness_to_chord = 0.10
+    parameters.design_cruise_altitude = 38000. * Units.ft
     Baseline(parameters)
 
     #design_cruise_altitudes = np.linspace(31000., 33000., 2) * Units.ft

@@ -79,26 +79,28 @@ def systems_Raymer(vehicle):
     Kr      = 1  # assuming not a reciprocating engine
     Ktp     = 1  # assuming not a turboprop
     Nf      = 7  # number of functions performed by controls (typically 4-7)
+    Nm      = 2  # number of mechanical functions (typically 0-2)
     Rkva    = 60  # system electrical rating
     Wuav    = 1400  # uninstalled avionics weight
 
-    WSC = 36.28 * design_mach**0.003 * Scs**0.489 * Ns**0.484 * flight_crew**0.124
+    # WSC = 36.28 * design_mach**0.003 * Scs**0.489 * Ns**0.484 * flight_crew**0.124
+
 
     if num_pax >= 6.:
         apu_wt = 7.0 * num_pax
     else:
         apu_wt = 0.0  # no apu if less than 9 seats
-    WAPU = 500 * Units.kilogram / Units.lbs     # hardcoded as no variation is expected
-    NENG = networks.number_of_engines
-    WIN = 4.509 * Kr * Ktp * flight_crew ** 0.541 * NENG * (L + Bw) ** 0.5
+    WAPU = 500 / Units.lbs     # hardcoded as no variation is expected
 
-    CALIBRATION_HYD = 6.35
+    CALIBRATION_HYD = 1.754
+    WSC  = CALIBRATION_HYD * 145.9 * Nf ** 0.554 * (1 + Nm / Nf) ** -1. * Scs ** 0.20
     WHYD = CALIBRATION_HYD * 0.2673 * Nf * (L + Bw) ** 0.937
 
-    CALIBRATION_ELEC = 5.714
+    CALIBRATION_ELEC = 2.110
+    NENG = networks.number_of_engines
+    WIN = CALIBRATION_ELEC * 4.509 * Kr * Ktp * flight_crew ** 0.541 * NENG * (L + Bw) ** 0.5
     WELEC = CALIBRATION_ELEC * 7.291 * Rkva ** 0.782 * (2 * L) ** 0.346 * NENG ** 0.1
-
-    WAVONC = 1.73 * Wuav ** 0.983
+    WAVONC = CALIBRATION_ELEC * 1.73 * Wuav ** 0.983
 
     D   = (fuse_w + fuse_h) / 2.
     Sf  = np.pi * (L / D - 1.7) * D ** 2  # Fuselage wetted area, ft**2
