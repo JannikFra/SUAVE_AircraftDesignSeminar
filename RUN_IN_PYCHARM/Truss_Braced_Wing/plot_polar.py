@@ -25,7 +25,7 @@ from SUAVE.Attributes.Gases.Air import Air
 import sys
 #import vehicle file
 from vehicle_setup import vehicle_setup
-from Baseline import configs_setup
+from Truss_Braced_Wing import configs_setup
 import matplotlib.pyplot as plt
 
 
@@ -47,10 +47,10 @@ def main(altitude, mach, wing_loading, plot=True):
     #iteration_setup.sizing_iter.wing_loading = 750.
     iteration_setup.sizing_iter.wing_loading = wing_loading
     iteration_setup.sizing_iter.thrust_loading = 0.2275
-    iteration_setup.sizing_iter.aspect_ratio = 15.6
-    iteration_setup.sizing_iter.thickness_to_chord = 0.105
-    iteration_setup.sizing_iter.sweep_quarter_chord = 29 * Units.deg
-    iteration_setup.sizing_iter.wing_origin = [[22.408, 0, -1]]
+    iteration_setup.sizing_iter.aspect_ratio = 20.
+    iteration_setup.sizing_iter.thickness_to_chord = 0.09
+    iteration_setup.sizing_iter.sweep_quarter_chord = 25 * Units.deg
+    iteration_setup.sizing_iter.wing_origin = [[22.408, 0, 4.]]
 
     design_cruise_altitude = iteration_setup.mission_iter.design_cruise_altitude
     design_cruise_mach = iteration_setup.mission_iter.design_cruise_mach
@@ -236,7 +236,7 @@ def sweep():
 
 
 if __name__ =='__main__':
-    sar, sfc, l_d = main(35000*Units.ft, 0.82, 750)
+    sar, sfc, l_d = main(36_000*Units.ft, 0.82, 700)
     print('sar', sar)
     print('sfc', sfc)
     print('l_d', l_d)

@@ -24,8 +24,8 @@ from pathlib import Path
 import os
 import time
 from SUAVE.Methods.Performance import payload_range
-from RUN_IN_PYCHARM.Baseline.vehicle_setup import vehicle_setup, configs_setup
-from RUN_IN_PYCHARM.Baseline.mission_setup import mission_setup
+from RUN_IN_PYCHARM.Truss_Braced_Wing.vehicle_setup import vehicle_setup, configs_setup
+from RUN_IN_PYCHARM.Truss_Braced_Wing.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
 from SUAVE.Components.Energy.Networks.Turbofan_Raymer import Turbofan_Raymer
 
@@ -146,9 +146,9 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.03
+    weights.settings.weight_reduction_factors.main_wing = 0.18
     weights.settings.weight_reduction_factors.empennage = 0.03
-    weights.settings.weight_reduction_factors.fuselage = 0.03
+    weights.settings.weight_reduction_factors.fuselage = 0.03 - 0.06
     weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
@@ -321,7 +321,7 @@ def Baseline(parameters):
     iteration_setup.sizing_iter.aspect_ratio = parameters.aspect_ratio
     iteration_setup.sizing_iter.sweep_quarter_chord = parameters.sweep_quarter_chord
     iteration_setup.sizing_iter.thickness_to_chord = parameters.thickness_to_chord
-    iteration_setup.sizing_iter.wing_origin = [[22.408,0,-0.957]]
+    iteration_setup.sizing_iter.wing_origin = [[22.408,0,-0.957+5.]]
 
     landing_weight = 0.0
     block_distance = 0.0
@@ -520,13 +520,13 @@ def sweep():
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 700.
-    parameters.aspect_ratio = 15.6
-    parameters.thickness_to_chord = 0.105
-    parameters.design_cruise_altitude = 37_000 * Units.ft
+    parameters.wing_loading = 700. * 0.9
+    parameters.aspect_ratio = 20.
+    parameters.thickness_to_chord = 0.09
+    parameters.design_cruise_altitude = 39_000 * Units.ft
     parameters.design_cruise_mach = 0.82
-    parameters.sweep_quarter_chord = 29 * Units.deg
-    parameters.thrust_loading = 0.22
+    parameters.sweep_quarter_chord = 25 * Units.deg
+    parameters.thrust_loading = 0.25
     Baseline(parameters)
 
     #sweep()

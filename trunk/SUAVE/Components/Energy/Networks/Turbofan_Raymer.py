@@ -229,6 +229,19 @@ class Turbofan_Raymer(Network):
         self.sealevel_static_thrust = sea_level_static_thrust
         self.max_thrust_factor = max_thrust_factor
         self.tsfc_factor = sfc_factor
+
+    def get_thrust_loading_requirement_toc(self, design_cruise_altitude, design_cruise_mach, m4_m0=1., LoD_initial_cruise_altitude=22):
+        atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
+        tf = Turbofan_Raymer()
+        altitude = design_cruise_altitude - 2_000 * Units.ft
+        mach = design_cruise_mach
+        temperature_deviation = 0
+        atmo_data = atmosphere.compute_values(altitude, temperature_deviation)
+        v_v_300 = 300 * Units.ft / Units.min
+        v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
+        thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
+        F_m_TOC = m4_m0 * (v_v_300 / v_initial_cruise_altitude + 1 / LoD_initial_cruise_altitude) * thrust_ratio
+        return F_m_TOC[0][0]
     
     def unpack_unknowns(self,segment,state):
         """ This is an extra set of unknowns which are unpacked from the mission solver and send to the network.
