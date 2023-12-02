@@ -108,6 +108,7 @@ def nacelle_Raymer(vehicle, WENG):
     WNAC = CALIBRATION_NAC * 0.6724 * Kng * Nlt ** 0.1 * Nw ** 0.294 * vehicle.envelope.ultimate_load ** 0.119 \
            * Wec ** 0.611 * NENG ** 0.984 * Sn ** 0.224
 
+
     return WNAC * Units.lbs
 
 ## @ingroup Methods-Weights-Correlations-Raymer

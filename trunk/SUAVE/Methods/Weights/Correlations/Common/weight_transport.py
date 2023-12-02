@@ -330,6 +330,7 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     output                                  = Data()
     output.structures                       = Data()
     output.structures.wing                  = wt_main_wing
+
     output.structures.horizontal_tail       = wt_tail_horizontal
     output.structures.vertical_tail         = wt_tail_vertical
     output.structures.fuselage              = wt_fuse_total

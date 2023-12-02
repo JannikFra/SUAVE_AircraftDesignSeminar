@@ -51,7 +51,7 @@ def main():
 
     t_c = vehicle.wings.main_wing.thickness_to_chord
     print(t_c)
-        
+
 
     # initalize the aero model
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
