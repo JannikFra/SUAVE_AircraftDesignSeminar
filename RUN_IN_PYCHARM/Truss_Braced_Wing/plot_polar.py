@@ -10,7 +10,6 @@
 #   Imports
 # ----------------------------------------------------------------------
 
-
 import SUAVE
 from SUAVE.Core import Units
 from SUAVE.Core import Data
@@ -46,10 +45,10 @@ def main(altitude, mach, wing_loading, plot=True):
     iteration_setup.mission_iter.throttle_mid_cruise = 1.
     #iteration_setup.sizing_iter.wing_loading = 750.
     iteration_setup.sizing_iter.wing_loading = wing_loading
-    iteration_setup.sizing_iter.thrust_loading = 0.2275
+    iteration_setup.sizing_iter.thrust_loading = 0.23
     iteration_setup.sizing_iter.aspect_ratio = 20.
-    iteration_setup.sizing_iter.thickness_to_chord = 0.09
-    iteration_setup.sizing_iter.sweep_quarter_chord = 25 * Units.deg
+    iteration_setup.sizing_iter.thickness_to_chord = 0.10
+    iteration_setup.sizing_iter.sweep_quarter_chord = 28 * Units.deg
     iteration_setup.sizing_iter.wing_origin = [[22.408, 0, 4.]]
 
     design_cruise_altitude = iteration_setup.mission_iter.design_cruise_altitude
@@ -82,7 +81,7 @@ def main(altitude, mach, wing_loading, plot=True):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = 1e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -191,8 +190,38 @@ def main(altitude, mach, wing_loading, plot=True):
         plt.legend()
         plt.show()
 
-        plt.plot(cl_ref, cl_ref/cd_ref, label="Airbus")
-        plt.plot(cl, cl/cd_tot, label="SUAVE")
+        cl_base = [-0.64663888, -0.59831168, -0.54992253, -0.50147641, -0.45297826, -0.40443301, -0.35584557,
+                   -0.30722081, -0.2585636, -0.20987878, -0.16117117, -0.11244559, -0.06370684, -0.0149597, 0.03379105,
+                   0.08254064, 0.1312843, 0.18001727, 0.2287348, 0.27743212, 0.32610448, 0.37474711, 0.42335524,
+                   0.4719241, 0.5204489, 0.56892484, 0.61734711, 0.6657109, 0.71401137, 0.76224365, 0.81040287,
+                   0.85848414, 0.90648253, 0.9543931, 1.00221088, 1.04993088, 1.09754807, 1.14505739, 1.19245376,
+                   1.23973206, 1.28688713, 1.33391378, 1.38080678, 1.42756089, 1.47417078, 1.52063112, 1.56693653,
+                   1.61308158, 1.65906082, 1.70486872]
+        l_d_base = [-26.96722445, -26.72716744, -26.25232156, -25.52774633, -24.52755119, -23.22323278, -21.5886409,
+                    -19.60439632, -17.26233012, -14.56974088, -11.55285761, -8.25869177, -4.7545068, -1.12448739,
+                    2.53516019, 6.12604248, 9.55645225, 12.74805371, 15.64088077, 18.19568892, 20.3934762, 22.232694,
+                    23.72517459, 24.89119799, 25.75365948, 26.32934123, 26.60686467, 26.43664087, 24.92181177,
+                    22.27184786, 18.52438237, 14.27949349, 10.31625245, 7.13225344, 4.82051353, 3.23762194, 2.18367231,
+                    1.48783601, 1.02709072, 0.71921012, 0.51093982, 0.36812393, 0.26881799, 0.19881261, 0.14880573,
+                    0.11263177, 0.08615078, 0.06654667, 0.05187949, 0.04079644]
+        cl_ref = [-0.56647585, -0.523942, -0.4813547, -0.43871854, -0.39603805, -0.35331778, -0.31056222, -0.26777586,
+                  -0.22496317, -0.1821286, -0.13927658, -0.09641154, -0.05353788, -0.01066, 0.03221772, 0.0750909,
+                  0.11795517, 0.16080617, 0.20363953, 0.2464509, 0.28923593, 0.33199025, 0.37470951, 0.41738936,
+                  0.46002542, 0.50261333, 0.5451487, 0.58762716, 0.6300443, 0.67239571, 0.71467699, 0.75688368,
+                  0.79901133, 0.84105549, 0.88301167, 0.92487535, 0.96664203, 1.00830713, 1.04986611, 1.09131437,
+                  1.13264728, 1.17386021, 1.21494848, 1.2559074, 1.29673223, 1.33741823, 1.37796062, 1.41835456,
+                  1.45859522, 1.49867772]
+        l_d_ref = [-23.77599443, -24.14551249, -24.19428046, -23.98099152, -23.48597872, -22.66693254, -21.4737788,
+                   -19.85752702, -17.77920174, -15.2199354, -12.19132609, -8.74377888, -4.96978734, -0.99957763,
+                   3.00999422, 6.89715809, 10.5174494, 13.75869211, 16.54955242, 18.85976837, 20.69379178, 22.08095855,
+                   23.06449075, 23.69060747, 23.99570791, 23.97832716, 23.45469243, 21.71231127, 19.21609773,
+                   16.00480456, 12.5207997, 9.27949895, 6.6163014, 4.61359898, 3.18906481, 2.20587947, 1.5358441,
+                   1.0799412, 0.76817277, 0.55309506, 0.40312557, 0.29734006, 0.22183793, 0.16732038, 0.1275094,
+                   0.09812221, 0.07620521, 0.05969907, 0.0471524, 0.03753149]
+
+        plt.plot(cl_base, l_d_base, label='Baseline')
+        plt.plot(cl_ref, l_d_ref, label='Reference')
+        plt.plot(cl, cl/cd_tot, label="TBW")
         plt.vlines(cl_actual, 0, 50)
         plt.legend()
         plt.axis([0., 1., 0., 30.])

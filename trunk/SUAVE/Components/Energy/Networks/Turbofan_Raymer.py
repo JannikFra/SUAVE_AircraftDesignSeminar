@@ -240,6 +240,7 @@ class Turbofan_Raymer(Network):
         v_v_300 = 300 * Units.ft / Units.min
         v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
         thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
+        print("thrust ratio", thrust_ratio)
         F_m_TOC = m4_m0 * (v_v_300 / v_initial_cruise_altitude + 1 / LoD_initial_cruise_altitude) * thrust_ratio
         return F_m_TOC[0][0]
     

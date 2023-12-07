@@ -193,6 +193,8 @@ def main(altitude, mach, wing_loading, plot=True):
 
         plt.plot(cl_ref, cl_ref/cd_ref, label="Airbus")
         plt.plot(cl, cl/cd_tot, label="SUAVE")
+        print(cl)
+        print(cl/cd_tot)
         plt.vlines(cl_actual, 0, 50)
         plt.legend()
         plt.axis([0., 1., 0., 30.])
