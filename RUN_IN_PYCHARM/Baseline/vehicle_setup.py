@@ -406,7 +406,7 @@ def vehicle_setup(iteration_setup):
 
     # setup
     # # This origin is overwritten by compute_component_centers_of_gravity(base,compute_propulsor_origin=True)
-    propulsor.origin            = [[19., 8., 0.],[19., -8, 0.]]
+    propulsor.origin            = [[19., 8., -1.5],[19., -8, -1.5]]
     propulsor.number_of_engines = 2
 
     thrust_loading = max(iteration_setup.sizing_iter.thrust_loading, propulsor.get_thrust_loading_requirement_toc(
@@ -435,13 +435,13 @@ def vehicle_setup(iteration_setup):
     nacelle.inlet_diameter = 3.6 * (sea_level_static_thrust / 622720)**0.5
     nacelle.diameter = 3.8 * (sea_level_static_thrust / 622720)**0.5
     nacelle.areas.wetted = 1.1 * np.pi * nacelle.diameter * nacelle.length
-    nacelle.origin = [[19., 8., 0.]]
+    nacelle.origin = [[19., 8., -1.5]]
     nacelle.flow_through = True
     nacelle.Airfoil.NACA_4_series_flag = True
     nacelle.Airfoil.coordinate_file = '2410'
     nacelle_2 = deepcopy(nacelle)
     nacelle_2.tag = 'nacelle_2'
-    nacelle_2.origin = [[19., -8, 0.]]
+    nacelle_2.origin = [[19., -8, -1.5]]
     #
     vehicle.append_component(nacelle)
     vehicle.append_component(nacelle_2)

@@ -225,7 +225,7 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4#-12e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = 1e-4#-12e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -471,6 +471,7 @@ def Baseline(parameters):
     print('Reserve fuel : %.1f kg' % reserve_fuel)
     print('Wing span : %.2f m' % configs.base.wings.main_wing.spans.projected)
     print('Wing area : %.2f m' % configs.base.wings.main_wing.areas.reference)
+    print('Center of Gravity :', configs.base.mass_properties.center_of_gravity)
     results_show(results, configs.base)
 
     payload_range_run = False
@@ -520,13 +521,13 @@ def sweep():
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 700. * 0.9
+    parameters.wing_loading = 700.# * 0.9
     parameters.aspect_ratio = 20.
-    parameters.thickness_to_chord = 0.09
+    parameters.thickness_to_chord = 0.10
     parameters.design_cruise_altitude = 39_000 * Units.ft
     parameters.design_cruise_mach = 0.82
-    parameters.sweep_quarter_chord = 25 * Units.deg
-    parameters.thrust_loading = 0.25
+    parameters.sweep_quarter_chord = 28 * Units.deg
+    parameters.thrust_loading = 0.24
     Baseline(parameters)
 
     #sweep()

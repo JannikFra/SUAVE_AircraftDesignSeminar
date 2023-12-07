@@ -16,6 +16,7 @@ import SUAVE
 from SUAVE.Core import Units
 from SUAVE.Methods.Propulsion.turbofan_sizing import turbofan_sizing
 from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_planform, wing_segmented_planform, create_tapered_wing, wing_planform_v_tail, fuselage_planform
+from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_fuel_volume
 
 from copy import deepcopy 
 
@@ -69,7 +70,7 @@ def vehicle_setup(iteration_setup):
     wing = SUAVE.Components.Wings.Main_Wing()
     wing.tag = 'main_wing'
 
-    wing.areas.reference         = vehicle.reference_area * 0.9
+    wing.areas.reference         = vehicle.reference_area# * 0.9
     wing.origin                  = iteration_setup.sizing_iter.wing_origin
 
     wing.transition_x_upper = 0.08
@@ -156,6 +157,9 @@ def vehicle_setup(iteration_setup):
     # Fill out more segment properties automatically
     create_tapered_wing(wing, iteration_setup.sizing_iter.aspect_ratio, wing.areas.reference)
     wing_segmented_planform(wing, True)
+    wing_fuel_volume(wing)
+    fuel_mass_in_wing = wing.fuel_volume * 1000. * 0.78
+    print('Fuel mass in wing: %.1f kg' % fuel_mass_in_wing)
 
     # add to vehicle
     vehicle.append_component(wing)
@@ -164,37 +168,37 @@ def vehicle_setup(iteration_setup):
     #   Strut
     # ------------------------------------------------------------------
 
-    wing = SUAVE.Components.Wings.Wing()
-    wing.tag = 'strut'
-
-
-    wing.origin = [[34., 0, -3.]]
-    # wing.origin[0][0] += 4.
-    # wing.origin[0][2] += -5
-
-    wing.transition_x_upper = 0.3
-    wing.transition_x_lower = 0.3
-
-    wing.vertical = False
-    wing.symmetric = True
-    wing.high_lift = False
-
-    wing.flap_ratio = 0.3
-    wing.dynamic_pressure_ratio = 1.0
-
-    b = 0.4 * vehicle.wings.main_wing.spans.projected
-    c = 0.3 * vehicle.wings.main_wing.chords.mean_aerodynamic
-    wing.areas.reference = b * c
-    wing.aspect_ratio = (b)**2 / (b*c)
-    wing.sweeps.quarter_chord = -10 * Units.deg
-    wing.thickness_to_chord = 0.07
-    wing.taper = 1.
-    wing.dihedral = np.arctan(7/(b/2))
-
-    wing_planform(wing)
-
-    # add to vehicle
-    vehicle.append_component(wing)
+    # wing = SUAVE.Components.Wings.Wing()
+    # wing.tag = 'strut'
+    #
+    #
+    # wing.origin = [[34., 0, -3.]]
+    # # wing.origin[0][0] += 4.
+    # # wing.origin[0][2] += -5
+    #
+    # wing.transition_x_upper = 0.3
+    # wing.transition_x_lower = 0.3
+    #
+    # wing.vertical = False
+    # wing.symmetric = True
+    # wing.high_lift = False
+    #
+    # wing.flap_ratio = 0.3
+    # wing.dynamic_pressure_ratio = 1.0
+    #
+    # b = 0.45 * vehicle.wings.main_wing.spans.projected
+    # c = 0.35 * vehicle.wings.main_wing.chords.mean_aerodynamic
+    # wing.areas.reference = b * c
+    # wing.aspect_ratio = (b)**2 / (b*c)
+    # wing.sweeps.quarter_chord = -10 * Units.deg
+    # wing.thickness_to_chord = 0.07
+    # wing.taper = 1.
+    # wing.dihedral = np.arctan(7/(b/2))
+    #
+    # wing_planform(wing)
+    #
+    # # add to vehicle
+    # vehicle.append_component(wing)
     # ------------------------------------------------------------------
     #  V-Tail
     # ------------------------------------------------------------------
@@ -451,6 +455,7 @@ def vehicle_setup(iteration_setup):
     ))
 
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
+    print('Sea level static trust: ', sea_level_static_thrust)
     propulsor.engine_length = 7.4 * (sea_level_static_thrust / 622720)**0.5
     bucket_sfc = 0.475
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
@@ -469,6 +474,7 @@ def vehicle_setup(iteration_setup):
 
     nacelle.length = 7.2 * (sea_level_static_thrust / 622720)**0.5
     nacelle.inlet_diameter = 3.6 * (sea_level_static_thrust / 622720)**0.5
+    print('Nacelle inlet diameter: ', nacelle.inlet_diameter)
     nacelle.diameter = 3.8 * (sea_level_static_thrust / 622720)**0.5
     nacelle.areas.wetted = 1.1 * np.pi * nacelle.diameter * nacelle.length
     nacelle.origin = [[19., 8., 0.]]

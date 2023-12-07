@@ -163,6 +163,9 @@ def main():
     plt.axis([0., 1., 0., 25.])
     plt.show()
 
+    print(cl)
+    print(cl/cd_tot)
+
 
     return
 
