@@ -72,9 +72,9 @@ def vehicle_setup(iteration_setup):
 
     wing.areas.reference         = vehicle.reference_area# * 0.9
     wing.origin                  = iteration_setup.sizing_iter.wing_origin
-
-    wing.transition_x_upper = 0.08
-    wing.transition_x_lower = 0.08
+    print('Main wing origin:', wing.origin[0])
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -214,8 +214,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[55.337, 0, 2.082]]
     wing.aerodynamic_center      = [1,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -451,7 +451,7 @@ def vehicle_setup(iteration_setup):
 
     thrust_loading = max(iteration_setup.sizing_iter.thrust_loading, propulsor.get_thrust_loading_requirement_toc(
         iteration_setup.mission_iter.design_cruise_altitude, iteration_setup.mission_iter.design_cruise_mach,
-        m4_m0=0.99, LoD_initial_cruise_altitude=26,
+        m4_m0=0.9557, LoD_initial_cruise_altitude=26,
     ))
 
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81

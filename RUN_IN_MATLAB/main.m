@@ -14,7 +14,7 @@ stallSpeed = 0.51444 * stallSpeed_kts;  % in m/s
 
 climbAngleOEI = 0.024;   % in rad - CS-25 regulations for 2-engine a/c
 
-cruiseAltitude_ft = 35000;  % in ft, ref = 35000
+cruiseAltitude_ft = 39000;  % in ft, ref = 35000
 cruiseAltitude = 0.3048*cruiseAltitude_ft; % in m
 cruiseMach = 0.82;
 [~,a_cr,~,rho_cr] = atmosisa(cruiseAltitude);
@@ -30,9 +30,9 @@ AR = 14;     % wing aspect ratio, ref = 9.988
 oswald = 0.81;       % oswald factor, ref = 0.77 for low cL
 LD_OEI = 14;         % L/D in climb configuration
 LD_cruise = 26;      % L/D in cruise configuration
-cL_max = 2.9;  % ref = 2.15
+cL_max = 2.34;  % ref = 2.15
 cL_max_TO = 0.8 * cL_max;
-cD0 = 0.0108;   % ref = 0.0108
+cD0 = 0.014;   % ref = 0.0108
 k = 1/(pi * AR * oswald);   % induced drag constant
 
 % Engines

@@ -411,7 +411,7 @@ def vehicle_setup(iteration_setup):
 
     thrust_loading = max(iteration_setup.sizing_iter.thrust_loading, propulsor.get_thrust_loading_requirement_toc(
         iteration_setup.mission_iter.design_cruise_altitude, iteration_setup.mission_iter.design_cruise_mach,
-        m4_m0=0.99, LoD_initial_cruise_altitude=26,
+        m4_m0=0.9557, LoD_initial_cruise_altitude=24,
     ))
 
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81

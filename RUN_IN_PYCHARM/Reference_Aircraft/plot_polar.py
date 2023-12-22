@@ -59,7 +59,7 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -17e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True

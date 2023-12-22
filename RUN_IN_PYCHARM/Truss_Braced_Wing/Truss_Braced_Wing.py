@@ -146,9 +146,9 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.18
-    weights.settings.weight_reduction_factors.empennage = 0.03
-    weights.settings.weight_reduction_factors.fuselage = 0.03 - 0.06
+    weights.settings.weight_reduction_factors.main_wing = 0.11
+    weights.settings.weight_reduction_factors.empennage = 0.
+    weights.settings.weight_reduction_factors.fuselage = - 0.06 + 0.1 # +6 percent for high wing, -10 percent for CFRP
     weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
@@ -222,12 +222,12 @@ def base_analysis(vehicle):
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
     aerodynamics.geometry = vehicle
     aerodynamics.settings.drag_coefficient_increment = Data()
-    aerodynamics.settings.drag_coefficient_increment.base = 0
-    aerodynamics.settings.drag_coefficient_increment.takeoff = 0
-    aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = 1e-4#-12e-4
-    aerodynamics.settings.drag_coefficient_increment.descent = 0
-    aerodynamics.settings.drag_coefficient_increment.landing = 0
+    aerodynamics.settings.drag_coefficient_increment.base = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.takeoff = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.climb = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.descent = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.landing = -12e-4 + 19e-4 -5e-4
     aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
@@ -486,45 +486,38 @@ def sweep():
     This method gives the possiblity to make a parameter study
     '''
 
-    wing_loadings = np.linspace(730, 750, 2)
-    altitudes = np.linspace(36_000., 40_000., 3) * Units.ft
-    X, Y = np.meshgrid(altitudes, wing_loadings)
+    t_c_s = np.array([0.1])
+    aspect_ratios = np.linspace(12., 25., 10)
+    X, Y = np.meshgrid(t_c_s, aspect_ratios)
     fuels = np.zeros_like(X)
-    for i, alt in enumerate(altitudes):
-        for j, wl in enumerate(wing_loadings):
+    for i, tc in enumerate(t_c_s):
+        for j, ar in enumerate(aspect_ratios):
+            print('TC : %.3f' % tc)
+            print('AR : %.3f' % ar)
+            print('\n')
             parameters = Data()
-            parameters.wing_loading = wl
-            parameters.aspect_ratio = 21.
-            parameters.thickness_to_chord = 0.09
-            parameters.design_cruise_altitude = alt
+            parameters.wing_loading = 617.
+            parameters.aspect_ratio = ar
+            parameters.thickness_to_chord = tc
+            parameters.design_cruise_altitude = 40_000 * Units.ft
             parameters.design_cruise_mach = 0.82
-            atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
-            tf = Turbofan_Raymer()
-            altitude = parameters.design_cruise_altitude - 2_000 * Units.ft
-            mach = parameters.design_cruise_mach
-            temperature_deviation = 0
-            atmo_data = atmosphere.compute_values(altitude, temperature_deviation)
-            v_v_300 = 300 * Units.ft / Units.min
-            v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
-            LoD_initial_cruise_altitude = 22
-            m4_m0 = 1.
-            thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
-            F_m_TOC = m4_m0 * (v_v_300 / v_initial_cruise_altitude + 1 / LoD_initial_cruise_altitude) * thrust_ratio
-            parameters.thrust_loading = F_m_TOC[0][0]
+            parameters.sweep_quarter_chord = 28 * Units.deg
+            parameters.thrust_loading = 0.24
+
             fuels[j,i] = Baseline(parameters)
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(X, Y, fuels)
-    plt.show()
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    # ax.plot_surface(X, Y, fuels)
+    # plt.show()
 
 
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 700.# * 0.9
+    parameters.wing_loading = 617.# * 0.9
     parameters.aspect_ratio = 20.
     parameters.thickness_to_chord = 0.10
-    parameters.design_cruise_altitude = 39_000 * Units.ft
+    parameters.design_cruise_altitude = 40_000 * Units.ft
     parameters.design_cruise_mach = 0.82
     parameters.sweep_quarter_chord = 28 * Units.deg
     parameters.thrust_loading = 0.24
