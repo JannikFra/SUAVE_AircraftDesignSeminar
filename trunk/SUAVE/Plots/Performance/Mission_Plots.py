@@ -44,6 +44,8 @@ def plot_altitude_sfc_weight(results, line_color = 'bo-', save_figure = False, s
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -207,6 +209,7 @@ def plot_fuel_use(results, line_color = 'bo-', save_figure = False, save_filenam
     Plots
     Properties Used:
     N/A	"""
+    ##plt.style.use('dark_background')
 
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
@@ -300,6 +303,8 @@ def plot_aerodynamic_coefficients(results, line_color = 'bo-', save_figure = Fal
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -312,12 +317,12 @@ def plot_aerodynamic_coefficients(results, line_color = 'bo-', save_figure = Fal
         l_d  = cl/cd
 
         axes = plt.subplot(2,2,1)
-        axes.plot( time , aoa , line_color )
+        axes.plot( time , aoa , line_color)
         axes.set_ylabel('Angle of Attack (deg)',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,2)
-        axes.plot( time , cl, line_color )
+        axes.plot( time , cl, line_color)
         axes.set_ylabel('CL',axis_font)
         set_axes(axes)
 
@@ -365,6 +370,8 @@ def plot_aerodynamic_forces(results, line_color = 'bo-', save_figure = False, sa
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -431,6 +438,8 @@ def plot_drag_components(results, line_color = 'bo-', save_figure = False, save_
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig    = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -813,6 +822,8 @@ def plot_flight_conditions(results, line_color = 'bo-', save_figure = False, sav
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -1211,6 +1222,8 @@ def plot_stability_coefficients(results, line_color = 'bo-', save_figure = False
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)

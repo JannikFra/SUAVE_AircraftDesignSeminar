@@ -35,7 +35,7 @@ def main(altitude, mach, wing_loading, plot=True):
     iteration_setup.weight_iter = Data()
     iteration_setup.mission_iter = Data()
     iteration_setup.sizing_iter = Data()
-    iteration_setup.weight_iter.TOW = 230_000
+    iteration_setup.weight_iter.TOW = 210_000
     iteration_setup.weight_iter.BOW = 130_000
     iteration_setup.weight_iter.FUEL = 100_000
     iteration_setup.weight_iter.Design_Payload = 24_500
@@ -81,7 +81,7 @@ def main(altitude, mach, wing_loading, plot=True):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = 1e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4 + 19e-4 -5e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -163,6 +163,9 @@ def main(altitude, mach, wing_loading, plot=True):
     cd_tot         = drag_breakdown.total
 
     l_d = cl_actual[0][0] / np.interp(cl_actual[0][0], cl[:, 0], cd_tot[:, 0])
+
+    cd0 = np.interp(0, cl[:, 0], cd_tot[:, 0])
+    print('cd0', cd0)
     #print(l_d)
 
     specific_air_range = 1 / l_d * ref_sfc / (design_cruise_mach * a) * 9.81 * iteration_setup.weight_iter.TOW

@@ -47,7 +47,7 @@ def main(altitude, mach, wing_loading, plot=True):
     #iteration_setup.sizing_iter.wing_loading = 750.
     iteration_setup.sizing_iter.wing_loading = wing_loading
     iteration_setup.sizing_iter.thrust_loading = 0.2275
-    iteration_setup.sizing_iter.aspect_ratio = 15.6
+    iteration_setup.sizing_iter.aspect_ratio = 13.5
     iteration_setup.sizing_iter.thickness_to_chord = 0.105
     iteration_setup.sizing_iter.sweep_quarter_chord = 29 * Units.deg
     iteration_setup.sizing_iter.wing_origin = [[22.408, 0, -1]]
@@ -235,10 +235,8 @@ def sweep():
     # ax.plot_surface(X, Y, sfc)
     # ax.plot_surface(X, Y, l_d)
 
-
-
 if __name__ =='__main__':
-    sar, sfc, l_d = main(35000*Units.ft, 0.82, 750)
+    sar, sfc, l_d = main(35000*Units.ft, 0.82, 700)
     print('sar', sar)
     print('sfc', sfc)
     print('l_d', l_d)

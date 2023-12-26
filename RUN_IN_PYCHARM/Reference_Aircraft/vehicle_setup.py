@@ -90,8 +90,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[22.408,0,-0.957]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.08
-    wing.transition_x_lower = 0.08
+    wing.transition_x_upper = 0.
+    wing.transition_x_lower = 0.
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -227,8 +227,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[55.337, 0, 2.082]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -302,8 +302,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[52.2, 0, 3.59]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = True
     wing.symmetric               = False
