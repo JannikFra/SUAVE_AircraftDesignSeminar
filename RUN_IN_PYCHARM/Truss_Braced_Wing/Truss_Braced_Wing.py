@@ -521,7 +521,7 @@ def sweep():
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 700.# * 0.9
+    parameters.wing_loading = 617.# * 0.9
     parameters.aspect_ratio = 20.
     parameters.thickness_to_chord = 0.10
     parameters.design_cruise_altitude = 39_000 * Units.ft

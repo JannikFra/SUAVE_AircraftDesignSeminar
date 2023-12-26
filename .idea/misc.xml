@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="designSeminar" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="SUAVE_ADS" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="designSeminar" project-jdk-type="Python SDK" />
 </project>

@@ -147,7 +147,7 @@ def base_analysis(vehicle):
     weights.settings.weight_reduction_factors.main_wing = 0
     weights.settings.weight_reduction_factors.empennage = 0
     weights.settings.weight_reduction_factors.fuselage = 0
-    weights.settings.weight_reduction_factors.structural = 0.012
+    weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0

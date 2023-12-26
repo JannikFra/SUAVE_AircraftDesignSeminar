@@ -61,6 +61,17 @@ def wing_main_raymer(vehicle, wing):
     #     sweep = 0
     Wwing = CALIBRATION * 0.0051 * (Wdg * Nz) ** 0.557 * Sw ** 0.649 * A ** 0.5 * tc_root ** -0.4 * (1 + taper) ** 0.1 * \
             np.cos(sweep) ** -1. * Scsw ** 0.1
-    weight = Wwing * Units.lb
 
+    # Folding mechanism weight estimation for wingspans > 80 m
+    # Source: Gur et al., Development of Framework for Truss-Braced Wing Conceptual MDO
+    if wing.spans.projected > 80 * Units.meter:
+        # We assume that the hinge line is located at 40 m half-span
+        eta_fold = (80 * Units.meter)/wing.spans.projected
+        Fs_MTOW = 0.5 * (1 - 2/np.pi * eta_fold * (1 - eta_fold**2) ** 0.5 - 2/np.pi * np.arcsin(eta_fold))
+        Wfold = 0.07 * Wdg * Fs_MTOW
+        print('Folding Mechanism Weight: ', Wfold * Units.lb)
+    else:
+        Wfold = 0
+
+    weight = (Wwing + Wfold) * Units.lb
     return weight

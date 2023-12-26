@@ -47,7 +47,7 @@ mS = linspace(mS_min,mS_max);
 
 % Thrust-to-weight in cruise
 q_cr = 0.5 * rho_cr * V_cr^2;
-thrustRatioCruise = rho_0/rho_cr;
+thrustRatioCruise = 6;   % rho_0/rho_cr;
 TW_cruise = thrustRatioCruise * (q_cr * cD0 ./ (mS.*g) + k / q_cr .* mS .* g * massRatioCruise^2);
 
 % thrust to weight for take-off
@@ -59,8 +59,7 @@ TW_OEI = thrustRatioClimb * n_e/(n_e - 1) * (climbAngleOEI + 1/LD_OEI);
 
 % Thrust-to-weight for ICAC
 climbAngleICAC = 1.5/V_cr;
-TW_ICAC_alt = thrustRatioCruise * massRatioCruise * (climbAngleICAC + 1/LD_cruise);
-TW_ICAC     = thrustRatioCruise * massRatioCruise * (climbAngleICAC + q_cr * cD0 ./ (mS.*g) + k / q_cr .* mS .* g * massRatioCruise^2);
+TW_TOC = thrustRatioCruise * massRatioCruise * (climbAngleICAC + 1/LD_cruise);
 
 % Wing loading to maintain given maximum stall speed
 mS_stall = V_stall^2 * rho_0/(2*g) * cL_max;
@@ -81,11 +80,11 @@ mS_ldg = (TOFL/1.67 - l_a) * cL_max / (0.51*A*g*massRatioLanding);
 
 % lift coefficient for best cruise (jet aircraft) according to
 % Strohmayer Flugzeugentwurf 1, Teil 5, p. 47
-cL_LDmax = sqrt(cD0 / (3*k));
+cL_optCruise = sqrt(cD0 / (3*k));
 % cL_LDmax = 0.5;     % reference A/C
 
 % Best cruise for propeller aircraft
-mS_optCruise = q_cr/g * cL_LDmax;
+mS_optCruise = q_cr/g * cL_optCruise;
 
 % Choose lowest wing loading value as upper boundary
 mS_boundary = min([mS_stall, mS_approach, mS_ldg]);
@@ -96,22 +95,22 @@ mS_stall_stack = zeros(1,100);
 mS_stall_stack(1,:) = mS_boundary;
 mS_cruise_stack = zeros(1,100);
 mS_cruise_stack(1,:) = mS_optCruise;
-TW_climb_stack = min(TW_OEI, TW_ICAC_alt) .* ones(1,100);
+TW_climb_stack = max(TW_OEI, TW_TOC) .* ones(1,100);
 
 mS_stack = zeros(5,1);
 TW_stack = zeros(5,1);
 
-% [mS_stack(1),TW_stack(1)] = polyxpoly(mS,TW_to,mS_stall_stack,y_ph);  % intersection takeoff-stall
-% [mS_stack(2),TW_stack(2)] = polyxpoly(mS,TW_climb_stack,mS_stall_stack,y_ph);   % intersection climb-stall
-% [mS_stack(3),TW_stack(3)] = polyxpoly(mS,TW_cruise,mS_stall_stack,y_ph);    % intersection cruise-stall
-% [mS_stack(4),TW_stack(4)] = polyxpoly(mS,TW_OEI_stack,mS_cruise_stack,y_ph);  % intersection climb-opt. cruise
-% [mS_stack(5),TW_stack(5)] = polyxpoly(mS,TW_cruise,mS_cruise_stack,y_ph); % intersection cruise-opt. cruise
+[mS_stack(1),TW_stack(1)] = polyxpoly(mS,TW_to,mS_stall_stack,y_ph);  % intersection takeoff-stall
+[mS_stack(2),TW_stack(2)] = polyxpoly(mS,TW_climb_stack,mS_stall_stack,y_ph);   % intersection climb-stall
+[mS_stack(3),TW_stack(3)] = polyxpoly(mS,TW_cruise,mS_stall_stack,y_ph);    % intersection cruise-stall
+[mS_stack(4),TW_stack(4)] = polyxpoly(mS,TW_climb_stack,mS_cruise_stack,y_ph);  % intersection climb-opt. cruise
+[mS_stack(5),TW_stack(5)] = polyxpoly(mS,TW_cruise,mS_cruise_stack,y_ph); % intersection cruise-opt. cruise
 
 
 % Set Design point according to function description
 % if WS_stall < WS_cruise
     mS_set = mS_boundary;
-    TW_set = max(TW_stack);
+    TW_set = max(TW_stack(1:3,1));
 % else
 %     WS_set = WS_cruise;
 %     if TW_stack(4) > TW_stack(5)
@@ -133,17 +132,19 @@ xlabel('Wing Loading [kg/m²]')
 ylabel('Thrust to Weight [-]')
 axis([mS_min mS_max 0 0.5])
 hold on
+
 % xline(mS_stall,'LineStyle','--','DisplayName','Stall');
-xline(mS_approach,'DisplayName','Approach');
-xline(mS_ldg,'LineStyle',':','DisplayName','Ldg Distance');
-plot(mS,TW_to,'k','DisplayName','TOFL')
-yline(TW_OEI,'r','DisplayName','OEI Climb')
-yline(TW_ICAC_alt,'r','LineStyle','--','DisplayName','ICAC alt')
-plot(mS,TW_ICAC,'r','LineStyle','--','DisplayName','ICAC')
-xline(mS_optCruise,'--b','DisplayName','Best Cruise')
-plot(mS_set,TW_set,'Color','b','Marker','o','DisplayName','Design Point')
-plot(568.7,0.228,'Color','b','Marker','+','DisplayName','Reference A/C')
+xline(mS_approach,'Color','k','DisplayName','Approach');
+% xline(mS_ldg,'LineStyle',':','DisplayName','Ldg Distance');
+plot(mS,TW_to,'Color','k','DisplayName','TOFL')
+yline(TW_OEI,'r','LineStyle','--','DisplayName','OEI Climb')
+yline(TW_TOC,'r','DisplayName','TOC')
+xline(mS_optCruise,'LineStyle','--','Color','b','DisplayName','Best Cruise')
+plot(mS_set,TW_set,'Color','b','Marker','o','DisplayName','Design Point','LineStyle','none')
+plot(568.7,0.228,'Color','b','Marker','+','DisplayName','Reference A/C','LineStyle','none')
 legend('Location','northwest','NumColumns',2)
+
+% plot_darkmode
 hold off
 
 end 
