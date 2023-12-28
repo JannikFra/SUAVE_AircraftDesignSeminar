@@ -83,7 +83,7 @@ mS_ldg = (TOFL/1.67 - l_a) * cL_max / (0.51*A*g*massRatioLanding);
 cL_optCruise = sqrt(cD0 / (3*k));
 % cL_LDmax = 0.5;     % reference A/C
 
-% Best cruise for propeller aircraft
+% Best cruise for jet aircraft
 mS_optCruise = q_cr/g * cL_optCruise;
 
 % Choose lowest wing loading value as upper boundary

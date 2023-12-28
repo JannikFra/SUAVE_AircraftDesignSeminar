@@ -146,7 +146,7 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.11
+    weights.settings.weight_reduction_factors.main_wing = 0.11  #
     weights.settings.weight_reduction_factors.empennage = 0.
     weights.settings.weight_reduction_factors.fuselage = - 0.06 + 0.1 # +6 percent for high wing, -10 percent for CFRP
     weights.settings.weight_reduction_factors.structural = 0
@@ -514,7 +514,7 @@ def sweep():
 
 if __name__ == '__main__':
     parameters = Data()
-    parameters.wing_loading = 617.# * 0.9
+    parameters.wing_loading = 700.# * 0.9
     parameters.aspect_ratio = 20.
     parameters.thickness_to_chord = 0.10
     parameters.design_cruise_altitude = 40_000 * Units.ft

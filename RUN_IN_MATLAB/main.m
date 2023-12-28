@@ -3,13 +3,13 @@ clear
 clc
 
 %% User Inputs
-MTOM = 215000;  % in kg, ref = 279000
+MTOM = 220000;  % in kg, ref = 279000
 g = 9.81;
 
 % Operational
 rho_0 = 1.225;   % ground air density in kg/m³
 TOFL = 3200;     % take-off field length in m, TLAR
-stallSpeed_kts = 130;   % in kts, probably not relevant for us
+stallSpeed_kts = 150;   % in kts, probably not relevant for us
 stallSpeed = 0.51444 * stallSpeed_kts;  % in m/s
 
 climbAngleOEI = 0.024;   % in rad - CS-25 regulations for 2-engine a/c
@@ -21,17 +21,17 @@ cruiseMach = 0.82;
 cruiseSpeed = cruiseMach * a_cr; % in m/s
 massRatioCruise = 0.99 * 0.99 * 0.995 * 0.98;    % cruise mass divided by MTOM, nach Roskam
 
-approachSpeed_kts = 130;    % in kts, ref = 130
+approachSpeed_kts = 150;    % in kts, ref = 130
 approachSpeed = 0.51444 * approachSpeed_kts;
-massRatioLanding = 0.7;    % MLM divided by MTOM, ref = 0.70
+massRatioLanding = 0.85;    % MLM divided by MTOM, ref = 0.70, min = 0.665
 
 % Aerodynamics
 AR = 20;     % wing aspect ratio, ref = 9.988
 oswald = 0.84;       % oswald factor, ref = 0.84
 LD_OEI = 11;         % L/D in climb configuration
 LD_cruise = 26;      % L/D in cruise configuration
-cL_max = 2.34;  % ref = 2.15
-cL_max_TO = 0.8 * cL_max;
+cL_max = 2.42;  % ref = 2.15
+cL_max_TO = 2.1;
 cD0 = 0.0154;   % ref = 0.0108
 k = 1/(pi * AR * oswald);   % induced drag constant
 

@@ -502,10 +502,10 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------
     landing_gear                          = SUAVE.Components.Landing_Gear.Landing_Gear()
     landing_gear.tag                      = "main_landing_gear"
-    landing_gear.main_tire_diameter       = 1.12000 * Units.m
-    landing_gear.nose_tire_diameter       = 0.6858 * Units.m
-    landing_gear.main_strut_length        = 3.9 * Units.m       # TODO abhängigkeit modellieren
-    landing_gear.nose_strut_length        = 2.4 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.main_tire_diameter       = 0.9 * Units.m
+    landing_gear.nose_tire_diameter       = 0.9 * Units.m
+    landing_gear.main_strut_length        = 3.00 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.nose_strut_length        = 2.10 * Units.m       # TODO abhängigkeit modellieren
     landing_gear.main_units               = 2    #number of main landing gear
     landing_gear.nose_units               = 1    #number of nose landing gear
     landing_gear.main_wheels              = 4 * landing_gear.main_units    #number of wheels on the main landing gear
