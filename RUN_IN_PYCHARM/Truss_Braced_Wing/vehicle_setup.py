@@ -207,7 +207,7 @@ def vehicle_setup(iteration_setup):
     wing.tag = 'horizontal_stabilizer'
 
     wing.aspect_ratio            = 5.27
-    wing.sweeps.quarter_chord    = 30. * Units.deg
+    wing.sweeps.quarter_chord    = 33. * Units.deg
     wing.thickness_to_chord      = 0.088
     wing.taper                   = 0.378
 
@@ -220,12 +220,13 @@ def vehicle_setup(iteration_setup):
     wing.vertical                = False
     wing.symmetric               = True
 
-    wing.dynamic_pressure_ratio  = 0.9
+    wing.dynamic_pressure_ratio  = 0.8
 
     # Tailplane sizing
     deltaaerocenterhtp = 2
-    c_ht = 0.483 * 2 #0.483
-    c_vt = 0.035 * 2#0.035
+    c_ht = 1.5#0.483 * 2 #0.483 * 2 #0.483
+    c_vt = 0.06#0.06 #0.035 * 2#0.035
+
     while abs(deltaaerocenterhtp) > 1e-10:
         oldaerocenter = wing.aerodynamic_center[0]
 
@@ -236,6 +237,7 @@ def vehicle_setup(iteration_setup):
                             * vehicle.wings.main_wing.areas.reference \
                             * c_ht \
                             / l_ht
+
         req_area_proj_x_z = vehicle.wings.main_wing.spans.projected \
                             * vehicle.wings.main_wing.areas.reference \
                             * c_vt \
@@ -249,6 +251,9 @@ def vehicle_setup(iteration_setup):
 
         newaerocenter = wing.aerodynamic_center[0]
         deltaaerocenterhtp = oldaerocenter - newaerocenter
+
+    print('SH/S: %.3f' % (req_area_proj_x_y / vehicle.wings.main_wing.areas.reference))
+    print('SV/S: %.3f' % (req_area_proj_x_z / vehicle.wings.main_wing.areas.reference))
 
     # Fill out more segment properties automatically
     # wing = wing_segmented_planform(wing)
@@ -456,8 +461,10 @@ def vehicle_setup(iteration_setup):
 
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
     print('Sea level static trust: ', sea_level_static_thrust)
-    propulsor.engine_length = 7.4 * (sea_level_static_thrust / 622720)**0.5
-    bucket_sfc = 0.475
+
+
+    propulsor.engine_length = 4. * (sea_level_static_thrust / 461600)**0.5
+    bucket_sfc = 0.4498 # 0.4498 According to Offtakes from SFC_Offtakes.py File #0.442
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
                             sea_level_static_thrust,
@@ -472,10 +479,10 @@ def vehicle_setup(iteration_setup):
     nacelle = SUAVE.Components.Nacelles.Nacelle()
     nacelle.tag = 'nacelle_1'
 
-    nacelle.length = 7.2 * (sea_level_static_thrust / 622720)**0.5
-    nacelle.inlet_diameter = 3.6 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.length = 4. * (sea_level_static_thrust / 461600)**0.5
+    nacelle.inlet_diameter = 2.4 * (sea_level_static_thrust / 461600)**0.5
     print('Nacelle inlet diameter: ', nacelle.inlet_diameter)
-    nacelle.diameter = 3.8 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.diameter = 2.9 * (sea_level_static_thrust / 461600)**0.5
     nacelle.areas.wetted = 1.1 * np.pi * nacelle.diameter * nacelle.length
     nacelle.origin = [[19., 8., 0.]]
     nacelle.flow_through = True
@@ -495,7 +502,8 @@ def vehicle_setup(iteration_setup):
     vehicle.fuel                          = fuel
     fuel.mass_properties.mass             = vehicle.mass_properties.max_takeoff-vehicle.mass_properties.max_fuel
     fuel.origin                           = vehicle.wings.main_wing.origin
-    fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.aerodynamic_center
+    fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.mass_properties.center_of_gravity
+    fuel.mass_properties.center_of_gravity[0] += 0.04 * vehicle.wings.main_wing.chords.root
 
     # ------------------------------------------------------------------
     #  Landing Gear

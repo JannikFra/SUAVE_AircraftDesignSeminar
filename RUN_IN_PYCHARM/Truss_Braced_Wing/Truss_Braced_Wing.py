@@ -146,14 +146,14 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.11  #
-    weights.settings.weight_reduction_factors.empennage = 0.
+    weights.settings.weight_reduction_factors.main_wing = 0.05 + 0.11# 11 percent for ttbw, 5 percent for CFRP
+    weights.settings.weight_reduction_factors.empennage = 0.05 # 5 percent for CFRP
     weights.settings.weight_reduction_factors.fuselage = - 0.06 + 0.1 # +6 percent for high wing, -10 percent for CFRP
     weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0
     weights.settings.weight_reduction_factors.landing_gear = 0
-    weights.settings.weight_reduction_factors.propulsion = 0.03
+    weights.settings.weight_reduction_factors.propulsion = 0. #0.03
     analyses.append(weights)
 
     # ------------------------------------------------------------------
@@ -233,11 +233,11 @@ def base_analysis(vehicle):
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.919  # 0.921
-    aerodynamics.settings.compressibility_constant_n = 10  # 2.5
+    aerodynamics.settings.mach_star = 0.91  # 0.921
+    aerodynamics.settings.compressibility_constant_n = 20.  # 2.5
     aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.84
+    aerodynamics.settings.oswald_efficiency_factor = 0.89
 
     analyses.append(aerodynamics)
 
@@ -313,7 +313,7 @@ def Baseline(parameters):
     iteration_setup.mission_iter.reserve_hold_speed = 250 * Units['kts']
     iteration_setup.mission_iter.reserve_trip_pct = 0.03
     iteration_setup.mission_iter.reserve_distance = 200. * Units.nautical_mile
-    iteration_setup.mission_iter.reserve_cruise_distance = 100. * Units.nautical_miles
+    iteration_setup.mission_iter.reserve_cruise_distance = 200. * Units.nautical_miles
 
     iteration_setup.sizing_iter = Data()
     iteration_setup.sizing_iter.wing_loading = parameters.wing_loading
@@ -427,7 +427,7 @@ def Baseline(parameters):
         percent_mac_max = np.max(percent_mac)
         reference_mac = (percent_mac_min+percent_mac_max)/2  # or min!!!
 
-        percent_mac_iter = 24  # Raymer
+        percent_mac_iter = 44  # Raymer
         iteration_setup.sizing_iter.wing_origin[0][0] = iteration_setup.sizing_iter.wing_origin[0][0] - (
                     percent_mac_iter - reference_mac) / 100 * configs.base.wings.main_wing.chords.mean_aerodynamic
         delta_percent_mac = (percent_mac_iter - reference_mac) * 5
@@ -472,6 +472,28 @@ def Baseline(parameters):
     print('Wing span : %.2f m' % configs.base.wings.main_wing.spans.projected)
     print('Wing area : %.2f m' % configs.base.wings.main_wing.areas.reference)
     print('Center of Gravity :', configs.base.mass_properties.center_of_gravity)
+    print('Wing mass :', configs.base.weight_breakdown.structures.wing)
+
+    print('V Tail')
+    ar = configs.base.wings.horizontal_stabilizer.aspect_ratio
+    sref = configs.base.wings.horizontal_stabilizer.areas.reference
+    print('Area : %.2f m' % sref)
+    print('Span : %.2f m' % (ar*sref)**.5)
+    print('Root inner : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.root)
+    print('Root outer : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.tip)
+    print('Dihedral : %.2f deg' % (configs.base.wings.horizontal_stabilizer.dihedral / Units.deg))
+
+    print("Wing")
+    print('Area : %.2f m' % configs.base.wings.main_wing.areas.reference)
+    print('Span : %.2f m' % configs.base.wings.main_wing.spans.projected)
+    print('chord inner : %.2f m' % configs.base.wings.main_wing.chords.root)
+    print('chord outer : %.2f m' % configs.base.wings.main_wing.chords.tip)
+    print('chord mac : %.2f m' % configs.base.wings.main_wing.chords.mean_aerodynamic)
+    print('origin :', configs.base.wings.main_wing.origin)
+
+    print("landing gear")
+    print("x coord main gear", configs.base.landing_gear.main.origin[0][0])
+    print("x coord nose gear", configs.base.landing_gear.nose.origin[0][0])
     results_show(results, configs.base)
 
     payload_range_run = False
@@ -486,20 +508,22 @@ def sweep():
     This method gives the possiblity to make a parameter study
     '''
 
-    t_c_s = np.array([0.1])
-    aspect_ratios = np.linspace(12., 25., 10)
-    X, Y = np.meshgrid(t_c_s, aspect_ratios)
+    ars = np.linspace(10, 16, 3)
+    altitudes = np.array([36.]) * 1000 * Units.ft
+    X, Y = np.meshgrid(ars, altitudes)
     fuels = np.zeros_like(X)
-    for i, tc in enumerate(t_c_s):
-        for j, ar in enumerate(aspect_ratios):
-            print('TC : %.3f' % tc)
+    for i, ar in enumerate(ars):
+        for j, alt in enumerate(altitudes):
             print('AR : %.3f' % ar)
+            print('ALT : %.3f' % (alt/Units.ft))
             print('\n')
             parameters = Data()
-            parameters.wing_loading = 617.
+            parameters.wing_loading = 700.
+
+
             parameters.aspect_ratio = ar
-            parameters.thickness_to_chord = tc
-            parameters.design_cruise_altitude = 40_000 * Units.ft
+            parameters.thickness_to_chord = 0.1
+            parameters.design_cruise_altitude = alt
             parameters.design_cruise_mach = 0.82
             parameters.sweep_quarter_chord = 28 * Units.deg
             parameters.thrust_loading = 0.24
@@ -517,7 +541,7 @@ if __name__ == '__main__':
     parameters.wing_loading = 700.# * 0.9
     parameters.aspect_ratio = 20.
     parameters.thickness_to_chord = 0.10
-    parameters.design_cruise_altitude = 40_000 * Units.ft
+    parameters.design_cruise_altitude = 38_000 * Units.ft
     parameters.design_cruise_mach = 0.82
     parameters.sweep_quarter_chord = 28 * Units.deg
     parameters.thrust_loading = 0.24

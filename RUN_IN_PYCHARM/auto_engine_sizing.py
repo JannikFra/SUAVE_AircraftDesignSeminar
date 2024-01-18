@@ -4,19 +4,22 @@ from SUAVE.Components.Energy.Networks.Turbofan_Raymer import Turbofan_Raymer
 
 atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
 tf = Turbofan_Raymer()
-altitude = 42000 * Units.ft
-mach = 0.82
+altitude = 35000 * Units.ft
+mach = 0.8
 temperature_deviation = 0
 atmo_data =  atmosphere.compute_values(altitude, temperature_deviation)
-v_v_300 = 300 * Units.ft / Units.min
-v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
-LoD_initial_cruise_altitude = 26
-m4_m0 = 0.98
-rho_initial_cruise_altitude = atmo_data.density[0][0]
+
 thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
+print(thrust_ratio)
 
-F_m_TOC = m4_m0 * (v_v_300/v_initial_cruise_altitude + 1/LoD_initial_cruise_altitude) * thrust_ratio
+mtom = 140_000
+thrust_loading = 230_800 * 2 / mtom / 9.81
+print('thrust_loading', thrust_loading)
 
+print(230_800 / Units.lbf)
 
-print(F_m_TOC)
+max_thrust_in_cruise = 230_800 / thrust_ratio / Units.lbf
+print('max_thrust_in_cruise lbf', max_thrust_in_cruise)
 
+# print(0.046995667731751595 * Units.kg / Units.lb / (Units.N / Units.lbf))
+# print(0.475 * Units.lb / Units.kg / (Units.lbf / Units.N))

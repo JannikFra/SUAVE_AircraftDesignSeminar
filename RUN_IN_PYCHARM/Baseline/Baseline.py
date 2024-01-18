@@ -146,9 +146,9 @@ def base_analysis(vehicle):
     #  Weights
     weights = SUAVE.Analyses.Weights.Weights_Transport()
     weights.vehicle = vehicle
-    weights.settings.weight_reduction_factors.main_wing = 0.03
-    weights.settings.weight_reduction_factors.empennage = 0.03
-    weights.settings.weight_reduction_factors.fuselage = 0.03
+    weights.settings.weight_reduction_factors.main_wing = 0.05
+    weights.settings.weight_reduction_factors.empennage = 0.05
+    weights.settings.weight_reduction_factors.fuselage = 0.1
     weights.settings.weight_reduction_factors.structural = 0
     weights.settings.weight_reduction_factors.systems = 0
     weights.settings.weight_reduction_factors.operating_items = 0

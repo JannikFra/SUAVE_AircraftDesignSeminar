@@ -415,8 +415,8 @@ def vehicle_setup(iteration_setup):
     ))
 
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
-    propulsor.engine_length = 7.4 * (sea_level_static_thrust / 622720)**0.5
-    bucket_sfc = 0.475
+    propulsor.engine_length = 4. * (sea_level_static_thrust / 461600) ** 0.5
+    bucket_sfc = 0.4498  # 0.4498 According to Offtakes from SFC_Offtakes.py File #0.442
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
                             sea_level_static_thrust,
@@ -424,28 +424,27 @@ def vehicle_setup(iteration_setup):
                             bucket_sfc=bucket_sfc)
 
     vehicle.append_component(propulsor)
-
     # ------------------------------------------------------------------
     #   Nacelles
     # ------------------------------------------------------------------
     nacelle = SUAVE.Components.Nacelles.Nacelle()
     nacelle.tag = 'nacelle_1'
 
-    nacelle.length = 7.2 * (sea_level_static_thrust / 622720)**0.5
-    nacelle.inlet_diameter = 3.6 * (sea_level_static_thrust / 622720)**0.5
-    nacelle.diameter = 3.8 * (sea_level_static_thrust / 622720)**0.5
+    nacelle.length = 4. * (sea_level_static_thrust / 461600) ** 0.5
+    nacelle.inlet_diameter = 2.4 * (sea_level_static_thrust / 461600) ** 0.5
+    print('Nacelle inlet diameter: ', nacelle.inlet_diameter)
+    nacelle.diameter = 2.9 * (sea_level_static_thrust / 461600) ** 0.5
     nacelle.areas.wetted = 1.1 * np.pi * nacelle.diameter * nacelle.length
-    nacelle.origin = [[19., 8., -1.5]]
+    nacelle.origin = [[19., 8., 0.]]
     nacelle.flow_through = True
     nacelle.Airfoil.NACA_4_series_flag = True
     nacelle.Airfoil.coordinate_file = '2410'
     nacelle_2 = deepcopy(nacelle)
     nacelle_2.tag = 'nacelle_2'
-    nacelle_2.origin = [[19., -8, -1.5]]
+    nacelle_2.origin = [[19., -8, 0.]]
     #
     vehicle.append_component(nacelle)
     vehicle.append_component(nacelle_2)
-
     # ------------------------------------------------------------------
     #  Fuel
     # ------------------------------------------------------------------

@@ -35,9 +35,9 @@ def main(altitude, mach, wing_loading, plot=True):
     iteration_setup.weight_iter = Data()
     iteration_setup.mission_iter = Data()
     iteration_setup.sizing_iter = Data()
-    iteration_setup.weight_iter.TOW = 210_000
-    iteration_setup.weight_iter.BOW = 130_000
-    iteration_setup.weight_iter.FUEL = 100_000
+    iteration_setup.weight_iter.TOW = 192_997
+    iteration_setup.weight_iter.BOW = 102_278
+    iteration_setup.weight_iter.FUEL = 66_218
     iteration_setup.weight_iter.Design_Payload = 24_500
     iteration_setup.mission_iter.design_cruise_altitude = altitude
     iteration_setup.mission_iter.design_cruise_mach = mach
@@ -49,7 +49,7 @@ def main(altitude, mach, wing_loading, plot=True):
     iteration_setup.sizing_iter.aspect_ratio = 20.
     iteration_setup.sizing_iter.thickness_to_chord = 0.10
     iteration_setup.sizing_iter.sweep_quarter_chord = 28 * Units.deg
-    iteration_setup.sizing_iter.wing_origin = [[22.408, 0, 4.]]
+    iteration_setup.sizing_iter.wing_origin = [[20., 0, 4.]]
 
     design_cruise_altitude = iteration_setup.mission_iter.design_cruise_altitude
     design_cruise_mach = iteration_setup.mission_iter.design_cruise_mach
@@ -89,11 +89,11 @@ def main(altitude, mach, wing_loading, plot=True):
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.919  # 0.921
-    aerodynamics.settings.compressibility_constant_n = 10  # 2.5
+    aerodynamics.settings.mach_star = 0.91  # 0.921
+    aerodynamics.settings.compressibility_constant_n = 20.  # 2.5
     aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.84
+    aerodynamics.settings.oswald_efficiency_factor = 0.89
 
     aerodynamics.geometry = configs.cruise
 
@@ -176,22 +176,22 @@ def main(altitude, mach, wing_loading, plot=True):
     if plot:
         cl_quad = np.linspace(0.0, 0.8, 100)
         cd_quad = 0.0108 + 1/(np.pi*0.796*vehicle.wings.main_wing.aspect_ratio) * cl_quad**2
-        plt.plot(cd_quad, cl_quad, label="quadratic")
-        plt.plot(cd_tot, cl, label="SUAVE")
-        plt.plot(cd_c, cl, label="compressibility")
-        plt.plot(cd_i, cl, label="induced")
+        #plt.plot(cd_quad, cl_quad, label="quadratic")
+        #plt.plot(cd_tot, cl, label="SUAVE")
+        #plt.plot(cd_c, cl, label="compressibility")
+        #plt.plot(cd_i, cl, label="induced")
         #plt.plot(cd_m, cl, label="miscellaneous")
         #plt.plot(cd_p_fuse, cl, label="parasite fuselage")
         #plt.plot(cd_p_wing, cl, label="parasite wing")
-        plt.hlines(cl_actual, 0, 1)
+        #plt.hlines(cl_actual, 0, 1)
         cl_ref = np.array([0., 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6, 0.65, 0.7, 0.75])
         cd_ref = np.array([0.0108, 0.0123, 0.0132, 0.0143, 0.0156, 0.0171, 0.0188, 0.0208, 0.0238, 0.0246, 0.0254, 0.0264, 0.0274,
               0.0288, 0.0366, 0.0530, 0.0947])
-        plt.scatter(cd_ref, cl_ref, label="Airbus")
-        plt.grid('on')
-        plt.axis([0, 0.1, 0, 1.])
-        plt.legend()
-        plt.show()
+        #plt.scatter(cd_ref, cl_ref, label="Airbus")
+        #plt.grid('on')
+        #plt.axis([0, 0.1, 0, 1.])
+        #plt.legend()
+        #plt.show()
 
         cl_base = [-0.64663888, -0.59831168, -0.54992253, -0.50147641, -0.45297826, -0.40443301, -0.35584557,
                    -0.30722081, -0.2585636, -0.20987878, -0.16117117, -0.11244559, -0.06370684, -0.0149597, 0.03379105,
@@ -222,9 +222,13 @@ def main(altitude, mach, wing_loading, plot=True):
                    1.0799412, 0.76817277, 0.55309506, 0.40312557, 0.29734006, 0.22183793, 0.16732038, 0.1275094,
                    0.09812221, 0.07620521, 0.05969907, 0.0471524, 0.03753149]
 
-        plt.plot(cl_base, l_d_base, label='Baseline')
-        plt.plot(cl_ref, l_d_ref, label='Reference')
+        cl_calib =[-0.032,0.007,0.046,0.087,0.127,0.166,0.206,0.246,0.286,0.326,0.367,0.408,0.447,0.485,0.524,0.56,0.598,0.634,0.671,0.708,0.743,0.779,0.812,0.851,0.887]
+        l_d_calib = [-1.97, 0.447, 2.87, 5.386, 7.856, 10.2, 12.426, 14.69, 16.80, 18.68, 20.56, 22.25, 23.79, 25.0, 26.1, 26.95, 27.43, 27.31, 24.57, 20.05, 15.1, 10.39, 7.17, 4.52, 2.92]
+
+        #plt.plot(cl_base, l_d_base, label='Baseline')
+        #plt.plot(cl_ref, l_d_ref, label='Reference')
         plt.plot(cl, cl/cd_tot, label="TBW")
+        plt.plot(cl_calib, l_d_calib, label="Calibration")
         plt.vlines(cl_actual, 0, 50)
         plt.legend()
         plt.axis([0., 1., 0., 30.])
@@ -268,7 +272,7 @@ def sweep():
 
 
 if __name__ =='__main__':
-    sar, sfc, l_d = main(39_000*Units.ft, 0.82, 700)
+    sar, sfc, l_d = main(38_000*Units.ft, 0.82, 700)
     print('sar', sar)
     print('sfc', sfc)
     print('l_d', l_d)
