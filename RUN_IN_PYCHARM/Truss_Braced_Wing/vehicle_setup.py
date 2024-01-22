@@ -86,7 +86,7 @@ def vehicle_setup(iteration_setup):
     wing.aspect_ratio = iteration_setup.sizing_iter.aspect_ratio
     wing.sweeps.quarter_chord = iteration_setup.sizing_iter.sweep_quarter_chord
     wing.thickness_to_chord = iteration_setup.sizing_iter.thickness_to_chord
-    wing.taper = 0.2893
+    wing.taper = 0.22
 
     # Wing Segments
     root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
@@ -106,7 +106,7 @@ def vehicle_setup(iteration_setup):
     mid_airfoil.coordinate_file           = 'Airfoils/B737b.txt'
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Section_2'
-    segment.percent_span_location         = 0.4
+    segment.percent_span_location         = 0.55
     segment.twist                         = 0.00258 * Units.deg
     segment.root_chord_percent            = 0.8
     segment.thickness_to_chord            = iteration_setup.sizing_iter.thickness_to_chord
@@ -458,7 +458,7 @@ def vehicle_setup(iteration_setup):
         iteration_setup.mission_iter.design_cruise_altitude, iteration_setup.mission_iter.design_cruise_mach,
         m4_m0=0.9557, LoD_initial_cruise_altitude=26,
     ))
-
+    print('Thrust loading: ', thrust_loading)
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
     print('Sea level static trust: ', sea_level_static_thrust)
 

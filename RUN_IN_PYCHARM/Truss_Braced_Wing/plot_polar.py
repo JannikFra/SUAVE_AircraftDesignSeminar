@@ -49,7 +49,7 @@ def main(altitude, mach, wing_loading, plot=True):
     iteration_setup.sizing_iter.aspect_ratio = 20.
     iteration_setup.sizing_iter.thickness_to_chord = 0.10
     iteration_setup.sizing_iter.sweep_quarter_chord = 28 * Units.deg
-    iteration_setup.sizing_iter.wing_origin = [[20., 0, 4.]]
+    iteration_setup.sizing_iter.wing_origin = [[17.568, 0, 4.]]
 
     design_cruise_altitude = iteration_setup.mission_iter.design_cruise_altitude
     design_cruise_mach = iteration_setup.mission_iter.design_cruise_mach
