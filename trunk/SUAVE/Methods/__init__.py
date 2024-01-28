@@ -14,6 +14,7 @@ from . import Propulsion
 from . import Utilities
 from . import Weights
 from . import Cryogenics
+from . import Figures_of_Merit
 
 
 

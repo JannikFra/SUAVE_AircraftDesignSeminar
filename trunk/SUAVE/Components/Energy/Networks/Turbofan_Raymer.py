@@ -219,12 +219,21 @@ class Turbofan_Raymer(Network):
         if design_cruise_altitude < 36000.:
             ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * 0.533981
         else:
+<<<<<<< Updated upstream
             ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * 0.533981
         ref_sfc = ref_sfc + 0.006 * (design_cruise_mach-0.82)/0.01
+=======
+            ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * bucket_sfc
+
+        ref_sfc = ref_sfc * (1 + 0.006 * (design_cruise_mach-0.82)/0.01)
+>>>>>>> Stashed changes
 
         ref_sfc = ref_sfc / 3600.
         surrogate_sfc = self.get_tsfc(design_cruise_altitude*Units.ft, design_cruise_mach, throttle_mid_cruise)
         sfc_factor = ref_sfc / surrogate_sfc
+
+        print("sfc factor", sfc_factor)
+        print("max thrust factor", max_thrust_factor)
 
         self.sealevel_static_thrust = sea_level_static_thrust
         self.max_thrust_factor = max_thrust_factor

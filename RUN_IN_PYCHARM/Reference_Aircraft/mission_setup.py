@@ -120,14 +120,40 @@ def mission_setup(analyses, iteration_setup):
     segment.analyses.extend(analyses.cruise)
 
     segment.altitude_start = 20_000 * Units.ft
+<<<<<<< Updated upstream
     segment.altitude_end = 25_000 * Units.ft
     rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
     segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
     segment.throttle = climb_throttle
+=======
+    segment.altitude_end = 22_000 * Units.ft
+    rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
+    segment.throttle = climb_throttle
+    segment.state.numerics.number_control_points = 10
+>>>>>>> Stashed changes
 
     # add to mission
     mission.append_segment(segment)
 
+    # ------------------------------------------------------------------
+    #   Fifth5 Climb Segment: Constant Speed Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "climb_5_5"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = 22_000 * Units.ft
+    segment.altitude_end = 24_000 * Units.ft
+    rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
+    segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
+    segment.throttle = climb_throttle
+    segment.state.numerics.number_control_points = 10
+
+    # add to mission
+    mission.append_segment(segment)
     # ------------------------------------------------------------------
     #   Sixth Climb Segment: Constant Speed Constant Rate
     # ------------------------------------------------------------------
@@ -226,6 +252,66 @@ def mission_setup(analyses, iteration_setup):
 
     # add to mission
     mission.append_segment(segment)
+
+    # # ------------------------------------------------------------------
+    # #   Third Step Climb Segment: Constant Speed Constant Rate
+    # # ------------------------------------------------------------------
+    #
+    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment.tag = "step_climb_3"
+    #
+    # segment.analyses.extend(analyses.cruise)
+    #
+    # segment.altitude_start = iteration_setup.mission_iter.design_cruise_altitude + 2_000 * Units.ft
+    # segment.altitude_end = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    # segment.air_speed = atmosphere.compute_values((
+    #                                                           segment.altitude_start + segment.altitude_end) / 2).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    # segment.throttle = climb_throttle
+    # segment.state.numerics.number_control_points = 4
+    #
+    # # add to mission
+    # mission.append_segment(segment)
+    #
+    # # ------------------------------------------------------------------
+    # #   4. Cruise Segment: Constant Speed Constant Altitude
+    # # ------------------------------------------------------------------
+    #
+    # segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    # segment.tag = "cruise_4"
+    #
+    # segment.analyses.extend(analyses.cruise)
+    #
+    # segment.altitude = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    # segment.air_speed = atmosphere.compute_values(
+    #     segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    # segment.distance = iteration_setup.mission_iter.cruise_distance / 4
+    # segment.state.numerics.number_control_points = 8
+    #
+    # # post-process aerodynamic derivatives in cruise
+    # # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
+    #
+    # # add to mission
+    # mission.append_segment(segment)
+    #
+    # # ------------------------------------------------------------------
+    # #   Zeroth Descent Segment: Constant Speed Constant Rate
+    # # ------------------------------------------------------------------
+    #
+    # segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    # segment.tag = "descent_0"
+    #
+    # segment.analyses.extend(analyses.cruise)
+    #
+    # segment.altitude_start = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    # segment.altitude_end = iteration_setup.mission_iter.design_cruise_altitude + 2_000 * Units.ft
+    # rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
+    # segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
+    # segment.state.numerics.number_control_points = 4
+    # segment.throttle = idle_throttle
+    #
+    # # add to mission
+    # mission.append_segment(segment)
+
     # ------------------------------------------------------------------
     #   First Descent Segment: Constant Speed Constant Rate
     # ------------------------------------------------------------------

@@ -1,0 +1,19 @@
+Output file with Payload Range Diagram details
+
+ Maximum Takeoff Weight ...........( MTOW ).....:   197308 kg
+ Operational Empty Weight .........( OEW  ).....:   104109 kg
+ Maximum Zero Fuel Weight .........( MZFW ).....:   154110 kg
+ Maximum Payload Weight ...........( PLDMX  )...:    50000 kg
+ Maximum Fuel Weight ..............( FUELMX )...:    68699 kg
+ Reserve Fuel  .................................:     1912 kg
+
+    RANGE    |   PAYLOAD   |   FUEL      |    TOW      |  
+     nm      |     kg      |    kg       |     kg      |  
+         0   |     50000   |         0   |         0   |
+      5558   |     50000   |     43199   |    197308   |
+     10500   |     24501   |     68699   |    197308   |
+     11417   |         0   |     68699   |    172808   |
+
+
+-------------------------------------------
+ Friday, 26. January 2024 02:41:04 AM
