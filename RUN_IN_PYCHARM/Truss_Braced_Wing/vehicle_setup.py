@@ -86,7 +86,7 @@ def vehicle_setup(iteration_setup):
     wing.aspect_ratio = iteration_setup.sizing_iter.aspect_ratio
     wing.sweeps.quarter_chord = iteration_setup.sizing_iter.sweep_quarter_chord
     wing.thickness_to_chord = iteration_setup.sizing_iter.thickness_to_chord
-    wing.taper = 0.22
+    wing.taper = 0.2893
 
     # Wing Segments
     root_airfoil                          = SUAVE.Components.Airfoils.Airfoil()
@@ -106,7 +106,7 @@ def vehicle_setup(iteration_setup):
     mid_airfoil.coordinate_file           = 'Airfoils/B737b.txt'
     segment                               = SUAVE.Components.Wings.Segment()
     segment.tag                           = 'Section_2'
-    segment.percent_span_location         = 0.55
+    segment.percent_span_location         = 0.4
     segment.twist                         = 0.00258 * Units.deg
     segment.root_chord_percent            = 0.8
     segment.thickness_to_chord            = iteration_setup.sizing_iter.thickness_to_chord

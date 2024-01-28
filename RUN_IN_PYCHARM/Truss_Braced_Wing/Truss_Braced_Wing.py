@@ -321,7 +321,7 @@ def Baseline(parameters):
     iteration_setup.sizing_iter.aspect_ratio = parameters.aspect_ratio
     iteration_setup.sizing_iter.sweep_quarter_chord = parameters.sweep_quarter_chord
     iteration_setup.sizing_iter.thickness_to_chord = parameters.thickness_to_chord
-    iteration_setup.sizing_iter.wing_origin = [[22.408,0,2.9]]
+    iteration_setup.sizing_iter.wing_origin = [[22.408,0,-0.957+5.]]
 
     landing_weight = 0.0
     block_distance = 0.0
@@ -544,7 +544,7 @@ if __name__ == '__main__':
     parameters.design_cruise_altitude = 38_000 * Units.ft
     parameters.design_cruise_mach = 0.82
     parameters.sweep_quarter_chord = 28 * Units.deg
-    parameters.thrust_loading = 0.255
+    parameters.thrust_loading = 0.24
     Baseline(parameters)
 
     #sweep()
