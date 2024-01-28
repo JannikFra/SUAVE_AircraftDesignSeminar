@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 import os
 import time
-from SUAVE.Methods.Performance import payload_range
+from SUAVE.Methods.Performance import payload_range_multiple_cruise
 from RUN_IN_PYCHARM.Truss_Braced_Wing.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Truss_Braced_Wing.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
@@ -496,9 +496,9 @@ def Baseline(parameters):
     print("x coord nose gear", configs.base.landing_gear.nose.origin[0][0])
     results_show(results, configs.base)
 
-    payload_range_run = False
+    payload_range_run = True
     if payload_range_run == True:
-        payload_range = payload_range(configs.cruise, results, "cruise_2", reserves=reserve_fuel)
+        payload_range = payload_range_multiple_cruise(configs.cruise,mission,num_cruise_seg=4,reserves=reserve_fuel_pct)
 
     return iteration_setup.weight_iter.FUEL
 
