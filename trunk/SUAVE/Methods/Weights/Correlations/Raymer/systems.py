@@ -2,7 +2,7 @@
 # systems.py
 #
 # Created:  May 2020, W. Van Gijseghem
-# Modified:
+# Modified: Nov 2023, L. Bauer
 
 # ----------------------------------------------------------------------
 #  Imports
@@ -59,6 +59,7 @@ def systems_Raymer(vehicle):
             N/A
     """
     L              = vehicle.fuselages['fuselage'].lengths.total / Units.ft
+    Lcabin         = vehicle.fuselages['fuselage'].lengths.cabin / Units.ft
     Bw             = vehicle.wings['main_wing'].spans.projected / Units.ft
     DG             = vehicle.mass_properties.max_takeoff / Units.lbs
     Scs            = vehicle.wings['main_wing'].flap_ratio * vehicle.reference_area / Units.ft**2
@@ -71,41 +72,45 @@ def systems_Raymer(vehicle):
     cargo_weight   = vehicle.payload.cargo.mass_properties.mass / Units.lbs
     
     if vehicle.passengers >= 150:
-        flight_crew = 3 # number of flight crew
+        flight_crew = 6 # number of flight crew
     else:
-        flight_crew = 2
+        flight_crew = 6
     Ns      = 4  # Number of flight control systems (typically 4)
     Kr      = 1  # assuming not a reciprocating engine
     Ktp     = 1  # assuming not a turboprop
     Nf      = 7  # number of functions performed by controls (typically 4-7)
+    Nm      = 2  # number of mechanical functions (typically 0-2)
     Rkva    = 60  # system electrical rating
     Wuav    = 1400  # uninstalled avionics weight
 
-    WSC = 36.28 * design_mach**0.003 * Scs**0.489 * Ns**0.484 * flight_crew**0.124
+    # WSC = 36.28 * design_mach**0.003 * Scs**0.489 * Ns**0.484 * flight_crew**0.124
+
 
     if num_pax >= 6.:
         apu_wt = 7.0 * num_pax
     else:
         apu_wt = 0.0  # no apu if less than 9 seats
-    WAPU            = max(apu_wt, 70./Units.lbs)
-    NENG            = networks.number_of_engines
-    WIN = 4.509 * Kr * Ktp * flight_crew ** 0.541 * NENG * (L + Bw) ** 0.5
-    WHYD = 0.2673 * Nf * (L + Bw) ** 0.937
-    WELEC = 7.291 * Rkva ** 0.782 * (2*L) ** 0.346 * NENG ** 0.1
-    WAVONC = 1.73 * Wuav ** 0.983
+    WAPU = 500 / Units.lbs     # hardcoded as no variation is expected
+
+    CALIBRATION_HYD = 1.754
+    WSC  = CALIBRATION_HYD * 145.9 * Nf ** 0.554 * (1 + Nm / Nf) ** -1. * Scs ** 0.20
+    WHYD = CALIBRATION_HYD * 0.2673 * Nf * (L + Bw) ** 0.937
+
+    CALIBRATION_ELEC = 2.110
+    NENG = networks.number_of_engines
+    WIN = CALIBRATION_ELEC * 4.509 * Kr * Ktp * flight_crew ** 0.541 * NENG * (L + Bw) ** 0.5
+    WELEC = CALIBRATION_ELEC * 7.291 * Rkva ** 0.782 * (2 * L) ** 0.346 * NENG ** 0.1
+    WAVONC = CALIBRATION_ELEC * 1.73 * Wuav ** 0.983
 
     D   = (fuse_w + fuse_h) / 2.
     Sf  = np.pi * (L / D - 1.7) * D ** 2  # Fuselage wetted area, ft**2
-    WFURN = 0.0577 * flight_crew ** 0.1 * (cargo_weight) ** 0.393 * Sf ** 0.75 + 46 * num_pax
-    WFURN += 75 * flight_crew
-    WFURN += 2.5 * num_pax**1.33
+    # CALIBRATION_FURN = 4.285
+    # WFURN = CALIBRATION_FURN * 0.0577 * flight_crew ** 0.1 * (cargo_weight) ** 0.393 * Sf ** 0.75
+    WFURN = 8_000 / Units.lbs
 
-    Vpr = D ** 2 * np.pi / 4 * L
-    WAC = 62.36 * num_pax ** 0.25 * (Vpr / 1000) ** 0.604 * Wuav ** 0.1
 
-<<<<<<< Updated upstream
+
     WAI = 0.002 * DG
-=======
     Vpr = D ** 2 * np.pi / 4 * Lcabin
     CALIBRATION_AC = 0.789
     if vehicle.tag == 'Baseline_Aircraft':
@@ -115,7 +120,6 @@ def systems_Raymer(vehicle):
     WAC = BLEEDLESS_ECS_FACTOR * CALIBRATION_AC * 62.36 * num_pax ** 0.25 * (Vpr / 1000) ** 0.604 * Wuav ** 0.1
 
     WAI = 0     # 0.002 * DG TODO
->>>>>>> Stashed changes
 
     output                      = Data()
     output.wt_flight_control    = WSC * Units.lbs

@@ -117,6 +117,7 @@ def taw_cmalpha(geometry,mach,conditions,configuration):
         twist_r   = surf.twists.root
         twist_t   = surf.twists.tip     
         taper     = surf.taper
+        dihedral  = surf.dihedral
         if 'Airfoil' in surf:
             if 'zero_angle_lift_coefficient' in surf.Airfoil:
                 al0 = surf.Airfoil.zero_angle_lift_coefficient
@@ -135,8 +136,8 @@ def taw_cmalpha(geometry,mach,conditions,configuration):
         
         #Calculate Cm_alpha contributions
         l_surf    = x_surf + x_ac_surf - x_cg
-        Cma       = -l_surf*s/(mac*Sref)*(CL_alpha*eta*downw)*(1. - vertical)
-        cmo       = cmac+ s*eta*CL0_surf*l_surf*downw*(1. - vertical)/(mac*Sref)
+        Cma       = -l_surf*s/(mac*Sref)*(CL_alpha*eta*downw)*(1. - vertical) * (np.cos(dihedral))**2
+        cmo       = cmac+ s*eta*CL0_surf*l_surf*downw*(1. - vertical)/(mac*Sref) * (np.cos(dihedral))**2
         CmAlpha_surf.append(Cma)
         Cm0_surf.append(cmo)
         

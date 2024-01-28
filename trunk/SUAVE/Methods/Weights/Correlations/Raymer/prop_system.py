@@ -3,7 +3,7 @@ from SUAVE.Core import Units, Data
 # prop_system.py
 #
 # Created:  May 2020, W. Van Gijseghem
-# Modified: Oct 2021, M. Clarke
+# Modified: Nov 2023, L. Bauer
 
 # ----------------------------------------------------------------------
 #  Imports
@@ -44,14 +44,17 @@ def total_prop_Raymer(vehicle,prop):
         Properties Used:
             N/A
     """    
+
     NENG            = prop.number_of_engines
     WFSYS           = fuel_system_Raymer(vehicle, NENG)
     WENG            = engine_FLOPS(vehicle, prop)
-    #WNAC            = nacelle_Raymer(vehicle, WENG)
-    WNAC            = 0
-    WEC, WSTART     = misc_engine_Raymer(vehicle, prop, WENG)
+    WNAC            = nacelle_Raymer(vehicle, WENG)
+    # WNAC = 0
+    WEC, WSTART     = 0, 0  # misc_engine_Raymer(vehicle, prop, WENG)
     WTHR            = 0
-    WPRO            = NENG * WENG + WFSYS + WEC + WSTART + WTHR + WNAC
+
+    WPYL            = 0.225 * (NENG * WENG + WEC + WSTART + WTHR + WNAC)
+    WPRO            = NENG * WENG + WEC + WSTART + WTHR + WNAC
 
     output                      = Data()
     output.wt_prop              = WPRO
@@ -61,6 +64,7 @@ def total_prop_Raymer(vehicle,prop):
     output.fuel_system          = WFSYS
     output.nacelle              = WNAC
     output.wt_eng               = WENG * NENG
+    output.wt_pyl               = WPYL
     return output
 
 ## @ingroup Methods-Weights-Correlations-Raymer
@@ -92,13 +96,19 @@ def nacelle_Raymer(vehicle, WENG):
     nacelle_tag     = list(vehicle.nacelles.keys())[0]
     ref_nacelle     = vehicle.nacelles[nacelle_tag]    
     NENG            = len(vehicle.nacelles)
-    Kng             = 1 # assuming the engine is not pylon mounted
+    Kng             = 1.017         # assuming the engine is pylon mounted
     Nlt             = ref_nacelle.length / Units.ft
     Nw              = ref_nacelle.diameter / Units.ft
-    Wec             = 2.331 * WENG ** 0.901 * 1.18
-    Sn              = 2 * np.pi * Nw/2 * Nlt + np.pi * Nw**2/4 * 2
-    WNAC            = 0.6724 * Kng * Nlt ** 0.1 * Nw ** 0.294 * vehicle.envelope.ultimate_load ** 0.119 \
-                      * Wec ** 0.611 * NENG * 0.984 * Sn ** 0.224
+    Kp              = 1.            # assuming no prop engine
+    Ktr             = 1.            # assuming no thrust reverser, otherwise 1.18
+    Wec             = 2.331 * (WENG/ Units.lbs) ** 0.901 * Kp * Ktr
+    Sn              = 2 * np.pi * Nw/2 * Nlt + np.pi * Nw**2/2
+
+    CALIBRATION_NAC = 1.
+    WNAC = CALIBRATION_NAC * 0.6724 * Kng * Nlt ** 0.1 * Nw ** 0.294 * vehicle.envelope.ultimate_load ** 0.119 \
+           * Wec ** 0.611 * NENG ** 0.984 * Sn ** 0.224
+
+
     return WNAC * Units.lbs
 
 ## @ingroup Methods-Weights-Correlations-Raymer
@@ -150,5 +160,13 @@ def fuel_system_Raymer(vehicle, NENG):
     """
     VMAX    = vehicle.design_mach_number
     FMXTOT  = vehicle.mass_properties.max_zero_fuel / Units.lbs
-    WFSYS = 1.07 * FMXTOT ** 0.58 * NENG ** 0.43 * VMAX ** 0.34
+
+    fuel_density = 5.7 * Units.lbs / Units.gallon
+    Vt = vehicle.mass_properties.max_fuel / fuel_density / Units.gallon # total fuel volume, gal
+    Vi = Vt  # integral tanks volume, gal
+    Vp = 0  # self-sealing "protected" tanks volume, gal
+    Nt = 5  # number of fuel tanks
+
+    CALIBRATION_FSYS = 0.834
+    WFSYS = CALIBRATION_FSYS * 2.405 * Vt ** 0.606 * (1 + Vi/Vt) ** (-1.0) * (1 + Vp/Vt) * Nt ** 0.5
     return WFSYS * Units.lbs

@@ -233,11 +233,11 @@ def base_analysis(vehicle):
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.913  # 0.921
+    aerodynamics.settings.mach_star = 0.91  # 0.921
     aerodynamics.settings.compressibility_constant_n = 20.  # 2.5
-    aerodynamics.settings.compressibility_constant_dM = 0.03
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.93
+    aerodynamics.settings.oswald_efficiency_factor = 0.89
 
     analyses.append(aerodynamics)
 
@@ -522,6 +522,7 @@ def Baseline(parameters):
 
     return iteration_setup.weight_iter.FUEL
 
+
 def sweep():
     '''
     This method gives the possiblity to make a parameter study
@@ -538,14 +539,13 @@ def sweep():
             print('\n')
             parameters = Data()
             parameters.wing_loading = 700.
-
-
             parameters.aspect_ratio = 20.
             parameters.thickness_to_chord = 0.1
             parameters.design_cruise_altitude = alt
             parameters.design_cruise_mach = mach
             parameters.sweep_quarter_chord = 28 * Units.deg
             parameters.thrust_loading = 0.255
+
 
             fuels[j,i] = Baseline(parameters)
     # fig = plt.figure()
@@ -564,6 +564,7 @@ if __name__ == '__main__':
     parameters.design_cruise_mach = 0.82
     parameters.sweep_quarter_chord = 28 * Units.deg
     parameters.thrust_loading = 0.24
+
     Baseline(parameters)
 
     #sweep()

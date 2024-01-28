@@ -44,6 +44,8 @@ def plot_altitude_sfc_weight(results, line_color = 'bo-', save_figure = False, s
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -207,6 +209,7 @@ def plot_fuel_use(results, line_color = 'bo-', save_figure = False, save_filenam
     Plots
     Properties Used:
     N/A	"""
+    ##plt.style.use('dark_background')
 
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
@@ -300,6 +303,8 @@ def plot_aerodynamic_coefficients(results, line_color = 'bo-', save_figure = Fal
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -312,12 +317,12 @@ def plot_aerodynamic_coefficients(results, line_color = 'bo-', save_figure = Fal
         l_d  = cl/cd
 
         axes = plt.subplot(2,2,1)
-        axes.plot( time , aoa , line_color )
+        axes.plot( time , aoa , line_color)
         axes.set_ylabel('Angle of Attack (deg)',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,2)
-        axes.plot( time , cl, line_color )
+        axes.plot( time , cl, line_color)
         axes.set_ylabel('CL',axis_font)
         set_axes(axes)
 
@@ -365,6 +370,8 @@ def plot_aerodynamic_forces(results, line_color = 'bo-', save_figure = False, sa
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -431,6 +438,8 @@ def plot_drag_components(results, line_color = 'bo-', save_figure = False, save_
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig    = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -813,6 +822,8 @@ def plot_flight_conditions(results, line_color = 'bo-', save_figure = False, sav
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
@@ -1211,25 +1222,31 @@ def plot_stability_coefficients(results, line_color = 'bo-', save_figure = False
     Properties Used:
     N/A
     """
+    #plt.style.use('dark_background')
+
     axis_font = {'size':'14'}
     fig = plt.figure(save_filename)
     fig.set_size_inches(width, height)
 
     for segment in results.segments.values():
         time     = segment.conditions.frames.inertial.time[:,0] / Units.min
-        cm       = segment.conditions.stability.static.CM[:,0]
+        #cm       = segment.conditions.stability.static.CM[:,0]
+        cn_beta = segment.conditions.stability.static.Cn_beta[:,0]
         cm_alpha = segment.conditions.stability.static.Cm_alpha[:,0]
+        percent_mac = segment.conditions.stability.static.percent_mac[:,0]
         SM       = segment.conditions.stability.static.static_margin[:,0]
-        aoa      = segment.conditions.aerodynamics.angle_of_attack[:,0] / Units.deg
+        #aoa      = segment.conditions.aerodynamics.angle_of_attack[:,0] / Units.deg
 
         axes = plt.subplot(2,2,1)
-        axes.plot( time , aoa, line_color )
-        axes.set_ylabel(r'$AoA$',axis_font)
+        #axes.plot( time , aoa, line_color )
+        axes.plot(time, cn_beta, line_color)
+        axes.set_ylabel(r'$C_N\beta$',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,2)
-        axes.plot( time , cm, line_color )
-        axes.set_ylabel(r'$C_M$',axis_font)
+        #axes.plot( time , cm, line_color )
+        axes.plot(time, percent_mac, line_color)
+        axes.set_ylabel('%MAC',axis_font)
         set_axes(axes)
 
         axes = plt.subplot(2,2,3)

@@ -105,7 +105,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     # Select a length scale depending on what kind of vehicle this is
     length_scale = 1.
     nose_length  = 0.
-     
+
     # Check if there is a fuselage
     if len(vehicle.fuselages) == 0.:
         for wing in vehicle.wings:
@@ -121,7 +121,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
             if length > length_scale:
                 length_scale = length
                 nose_length  = nose
-                
+
     # unpack all components:
     avionics                                                = vehicle.systems.avionics
     furnishings                                             = vehicle.systems.furnishings
@@ -137,7 +137,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     main_gear                                               = vehicle.landing_gear.main    
     nose_gear                                               = vehicle.landing_gear.nose 
     hydraulics                                              = vehicle.systems.hydraulics
-        
+
     avionics.origin[0][0]                                      = 0.4 * nose_length
     avionics.mass_properties.center_of_gravity[0][0]           = 0.0
     
@@ -148,14 +148,14 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     apu.origin[0][0]                                           = 0.9 * length_scale   
     apu.mass_properties.center_of_gravity[0][0]                = 0.0
     
-    passengers.origin[0][0]                                    = 0.51 * length_scale  
+    passengers.origin[0][0]                                    = 0.615 * length_scale
     passengers.mass_properties.center_of_gravity[0][0]         = 0.0
     
     baggage.origin[0][0]                                       = 0.51 * length_scale  
     baggage.mass_properties.center_of_gravity[0][0]            = 0.0
     
-    cargo.origin[0][0]                                         = 0.51 * length_scale  
-    cargo.mass_properties.center_of_gravity[0][0]              = 0.0    
+    cargo.origin[0][0]                                         = 0.43 * length_scale #0.51 * length_scale
+    cargo.mass_properties.center_of_gravity[0][0]              = 0.0
     
     air_conditioner.origin[0][0]                               = nose_length
     air_conditioner.mass_properties.center_of_gravity[0][0]    = 0.0
@@ -165,6 +165,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
         
     fuel.origin[0][0]                                          = vehicle.wings.main_wing.origin[0][0] 
     fuel.mass_properties.center_of_gravity                     = vehicle.wings.main_wing.mass_properties.center_of_gravity
+    fuel.mass_properties.center_of_gravity[0][0]               += 0.1 * vehicle.wings.main_wing.chords.mean_aerodynamic
     
     control_systems.origin[0][0]                               = vehicle.wings.main_wing.origin[0][0] 
     control_systems.mass_properties.center_of_gravity[0][0]    = vehicle.wings.main_wing.mass_properties.center_of_gravity[0][0] + \
@@ -188,7 +189,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     # Main gear
     moment_sans_main = vehicle.center_of_gravity()[0][0]*(vehicle.sum_mass()-main_gear.mass_properties.mass)
     
-    main_gear_location = moment_sans_main/(vehicle.mass_properties.takeoff-main_gear.mass_properties.mass)/(1-nose_load)
-    main_gear.origin[0][0]                                     = main_gear_location
+    main_gear_location                                         = moment_sans_main/(vehicle.mass_properties.takeoff-main_gear.mass_properties.mass)/(1-nose_load)
+    main_gear.origin[0][0]                                     = 33.
     main_gear.mass_properties.center_of_gravity                = 0.0
     

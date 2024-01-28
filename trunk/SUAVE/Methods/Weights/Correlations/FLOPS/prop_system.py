@@ -3,6 +3,7 @@
 #
 # Created:  May 2020, W. Van Gijseghem 
 # Modified: Oct 2021, M. Clarke
+#           Nov 2023, L. Bauer
 
 # ----------------------------------------------------------------------
 #  Imports
@@ -15,16 +16,16 @@ def total_prop_flops(vehicle,prop):
     """ Calculate the weight of propulsion system, including:
         - dry engine weight
         - fuel system weight
-        - thurst reversers weight
+        - thrust reverser weight
         - electrical system weight
         - starter engine weight
         - nacelle weight
         - cargo containers
 
         Assumptions:
-            1) Rated thrust per scaled engine and rated thurst for baseline are the same
+            1) Rated thrust per scaled engine and rated thrust for baseline are the same
             2) Engine weight scaling parameter is 1.15
-            3) Enginge inlet weight scaling exponent is 1
+            3) Engine inlet weight scaling exponent is 1
             4) Baseline inlet weight is 0 lbs as in example files FLOPS
             5) Baseline nozzle weight is 0 lbs as in example files FLOPS
 
@@ -206,7 +207,7 @@ def fuel_system_FLOPS(vehicle, NENG):
 def engine_FLOPS(vehicle, prop):
     """ Calculates the dry engine weight based on the FLOPS method
         Assumptions:
-            Rated thrust per scaled engine and rated thurst for baseline are the same
+            Rated thrust per scaled engine and rated thrust for baseline are the same
             Engine weight scaling parameter is 1.15
             Enginge inlet weight scaling exponent is 1
             Baseline inlet weight is 0 lbs as in example files FLOPS
@@ -229,15 +230,12 @@ def engine_FLOPS(vehicle, prop):
         Properties Used:
             N/A
     """
-    EEXP = 1.15
-    EINL = 1
-    ENOZ = 1
-    THRSO = prop.sealevel_static_thrust * 1 / Units.lbf
-    THRUST = THRSO
-    if vehicle.systems.accessories == "short-range" or vehicle.systems.accessories == "commuter":
-        WENGB = THRSO / 10.5
-    else:
-        WENGB = THRSO / 5.5
+    EEXP = 0.8     # engine weight scaling parameter
+    EINL = 1        # inlet weight scaling parameter
+    ENOZ = 1        # nozzle weight scaling parameter
+    THRSO = 70_000 * Units.lbf  # baseline thrust
+    THRUST = prop.sealevel_static_thrust / prop.number_of_engines
+    WENGB = 8145 / Units.lbs   # baseline weight
     WINLB = 0 / Units.lbs
     WNOZB = 0 / Units.lbs
     WENGP = WENGB * (THRUST / THRSO) ** EEXP

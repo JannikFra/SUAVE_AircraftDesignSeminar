@@ -15,7 +15,7 @@ import numpy as np
 import SUAVE
 from SUAVE.Core import Units
 from SUAVE.Methods.Propulsion.turbofan_sizing import turbofan_sizing
-from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_segmented_planform
+from SUAVE.Methods.Geometry.Two_Dimensional.Planform import wing_segmented_planform, create_tapered_wing, horizontal_tail_planform_raymer, vertical_tail_planform_raymer, fuselage_planform
 
 from copy import deepcopy 
 
@@ -46,11 +46,11 @@ def vehicle_setup(iteration_setup):
     vehicle.mass_properties.max_zero_fuel             = iteration_setup.weight_iter.BOW \
                                                         + vehicle.mass_properties.max_payload
                                                         #+ iteration_setup.weight_iter.Design_Payload
-    vehicle.mass_properties.max_fuel                  = 135_000    # kg
+    vehicle.mass_properties.max_fuel                  = iteration_setup.weight_iter.FUEL    # kg
     vehicle.mass_properties.cargo                     = 14500.  * Units.kilogram
     #vehicle.mass_properties.center_of_gravity         = [[ 25.,   0.,  -0.48023939]]
     #vehicle.mass_properties.moments_of_inertia.tensor = [[3173074.17, 0 , 28752.77565],[0 , 3019041.443, 0],[0, 0, 5730017.433]] # estimated, not correct
-    vehicle.design_mach_number                        = 0.82
+    vehicle.design_mach_number                        = iteration_setup.mission_iter.design_cruise_mach
     vehicle.design_range                              = 10500 * Units['nautical_mile']
     vehicle.design_cruise_alt                         = iteration_setup.mission_iter.design_cruise_altitude
 
@@ -71,7 +71,7 @@ def vehicle_setup(iteration_setup):
 
     wing.aspect_ratio            = 9.988
     wing.sweeps.quarter_chord    = 29.7 * Units.deg
-    wing.thickness_to_chord      = 0.1525
+    wing.thickness_to_chord      = 0.105
     wing.taper                   = 0.2893
 
     wing.spans.projected         = 70. * Units.meter
@@ -90,8 +90,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[22.408,0,-0.957]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.08
-    wing.transition_x_lower = 0.08
+    wing.transition_x_upper = 0.
+    wing.transition_x_lower = 0.
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -195,8 +195,6 @@ def vehicle_setup(iteration_setup):
     aileron.deflection            = 0.0 * Units.degrees
     aileron.chord_fraction        = 0.30
     wing.append_control_surface(aileron)
-    
-
 
     # add to vehicle
     vehicle.append_component(wing)
@@ -229,8 +227,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[55.337, 0, 2.082]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -291,7 +289,7 @@ def vehicle_setup(iteration_setup):
     wing.total_length            = wing.spans.projected 
     
     wing.chords.root             = 7.936
-    wing.chords.tip              = 3.106
+    wing.chords.tip              = wing.taper * wing.chords.root
     wing.chords.mean_aerodynamic = 5.788
 
     wing.areas.reference         = 45.2
@@ -304,8 +302,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[52.2, 0, 3.59]]
     #wing.aerodynamic_center      = [0,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = True
     wing.symmetric               = False
@@ -329,9 +327,9 @@ def vehicle_setup(iteration_setup):
     segment.tag                           = 'tip'
     segment.percent_span_location         = 1.
     segment.twist                         = 0. * Units.deg
-    segment.root_chord_percent            = 3.106 / 7.936
+    segment.root_chord_percent            = wing.taper
     segment.dihedral_outboard             = 0. * Units.degrees
-    segment.sweeps.quarter_chord          = 0. * Units.degrees
+    segment.sweeps.quarter_chord          = 40. * Units.degrees
     segment.thickness_to_chord            = 0.11
     wing.append_segment(segment)
 
@@ -520,6 +518,7 @@ def vehicle_setup(iteration_setup):
     # ------------------------------------------------------------------ 
     nacelle                            = SUAVE.Components.Nacelles.Nacelle()
     nacelle.tag                        = 'nacelle_1'
+
     nacelle.length                     = 7.2
     nacelle.inlet_diameter             = 3.6
     nacelle.diameter                   = 3.8
@@ -547,7 +546,7 @@ def vehicle_setup(iteration_setup):
     propulsor.origin            = [[20.1, 10.8,-1.9],[20.1, -10.8,-1.9]]
     propulsor.engine_length = 7.4
     propulsor.number_of_engines = 2
-    sea_level_static_thrust = 70_000 * 4.448 * propulsor.number_of_engines
+    sea_level_static_thrust = 70_000 * Units.lbf * propulsor.number_of_engines
 
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
@@ -572,11 +571,11 @@ def vehicle_setup(iteration_setup):
     landing_gear.tag                      = "main_landing_gear"
     landing_gear.main_tire_diameter       = 1.12000 * Units.m
     landing_gear.nose_tire_diameter       = 0.6858 * Units.m
-    landing_gear.main_strut_length        = 3.9 * Units.m
-    landing_gear.nose_strut_length        = 2.4 * Units.m
-    landing_gear.main_units               = 1    #number of nose landing gear
+    landing_gear.main_strut_length        = 3.9 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.nose_strut_length        = 2.4 * Units.m       # TODO abhängigkeit modellieren
+    landing_gear.main_units               = 2    #number of main landing gear
     landing_gear.nose_units               = 1    #number of nose landing gear
-    landing_gear.main_wheels              = 2    #number of wheels on the main landing gear
+    landing_gear.main_wheels              = 4 * landing_gear.main_units    #number of wheels on the main landing gear
     landing_gear.nose_wheels              = 2    #number of wheels on the nose landing gear
     vehicle.landing_gear                  = landing_gear
 

@@ -48,20 +48,23 @@ def tail_vertical_Raymer(vehicle, wing):
     Svt         = wing.areas.reference / Units.ft ** 2
     sweep       = wing.sweeps.quarter_chord
     Av          = wing.aspect_ratio
-    t_c         = wing.thickness_to_chord 
+    t_c         = wing.Segments.root.thickness_to_chord
     Nult        = vehicle.envelope.ultimate_load
-    
+
     H = 0
     if t_tail_flag:
         H = 1
     Lt = (wing_origin + wing_ac - main_origin - main_ac)
     Kz = Lt
-    tail_weight = 0.0026 * (1 + H) ** 0.225 * DG ** 0.556 * Nult ** 0.536 \
+
+    CALIBRATION_VT = 0.612
+
+    tail_weight = CALIBRATION_VT * 0.0026 * (1 + H) ** 0.225 * DG ** 0.556 * Nult ** 0.536 \
                   * Lt ** (-0.5) * Svt ** 0.5 * Kz ** 0.875 * np.cos(sweep) ** (-1) * Av ** 0.35 * t_c ** (-0.5)
     return tail_weight * Units.lbs
 
 ## @ingroup Methods-Weights-Correlations-Raymer
-def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.4):
+def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.25):
     """ Calculates horizontal tail weight based on Raymer method
 
         Assumptions:
@@ -85,7 +88,7 @@ def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.4):
                 -.thickness_to_chord: t/c of tail
                 -.span.projected: project span of tail                          [m]
                 -.aspect_ratio: aspect ratio of wing
-            elevator_fraction - fraction of horizontal tail for elevator = 0.4
+            elevator_fraction - fraction of horizontal tail for elevator = 0.25
 
         Outputs:
             tail_weight: horizontal tail weight                                [kilograms]
@@ -95,7 +98,8 @@ def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.4):
     """
     Kuht    = 1 # not a all-moving unit horizontal tail
     Fw      = vehicle.fuselages['fuselage'].width / Units.ft
-    Bh      = wing.spans.projected / Units.ft
+    #Bh      = wing.spans.projected / Units.ft
+    Bh      = wing.spans.total / Units.ft # Make it suitable for V-Tail
     DG      = vehicle.mass_properties.max_takeoff / Units.lbs
     Sht     = wing.areas.reference / Units.ft ** 2
     Lt      = (wing.origin[0][0] + wing.aerodynamic_center[0] - vehicle.wings['main_wing'].origin[0][0] -
@@ -105,7 +109,9 @@ def tail_horizontal_Raymer(vehicle, wing, elevator_fraction=0.4):
     Ah      = wing.aspect_ratio
     Se      = elevator_fraction * Sht
 
-    tail_weight = 0.0379 * Kuht * (1 + Fw / Bh) ** (-0.25) * DG ** 0.639 *\
+    CALIBRATION_HT = 0.938
+
+    tail_weight = CALIBRATION_HT * 0.0379 * Kuht * (1 + Fw / Bh) ** (-0.25) * DG ** 0.639 *\
                   vehicle.envelope.ultimate_load ** 0.1 * Sht ** 0.75 * Lt ** -1 *\
                   Ky ** 0.704 * np.cos(sweep) ** (-1) * Ah ** 0.166 * (1 + Se / Sht) ** 0.1
     return tail_weight * Units.lbs

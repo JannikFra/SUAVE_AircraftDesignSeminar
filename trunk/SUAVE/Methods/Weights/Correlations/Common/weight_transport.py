@@ -330,21 +330,23 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     output                                  = Data()
     output.structures                       = Data()
     output.structures.wing                  = wt_main_wing
+
     output.structures.horizontal_tail       = wt_tail_horizontal
     output.structures.vertical_tail         = wt_tail_vertical
     output.structures.fuselage              = wt_fuse_total
     output.structures.main_landing_gear     = landing_gear.main
     output.structures.nose_landing_gear     = landing_gear.nose
-    if wt_prop_data is None:
-        output.structures.nacelle = 0
-    else:
-        output.structures.nacelle = wt_prop_data.nacelle
+    output.structures.pylons                = wt_prop_data.wt_pyl
+    # if wt_prop_data is None:
+    #     output.structures.nacelle = 0
+    # else:
+    #     output.structures.nacelle = wt_prop_data.nacelle
     if 'FLOPS' in method_type:
         print('Paint weight is currently ignored in FLOPS calculations.')
     output.structures.paint = 0  # TODO reconcile FLOPS paint calculations with Raymer and SUAVE baseline
     output.structures.total = output.structures.wing + output.structures.horizontal_tail + output.structures.vertical_tail \
                               + output.structures.fuselage + output.structures.main_landing_gear + output.structures.nose_landing_gear \
-                              + output.structures.paint + output.structures.nacelle
+                              + output.structures.paint + output.structures.pylons
 
     output.propulsion_breakdown = Data()
     if wt_prop_data is None:
@@ -353,12 +355,13 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
         output.propulsion_breakdown.thrust_reversers    = 0
         output.propulsion_breakdown.miscellaneous       = 0
         output.propulsion_breakdown.fuel_system         = 0
+        output.propulsion_breakdown.nacelle             = 0
     else:
         output.propulsion_breakdown.total               = wt_prop_total
         output.propulsion_breakdown.engines             = wt_prop_data.wt_eng
+        output.propulsion_breakdown.nacelle             = wt_prop_data.nacelle
         output.propulsion_breakdown.thrust_reversers    = wt_prop_data.wt_thrust_reverser
         output.propulsion_breakdown.miscellaneous       = wt_prop_data.wt_engine_controls + wt_prop_data.wt_starter
-        output.propulsion_breakdown.fuel_system         = wt_prop_data.fuel_system
 
     output.systems_breakdown                        = Data()
     output.systems_breakdown.control_systems        = wt_sys.wt_flight_control
@@ -369,19 +372,26 @@ def empty_weight(vehicle, settings=None, method_type='New SUAVE'):
     output.systems_breakdown.furnish                = wt_sys.wt_furnish
     output.systems_breakdown.air_conditioner        = wt_sys.wt_ac + wt_sys.wt_anti_ice # Anti-ice is sometimes included in ECS
     output.systems_breakdown.instruments            = wt_sys.wt_instruments
+    output.systems_breakdown.bleed_air              = 750   # TODO implement in Raymer method
+    output.systems_breakdown.fire_protection        = 250   # TODO implement in Raymer method
+    output.systems_breakdown.fuel_system            = wt_prop_data.fuel_system
     output.systems_breakdown.total                  = output.systems_breakdown.control_systems + output.systems_breakdown.apu \
-                                                    + output.systems_breakdown.electrical + output.systems_breakdown.avionics \
+                                                    + output.systems_breakdown.electrical + output.systems_breakdown.bleed_air \
                                                     + output.systems_breakdown.hydraulics + output.systems_breakdown.furnish \
-                                                    + output.systems_breakdown.air_conditioner + output.systems_breakdown.instruments
+                                                    + output.systems_breakdown.air_conditioner + output.systems_breakdown.fire_protection \
+                                                    + output.systems_breakdown.fuel_system + output.systems_breakdown.instruments \
+                                                    + output.systems_breakdown.avionics
 
     output.payload_breakdown = Data()
     output.payload_breakdown = payload
+
+    # output.furnishings = wt_sys.wt_furnish
 
     output.operational_items = Data()
     output.operational_items = wt_oper
 
     output.empty                = output.structures.total + output.propulsion_breakdown.total + output.systems_breakdown.total
-    output.operating_empty      = output.empty + output.operational_items.total
+    output.operating_empty      = output.empty + output.operational_items.total # + output.furnishings
     output.zero_fuel_weight     = output.operating_empty + output.payload_breakdown.total
     output.fuel                 = vehicle.mass_properties.max_takeoff - output.zero_fuel_weight
     output.max_takeoff          = vehicle.mass_properties.max_takeoff

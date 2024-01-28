@@ -208,7 +208,7 @@ class Turbofan_Raymer(Network):
         tsfc = tsfc.T / 3600 * self.tsfc_factor
         return tsfc
 
-    def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust, throttle_mid_cruise):
+    def scale_factors(self, design_cruise_altitude, design_cruise_mach, sea_level_static_thrust, throttle_mid_cruise, bucket_sfc=0.533981):
         self.tsfc_factor = 1.
         self.max_thrust_factor = 1.
         sea_level_static_thrust_per_engine = sea_level_static_thrust / self.number_of_engines
@@ -217,16 +217,12 @@ class Turbofan_Raymer(Network):
 
         design_cruise_altitude = design_cruise_altitude / Units.ft
         if design_cruise_altitude < 36000.:
-            ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * 0.533981
+            ref_sfc = (1 + .003 * (abs(design_cruise_altitude-36000.)/1000)) * bucket_sfc
         else:
-<<<<<<< Updated upstream
-            ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * 0.533981
-        ref_sfc = ref_sfc + 0.006 * (design_cruise_mach-0.82)/0.01
-=======
             ref_sfc = (1 + .002 * (abs(design_cruise_altitude - 36000.) / 1000)) * bucket_sfc
 
+
         ref_sfc = ref_sfc * (1 + 0.006 * (design_cruise_mach-0.82)/0.01)
->>>>>>> Stashed changes
 
         ref_sfc = ref_sfc / 3600.
         surrogate_sfc = self.get_tsfc(design_cruise_altitude*Units.ft, design_cruise_mach, throttle_mid_cruise)
@@ -238,6 +234,20 @@ class Turbofan_Raymer(Network):
         self.sealevel_static_thrust = sea_level_static_thrust
         self.max_thrust_factor = max_thrust_factor
         self.tsfc_factor = sfc_factor
+
+    def get_thrust_loading_requirement_toc(self, design_cruise_altitude, design_cruise_mach, m4_m0=1., LoD_initial_cruise_altitude=22):
+        atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
+        tf = Turbofan_Raymer()
+        altitude = design_cruise_altitude - 2_000 * Units.ft
+        mach = design_cruise_mach
+        temperature_deviation = 0
+        atmo_data = atmosphere.compute_values(altitude, temperature_deviation)
+        v_v_300 = 300 * Units.ft / Units.min
+        v_initial_cruise_altitude = mach * atmo_data.speed_of_sound
+        thrust_ratio = tf.get_max_thrust(0, 0) / tf.get_max_thrust(altitude, mach)
+        print("thrust ratio", thrust_ratio)
+        F_m_TOC = m4_m0 * (v_v_300 / v_initial_cruise_altitude + 1 / LoD_initial_cruise_altitude) * thrust_ratio
+        return F_m_TOC[0][0]
     
     def unpack_unknowns(self,segment,state):
         """ This is an extra set of unknowns which are unpacked from the mission solver and send to the network.

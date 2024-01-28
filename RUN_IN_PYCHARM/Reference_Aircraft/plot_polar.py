@@ -34,6 +34,7 @@ def main():
     iteration_setup.mission_iter = Data()
     iteration_setup.weight_iter.TOW = 279_000
     iteration_setup.weight_iter.BOW = 130_000
+    iteration_setup.weight_iter.FUEL = 115_000
     iteration_setup.weight_iter.Design_Payload = 24_500
     iteration_setup.mission_iter.design_cruise_altitude = 32_000 * Units.ft
     iteration_setup.mission_iter.design_cruise_mach = 0.82
@@ -47,7 +48,10 @@ def main():
     #     wing.areas.wetted   = 2.0 * wing.areas.reference
     #     wing.areas.exposed  = 0.8 * wing.areas.wetted
     #     wing.areas.affected = 0.6 * wing.areas.wetted
-        
+
+    t_c = vehicle.wings.main_wing.thickness_to_chord
+    print(t_c)
+
 
     # initalize the aero model
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
@@ -55,20 +59,19 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-<<<<<<< Updated upstream
-    aerodynamics.settings.drag_coefficient_increment.cruise = -10e-4
-=======
     aerodynamics.settings.drag_coefficient_increment.cruise = -18e-4
->>>>>>> Stashed changes
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = False
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
-    aerodynamics.settings.compressibility_drag_correction_factor = 0.
+    aerodynamics.settings.compressibility_drag_correction_factor = 1.
+    aerodynamics.settings.mach_star = 0.919#0.921
+    aerodynamics.settings.compressibility_constant_n = 10#2.5
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.81
+    aerodynamics.settings.oswald_efficiency_factor = 0.84
 
     aerodynamics.geometry = configs.cruise
 
@@ -76,10 +79,10 @@ def main():
     
     
     #no of test points
-    test_num = 200
+    test_num = 50
     
     #specify the angle of attack
-    angle_of_attacks = np.linspace(-10.,20.,test_num)[:,None] * Units.deg
+    angle_of_attacks = np.linspace(-5.,10.,test_num)[:,None] * Units.deg
     
     
     # Cruise conditions (except Mach number)
@@ -87,20 +90,22 @@ def main():
     state.conditions = SUAVE.Analyses.Mission.Segments.Conditions.Aerodynamics()
     
     
-    state.expand_rows(test_num)    
+    state.expand_rows(test_num)
+
+    atmosphere = SUAVE.Analyses.Atmospheric.US_Standard_1976()
+    alt = iteration_setup.mission_iter.design_cruise_altitude
 
     Mc = 0.82 * np.ones((test_num,1))
-    
-    rho = 0.379597 * np.ones((test_num,1))
-    
-    mu = 0.0000144446 * np.ones((test_num,1))
-    
-    T = 218.808 * np.ones((test_num,1))
-    
-    pressure = 23842.3 * np.ones((test_num,1))
 
-    air = Air()
-    a = air.compute_speed_of_sound(T,pressure)
+    rho = atmosphere.compute_values(alt).density * np.ones((test_num, 1))
+
+    mu = atmosphere.compute_values(alt).dynamic_viscosity * np.ones((test_num, 1))  # 0.0000144446
+
+    T = atmosphere.compute_values(alt).temperature * np.ones((test_num, 1))
+
+    pressure = atmosphere.compute_values(alt).pressure * np.ones((test_num, 1))
+
+    a = atmosphere.compute_values(alt).speed_of_sound
     
     re = rho*a*Mc/mu
 
@@ -157,6 +162,9 @@ def main():
     plt.legend()
     plt.axis([0., 1., 0., 25.])
     plt.show()
+
+    print(cl)
+    print(cl/cd_tot)
 
 
     return

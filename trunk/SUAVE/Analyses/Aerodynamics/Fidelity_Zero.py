@@ -78,6 +78,9 @@ class Fidelity_Zero(Markup):
         settings.model_fuselage                     = False
         settings.model_nacelle                      = False
         settings.compressibility_drag_correction_factor = 1.0
+        settings.mach_star = 0.921
+        settings.compressibility_constant_n = 2.5
+        settings.compressibility_constant_dM = 0.05
 
         # build the evaluation process
         compute = self.process.compute
@@ -102,7 +105,8 @@ class Fidelity_Zero(Markup):
         compute.drag.induced                       = Common.Drag.induced_drag_aircraft
         compute.drag.compressibility               = Process()
         compute.drag.compressibility.wings         = Process_Geometry('wings')
-        compute.drag.compressibility.wings.wing    = Common.Drag.compressibility_drag_wing
+        # compute.drag.compressibility.wings.wing    = Common.Drag.compressibility_drag_wing
+        compute.drag.compressibility.wings.wing    = Common.Drag.compressibility_drag_wing_torenbeek
         compute.drag.compressibility.total         = Common.Drag.compressibility_drag_wing_total
         compute.drag.miscellaneous                 = Common.Drag.miscellaneous_drag_aircraft_ESDU
         compute.drag.untrimmed                     = Common.Drag.untrimmed

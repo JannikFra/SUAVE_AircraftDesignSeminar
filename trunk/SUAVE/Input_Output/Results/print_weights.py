@@ -102,6 +102,9 @@ def print_weight_breakdown(config, filename='weight_breakdown.dat'):
             string = ' \t' + tag[0].upper() + tag[1:] + ' '
             string = string.ljust(31, '.') + ' :'
             fid.write(string + str('%8.0F' % value) + ' kg\n')
+    # fid.write(' Furnishing Weight Breakdown \n')
+    # fid.write(" Total furnishing weight".ljust(33, '.') + ' :' + str(
+    #     '%8.0F' % weight_breakdown.furnishings) + ' kg\n')
     fid.write('\n')
 
     fid.write(' OPERATING EMPTY WEIGHT BREAKDOWN \n')

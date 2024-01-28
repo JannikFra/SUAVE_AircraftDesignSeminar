@@ -89,11 +89,18 @@ def main(altitude, mach, wing_loading, plot=True):
     aerodynamics.settings.model_fuselage = True
     aerodynamics.settings.model_nacelle = True
     aerodynamics.settings.compressibility_drag_correction_factor = 1.
-    aerodynamics.settings.mach_star = 0.913  # 0.921
+# <<<<<<< HEAD
+#     aerodynamics.settings.mach_star = 0.913  # 0.921
+#     aerodynamics.settings.compressibility_constant_n = 20.  # 2.5
+#     aerodynamics.settings.compressibility_constant_dM = 0.03
+#
+#     aerodynamics.settings.oswald_efficiency_factor = 0.93
+# =======
+    aerodynamics.settings.mach_star = 0.91  # 0.921
     aerodynamics.settings.compressibility_constant_n = 20.  # 2.5
-    aerodynamics.settings.compressibility_constant_dM = 0.03
+    aerodynamics.settings.compressibility_constant_dM = 0.05
 
-    aerodynamics.settings.oswald_efficiency_factor = 0.93
+    aerodynamics.settings.oswald_efficiency_factor = 0.89
 
     aerodynamics.geometry = configs.cruise
 

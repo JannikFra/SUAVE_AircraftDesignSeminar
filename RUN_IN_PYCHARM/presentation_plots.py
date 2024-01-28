@@ -48,12 +48,14 @@ fig, ax = plt.subplots()
 levels = 15# np.array([68000, 69000, 70000, 71000, 72000, 73000, 74000, 75000, , 100000]) / 1000
 contour = ax.contour(Xd, Yd, Zd, levels=levels, colors="black", linewidths=0.5)
 contourf = ax.contourf(Xd, Yd, Zd, levels=levels, cmap="viridis_r")
+
 plt.colorbar(contourf, label='Mission Fuel [t]')
 
 ax.set_xlabel('Cruise Mach')
 ax.set_ylabel('Mid Cruise Altitude [kft]')
 ax.set_xticks([0.82, 0.825, 0.83, 0.835])
 ax.set_yticks([36, 37, 38, 39, 40])
+
 
 #ax.set_facecolor('#f0f0f0')
 

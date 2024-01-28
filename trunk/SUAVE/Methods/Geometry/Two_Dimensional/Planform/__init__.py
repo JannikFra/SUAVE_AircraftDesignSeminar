@@ -12,3 +12,5 @@ from .wing_segmented_planform         import wing_segmented_planform, segment_pr
 from .vertical_tail_planform_raymer   import vertical_tail_planform_raymer
 from .wing_fuel_volume                import wing_fuel_volume
 from .populate_control_sections       import populate_control_sections
+from .wing_geometry                   import create_tapered_wing
+from .wing_planform_v_tail            import wing_planform_v_tail

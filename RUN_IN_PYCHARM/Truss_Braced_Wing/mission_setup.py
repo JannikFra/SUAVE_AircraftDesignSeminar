@@ -215,7 +215,7 @@ def mission_setup(analyses, iteration_setup):
                 segment.analyses.extend(analyses.cruise)
 
                 segment.altitude_start = 34_000 * Units.ft
-                segment.altitude_end = 35_000 * Units.ft
+                segment.altitude_end = 36_000 * Units.ft
                 rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
                 segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5 * climb_speed_factor
                 segment.state.numerics.number_control_points = 10
@@ -423,6 +423,7 @@ def mission_setup(analyses, iteration_setup):
     rho_cr1 = atmosphere.compute_values(cruise_1_alt).density
     cruise_1_ias = (rho_cr1 / rho0) ** 0.5 * cruise_1_tas
 
+
     # add to mission
     mission.append_segment(segment)
 
@@ -519,8 +520,9 @@ def mission_setup(analyses, iteration_setup):
 
         segment.analyses.extend(analyses.cruise)
 
-        segment.altitude_start = 41_000 * Units.ft
-        segment.altitude_end = 39_000 * Units.ft
+
+        segment.altitude_start = 43_000 * Units.ft
+        segment.altitude_end = 41_000 * Units.ft
         rho = atmosphere.compute_values((segment.altitude_start + segment.altitude_end) / 2).density
         segment.air_speed = cruise_1_ias / (rho / rho0) ** 0.5
         segment.state.numerics.number_control_points = 10
