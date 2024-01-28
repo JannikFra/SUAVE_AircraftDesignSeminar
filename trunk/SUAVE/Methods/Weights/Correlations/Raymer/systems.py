@@ -111,7 +111,10 @@ def systems_Raymer(vehicle):
 
     Vpr = D ** 2 * np.pi / 4 * Lcabin
     CALIBRATION_AC = 0.789
-    BLEEDLESS_ECS_FACTOR = 1.57
+    if vehicle.tag == 'Baseline_Aircraft':
+        BLEEDLESS_ECS_FACTOR = 1.57
+    else:
+        BLEEDLESS_ECS_FACTOR = 1.0
     WAC = BLEEDLESS_ECS_FACTOR * CALIBRATION_AC * 62.36 * num_pax ** 0.25 * (Vpr / 1000) ** 0.604 * Wuav ** 0.1
 
     WAI = 0     # 0.002 * DG TODO
