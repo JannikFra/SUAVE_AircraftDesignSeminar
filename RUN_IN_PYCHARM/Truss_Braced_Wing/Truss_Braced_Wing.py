@@ -494,6 +494,20 @@ def Baseline(parameters):
     print("landing gear")
     print("x coord main gear", configs.base.landing_gear.main.origin[0][0])
     print("x coord nose gear", configs.base.landing_gear.nose.origin[0][0])
+
+    doc = SUAVE.Methods.Figures_of_Merit.direct_operating_costs(results, configs.base)
+    print('doc energy : %.1f' % doc.energy)
+    print('doc crew : %.1f' % doc.crew)
+    print('doc maintenance : %.1f' % doc.maintenance)
+    print('doc capital : %.1f' % doc.capital)
+    print('doc fees : %.1f' % doc.fees)
+    print('doc nav : %.1f' % doc.nav)
+    print('doc ldg : %.1f' % doc.landing)
+    print('doc ground : %.1f' % doc.ground)
+    print('doc af mat : %.1f' % doc.af_mat)
+    print('doc af per : %.1f' % doc.af_per)
+    print('doc eng : %.1f' % doc.eng)
+
     results_show(results, configs.base)
 
     payload_range_run = True
