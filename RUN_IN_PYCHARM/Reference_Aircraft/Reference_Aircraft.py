@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 import os
 import time
-from SUAVE.Methods.Performance  import payload_range
+from SUAVE.Methods.Performance  import payload_range_multiple_cruise
 from RUN_IN_PYCHARM.Reference_Aircraft.vehicle_setup import vehicle_setup, configs_setup
 from RUN_IN_PYCHARM.Reference_Aircraft.mission_setup import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
@@ -444,7 +444,20 @@ if __name__ == '__main__':
     print('Reserve fuel : %.1f kg' % reserve_fuel)
     results_show(results)
 
-    payload_range_run = False
+    doc = SUAVE.Methods.Figures_of_Merit.direct_operating_costs(results, configs.base)
+    print('doc energy : %.1f' % doc.energy)
+    print('doc crew : %.1f' % doc.crew)
+    print('doc maintenance : %.1f' % doc.maintenance)
+    print('doc capital : %.1f' % doc.capital)
+    print('doc fees : %.1f' % doc.fees)
+    print('doc nav : %.1f' % doc.nav)
+    print('doc ldg : %.1f' % doc.landing)
+    print('doc ground : %.1f' % doc.ground)
+    print('doc af mat : %.1f' % doc.af_mat)
+    print('doc af per : %.1f' % doc.af_per)
+    print('doc eng : %.1f' % doc.eng)
+
+    payload_range_run = True
     if payload_range_run == True:
-        payload_range = payload_range(configs.cruise, results, "cruise_2", reserves=reserve_fuel)
+        payload_range = payload_range_multiple_cruise(configs.cruise,mission,num_cruise_seg=5,reserves=reserve_fuel_pct)
 

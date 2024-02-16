@@ -176,7 +176,7 @@ def mission_setup(analyses, iteration_setup):
 
     segment.altitude = iteration_setup.mission_iter.design_cruise_altitude - 2_000 * Units.ft
     segment.air_speed = atmosphere.compute_values(segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
-    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 5
     segment.state.numerics.number_control_points = 8
 
     # rho_cr1 = atmosphere.compute_values(segment.altitude).density
@@ -218,7 +218,7 @@ def mission_setup(analyses, iteration_setup):
 
     segment.altitude = iteration_setup.mission_iter.design_cruise_altitude
     segment.air_speed = atmosphere.compute_values(segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
-    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 5
     segment.state.numerics.number_control_points = 8
 
     # post-process aerodynamic derivatives in cruise
@@ -256,7 +256,87 @@ def mission_setup(analyses, iteration_setup):
 
     segment.altitude = iteration_setup.mission_iter.design_cruise_altitude + 2_000 * Units.ft
     segment.air_speed = atmosphere.compute_values(segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
-    segment.distance = iteration_setup.mission_iter.cruise_distance / 3
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 5
+    segment.state.numerics.number_control_points = 8
+
+    # post-process aerodynamic derivatives in cruise
+    # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
+
+    # add to mission
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Second Step Climb Segment: Constant Speed Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "step_climb_3"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = iteration_setup.mission_iter.design_cruise_altitude + 2_000 * Units.ft
+    segment.altitude_end = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    segment.air_speed = atmosphere.compute_values((
+                                                              segment.altitude_start + segment.altitude_end) / 2).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    segment.throttle = climb_throttle
+    segment.state.numerics.number_control_points = 4
+
+    # add to mission
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   3. Cruise Segment: Constant Speed Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "cruise_4"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    segment.air_speed = atmosphere.compute_values(
+        segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 5
+    segment.state.numerics.number_control_points = 8
+
+    # post-process aerodynamic derivatives in cruise
+    # segment.process.finalize.post_process.aero_derivatives = SUAVE.Methods.Flight_Dynamics.Static_Stability.compute_aero_derivatives
+
+    # add to mission
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   Second Step Climb Segment: Constant Speed Constant Rate
+    # ------------------------------------------------------------------
+
+    segment = Segments.Climb.Constant_Throttle_Constant_Speed(base_segment)
+    segment.tag = "step_climb_4"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude_start = iteration_setup.mission_iter.design_cruise_altitude + 4_000 * Units.ft
+    segment.altitude_end = iteration_setup.mission_iter.design_cruise_altitude + 6_000 * Units.ft
+    segment.air_speed = atmosphere.compute_values((
+                                                          segment.altitude_start + segment.altitude_end) / 2).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    segment.throttle = climb_throttle
+    segment.state.numerics.number_control_points = 4
+
+    # add to mission
+    mission.append_segment(segment)
+
+    # ------------------------------------------------------------------
+    #   3. Cruise Segment: Constant Speed Constant Altitude
+    # ------------------------------------------------------------------
+
+    segment = Segments.Cruise.Constant_Speed_Constant_Altitude(base_segment)
+    segment.tag = "cruise_5"
+
+    segment.analyses.extend(analyses.cruise)
+
+    segment.altitude = iteration_setup.mission_iter.design_cruise_altitude + 6_000 * Units.ft
+    segment.air_speed = atmosphere.compute_values(
+        segment.altitude).speed_of_sound * iteration_setup.mission_iter.design_cruise_mach
+    segment.distance = iteration_setup.mission_iter.cruise_distance / 5
     segment.state.numerics.number_control_points = 8
 
     # post-process aerodynamic derivatives in cruise

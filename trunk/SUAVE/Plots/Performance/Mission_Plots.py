@@ -57,6 +57,11 @@ def plot_altitude_sfc_weight(results, line_color = 'bo-', save_figure = False, s
         thrust   =  segment.conditions.frames.body.thrust_force_vector[:,0]
         sfc      = (mdot / Units.lb) / (thrust /Units.lbf) * Units.hr
 
+        print('SFC')
+        print(segment.tag)
+        for i, _ in enumerate(sfc):
+            print('%.3f' % sfc[i])
+
         axes = plt.subplot(3,1,1)
         axes.plot( time , altitude , line_color)
         axes.set_ylabel('Altitude (ft)',axis_font)
@@ -315,6 +320,11 @@ def plot_aerodynamic_coefficients(results, line_color = 'bo-', save_figure = Fal
         cd   = segment.conditions.aerodynamics.drag_coefficient[:,0,None]
         aoa  = segment.conditions.aerodynamics.angle_of_attack[:,0] / Units.deg
         l_d  = cl/cd
+
+        print('L/D')
+        print(segment.tag)
+        for i, _ in enumerate(l_d):
+            print('%.3f' % l_d[i])
 
         axes = plt.subplot(2,2,1)
         axes.plot( time , aoa , line_color)
@@ -860,6 +870,56 @@ def plot_flight_conditions(results, line_color = 'bo-', save_figure = False, sav
     plt.tight_layout()
     if save_figure:
         plt.savefig(save_filename + file_type)
+
+    return
+
+def plot_mission_for_presentation(results, width=8, height=5):
+    axis_font = {'size':'14'}
+    fig = plt.figure("Mission_Profile")
+    fig.set_size_inches(width, height)
+
+    for segment in results.segments.values():
+        time = segment.conditions.frames.inertial.time[:,0] / Units.min
+        Distance = segment.conditions.frames.inertial.position_vector[:,0] / Units.nmi
+        Altitude = segment.conditions.freestream.altitude[:,0] / Units.ft
+
+        axes = plt.subplot(1,1,1)
+        axes.plot(Distance, Altitude, 'bo-')
+        axes.set_ylabel('Altitude (ft)',axis_font)
+        axes.set_xlabel('Distance (NM)',axis_font)
+        set_axes(axes)
+
+    plt.tight_layout()
+
+    return
+
+def plot_sfc_and_ld(results, width=8, height=5, line_color = 'bo-',):
+    axis_font = {'size': '14'}
+    fig = plt.figure("Mission_Profile")
+    fig.set_size_inches(width, height)
+
+    for segment in results.segments.values():
+        time = segment.conditions.frames.inertial.time[:, 0] / Units.min
+        mdot = segment.conditions.weights.vehicle_mass_rate[:, 0]
+        thrust = segment.conditions.frames.body.thrust_force_vector[:, 0]
+        sfc = (mdot / Units.lb) / (thrust / Units.lbf) * Units.hr
+        cl = segment.conditions.aerodynamics.lift_coefficient[:, 0, None]
+        cd = segment.conditions.aerodynamics.drag_coefficient[:, 0, None]
+        l_d = cl / cd
+
+        axes = plt.subplot(1,2, 1)
+        axes.plot(time, sfc, line_color)
+        axes.set_xlabel('Time (min)', axis_font)
+        axes.set_ylabel('sfc (lb/lbf-hr)', axis_font)
+        set_axes(axes)
+
+        axes = plt.subplot(1, 2, 2)
+        axes.plot(time, l_d, line_color)
+        axes.set_xlabel('Time (min)', axis_font)
+        axes.set_ylabel('L/D', axis_font)
+        set_axes(axes)
+
+    plt.tight_layout()
 
     return
 

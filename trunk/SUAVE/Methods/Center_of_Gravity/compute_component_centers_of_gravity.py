@@ -154,7 +154,7 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     baggage.origin[0][0]                                       = 0.51 * length_scale  
     baggage.mass_properties.center_of_gravity[0][0]            = 0.0
     
-    cargo.origin[0][0]                                         = 0.43 * length_scale #0.51 * length_scale
+    cargo.origin[0][0]                                         = 0.4 * length_scale #0.51 * length_scale #0.39
     cargo.mass_properties.center_of_gravity[0][0]              = 0.0
     
     air_conditioner.origin[0][0]                               = nose_length
@@ -163,9 +163,12 @@ def compute_component_centers_of_gravity(vehicle, nose_load = 0.06):
     optionals.origin[0][0]                                     = 0.51 * length_scale  
     optionals.mass_properties.center_of_gravity[0][0]          = 0.0   
         
-    fuel.origin[0][0]                                          = vehicle.wings.main_wing.origin[0][0] 
-    fuel.mass_properties.center_of_gravity                     = vehicle.wings.main_wing.mass_properties.center_of_gravity
-    fuel.mass_properties.center_of_gravity[0][0]               += 0.1 * vehicle.wings.main_wing.chords.mean_aerodynamic
+    # fuel.origin[0][0]                                          = vehicle.wings.main_wing.origin[0][0]
+    # fuel.mass_properties.center_of_gravity                     = vehicle.wings.main_wing.mass_properties.center_of_gravity
+    # fuel.mass_properties.center_of_gravity[0][0]               += 0.1 * vehicle.wings.main_wing.chords.mean_aerodynamic
+
+    fuel.origin[0][0]                                          = (20150 * 26.57 + 47076 * 29) / (20150 + 47076)
+    fuel.mass_properties.center_of_gravity[0][0]               = 0.
     
     control_systems.origin[0][0]                               = vehicle.wings.main_wing.origin[0][0] 
     control_systems.mass_properties.center_of_gravity[0][0]    = vehicle.wings.main_wing.mass_properties.center_of_gravity[0][0] + \

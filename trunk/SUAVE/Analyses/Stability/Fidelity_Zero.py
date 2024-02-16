@@ -162,7 +162,13 @@ class Fidelity_Zero(Stability):
             if surf.vertical == False:
                 # surf.ep_alpha = Supporting_Functions.ep_alpha(surf.CL_alpha, sref, span)
                 surf.ep_alpha = Supporting_Functions.ep_alpha(conditions.lift_curve_slope, sref, span)
+                #if mach.any() > 0.8:
+                    #print(surf)
+                    #print(surf.ep_alpha)
             else:
+                surf.ep_alpha = 0.
+
+            if surf.tag == 'main_wing':
                 surf.ep_alpha = 0.
 
         # Static Stability Methods

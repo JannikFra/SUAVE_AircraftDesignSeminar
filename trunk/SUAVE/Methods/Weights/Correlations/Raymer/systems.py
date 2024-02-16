@@ -111,7 +111,7 @@ def systems_Raymer(vehicle):
 
     Vpr = D ** 2 * np.pi / 4 * Lcabin
     CALIBRATION_AC = 0.789
-    if vehicle.tag == 'Baseline_Aircraft':
+    if vehicle.wings['main_wing'].aspect_ratio >= 15.:
         BLEEDLESS_ECS_FACTOR = 1.57
     else:
         BLEEDLESS_ECS_FACTOR = 1.0

@@ -75,6 +75,8 @@ def main(iteration_setup):
 #   Analysis Setup
 # ----------------------------------------------------------------------
 def results_show(results, vehicle):
+    #plot_mission_for_presentation(results)
+    plot_sfc_and_ld(results)
     plot_aerodynamic_coefficients(results)
     plot_fuel_use(results)
     plot_flight_conditions(results)
@@ -104,7 +106,7 @@ def full_setup(iteration_setup):
     configs  = configs_setup(vehicle)
 
     # vehicle analyses
-    configs_analyses = analyses_setup(configs)
+    configs_analyses = analyses_setup(configs, iteration_setup)
 
     # mission analyses
     mission  = mission_setup(configs_analyses, iteration_setup)
@@ -120,17 +122,17 @@ def full_setup(iteration_setup):
 #   Define the Vehicle Analyses
 # ----------------------------------------------------------------------
 
-def analyses_setup(configs):
+def analyses_setup(configs, iteration_setup):
     analyses = SUAVE.Analyses.Analysis.Container()
 
     # build a base analysis for each config
     for tag,config in list(configs.items()):
-        analysis = base_analysis(config)
+        analysis = base_analysis(config, iteration_setup)
         analyses[tag] = analysis
 
     return analyses
 
-def base_analysis(vehicle):
+def base_analysis(vehicle, iteration_setup):
     # ------------------------------------------------------------------
     #   Initialize the Analyses
     # ------------------------------------------------------------------     
@@ -222,12 +224,12 @@ def base_analysis(vehicle):
     aerodynamics = SUAVE.Analyses.Aerodynamics.Fidelity_Zero()
     aerodynamics.geometry = vehicle
     aerodynamics.settings.drag_coefficient_increment = Data()
-    aerodynamics.settings.drag_coefficient_increment.base = -12e-4 + 19e-4 -5e-4
-    aerodynamics.settings.drag_coefficient_increment.takeoff = -12e-4 + 19e-4 -5e-4
-    aerodynamics.settings.drag_coefficient_increment.climb = -12e-4 + 19e-4 -5e-4
-    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4 + 19e-4 -5e-4
-    aerodynamics.settings.drag_coefficient_increment.descent = -12e-4 + 19e-4 -5e-4
-    aerodynamics.settings.drag_coefficient_increment.landing = -12e-4 + 19e-4 -5e-4
+    aerodynamics.settings.drag_coefficient_increment.base = -12e-4 -5e-4 + parameters.drag_counts
+    aerodynamics.settings.drag_coefficient_increment.takeoff = -12e-4 -5e-4 + parameters.drag_counts
+    aerodynamics.settings.drag_coefficient_increment.climb = -12e-4 -5e-4 + parameters.drag_counts
+    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4 -5e-4 + parameters.drag_counts
+    aerodynamics.settings.drag_coefficient_increment.descent = -12e-4 -5e-4 + parameters.drag_counts
+    aerodynamics.settings.drag_coefficient_increment.landing = -12e-4 -5e-4 + parameters.drag_counts
     aerodynamics.settings.recalculate_total_wetted_area = True
     aerodynamics.settings.use_surrogate = True
     aerodynamics.settings.model_fuselage = True
@@ -296,8 +298,8 @@ def Baseline(parameters):
     iteration_setup = Data()
 
     iteration_setup.weight_iter = Data()
-    iteration_setup.weight_iter.MTOW = 240_000 * Units.kg
-    iteration_setup.weight_iter.BOW = 130_000 * Units.kg
+    iteration_setup.weight_iter.MTOW = 194872.8 * Units.kg
+    iteration_setup.weight_iter.BOW = 103146.1 * Units.kg
     iteration_setup.weight_iter.Design_Payload = 24_500 * Units.kg
     iteration_setup.weight_iter.FUEL = iteration_setup.weight_iter.MTOW - iteration_setup.weight_iter.BOW  \
                                        - iteration_setup.weight_iter.Design_Payload
@@ -314,6 +316,7 @@ def Baseline(parameters):
     iteration_setup.mission_iter.reserve_trip_pct = 0.03
     iteration_setup.mission_iter.reserve_distance = 200. * Units.nautical_mile
     iteration_setup.mission_iter.reserve_cruise_distance = 200. * Units.nautical_miles
+    iteration_setup.mission_iter.drag_counts = parameters.drag_counts
 
     iteration_setup.sizing_iter = Data()
     iteration_setup.sizing_iter.wing_loading = parameters.wing_loading
@@ -321,7 +324,8 @@ def Baseline(parameters):
     iteration_setup.sizing_iter.aspect_ratio = parameters.aspect_ratio
     iteration_setup.sizing_iter.sweep_quarter_chord = parameters.sweep_quarter_chord
     iteration_setup.sizing_iter.thickness_to_chord = parameters.thickness_to_chord
-    iteration_setup.sizing_iter.wing_origin = [[22.408,0,-0.957+5.]]
+    iteration_setup.sizing_iter.wing_origin = [[17.568,0,4.043]]
+
 
     landing_weight = 0.0
     block_distance = 0.0
@@ -428,9 +432,10 @@ def Baseline(parameters):
         reference_mac = (percent_mac_min+percent_mac_max)/2  # or min!!!
 
         percent_mac_iter = 44  # Raymer
-        iteration_setup.sizing_iter.wing_origin[0][0] = iteration_setup.sizing_iter.wing_origin[0][0] - (
-                    percent_mac_iter - reference_mac) / 100 * configs.base.wings.main_wing.chords.mean_aerodynamic
-        delta_percent_mac = (percent_mac_iter - reference_mac) * 5
+        #iteration_setup.sizing_iter.wing_origin[0][0] = iteration_setup.sizing_iter.wing_origin[0][0] - (
+        #            percent_mac_iter - reference_mac) / 100 * configs.base.wings.main_wing.chords.mean_aerodynamic
+        #delta_percent_mac = (percent_mac_iter - reference_mac) * 5
+        delta_percent_mac = 0.
 
         iteration_setup.weight_iter.FUEL = block_fuel + reserve_fuel
         iteration_setup.mission_iter.throttle_mid_cruise = np.mean(results.segments['cruise_2'].conditions.propulsion.throttle[:][0])
@@ -465,36 +470,36 @@ def Baseline(parameters):
         #results_show(results, configs.base)
 
     print('Total fuel : %.1f kg' % iteration_setup.weight_iter.FUEL)
-    print('Climb fuel : %.1f kg' % climb_fuel)
-    print('Cruise fuel : %.1f kg' % cruise_fuel)
-    print('Descent fuel : %.1f kg' % descent_fuel)
-    print('Reserve fuel : %.1f kg' % reserve_fuel)
-    print('Wing span : %.2f m' % configs.base.wings.main_wing.spans.projected)
-    print('Wing area : %.2f m' % configs.base.wings.main_wing.areas.reference)
-    print('Center of Gravity :', configs.base.mass_properties.center_of_gravity)
-    print('Wing mass :', configs.base.weight_breakdown.structures.wing)
-
-    print('V Tail')
-    ar = configs.base.wings.horizontal_stabilizer.aspect_ratio
-    sref = configs.base.wings.horizontal_stabilizer.areas.reference
-    print('Area : %.2f m' % sref)
-    print('Span : %.2f m' % (ar*sref)**.5)
-    print('Root inner : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.root)
-    print('Root outer : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.tip)
-    print('Dihedral : %.2f deg' % (configs.base.wings.horizontal_stabilizer.dihedral / Units.deg))
-
-    print("Wing")
-    print('Area : %.2f m' % configs.base.wings.main_wing.areas.reference)
-    print('Span : %.2f m' % configs.base.wings.main_wing.spans.projected)
-    print('chord inner : %.2f m' % configs.base.wings.main_wing.chords.root)
-    print('chord outer : %.2f m' % configs.base.wings.main_wing.chords.tip)
-    print('chord mac : %.2f m' % configs.base.wings.main_wing.chords.mean_aerodynamic)
-    print('origin :', configs.base.wings.main_wing.origin)
-
-    print("landing gear")
-    print("x coord main gear", configs.base.landing_gear.main.origin[0][0])
-    print("x coord nose gear", configs.base.landing_gear.nose.origin[0][0])
-
+    # print('Climb fuel : %.1f kg' % climb_fuel)
+    # print('Cruise fuel : %.1f kg' % cruise_fuel)
+    # print('Descent fuel : %.1f kg' % descent_fuel)
+    # print('Reserve fuel : %.1f kg' % reserve_fuel)
+    # print('Wing span : %.2f m' % configs.base.wings.main_wing.spans.projected)
+    # print('Wing area : %.2f m' % configs.base.wings.main_wing.areas.reference)
+    # print('Center of Gravity :', configs.base.mass_properties.center_of_gravity)
+    # print('Wing mass :', configs.base.weight_breakdown.structures.wing)
+    #
+    # print('V Tail')
+    # ar = configs.base.wings.horizontal_stabilizer.aspect_ratio
+    # sref = configs.base.wings.horizontal_stabilizer.areas.reference
+    # print('Area : %.2f m' % sref)
+    # print('Span : %.2f m' % (ar*sref)**.5)
+    # print('Root inner : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.root)
+    # print('Root outer : %.2f m' % configs.base.wings.horizontal_stabilizer.chords.tip)
+    # print('Dihedral : %.2f deg' % (configs.base.wings.horizontal_stabilizer.dihedral / Units.deg))
+    #
+    # print("Wing")
+    # print('Area : %.2f m' % configs.base.wings.main_wing.areas.reference)
+    # print('Span : %.2f m' % configs.base.wings.main_wing.spans.projected)
+    # print('chord inner : %.2f m' % configs.base.wings.main_wing.chords.root)
+    # print('chord outer : %.2f m' % configs.base.wings.main_wing.chords.tip)
+    # print('chord mac : %.2f m' % configs.base.wings.main_wing.chords.mean_aerodynamic)
+    # print('origin :', configs.base.wings.main_wing.origin)
+    #
+    # print("landing gear")
+    # print("x coord main gear", configs.base.landing_gear.main.origin[0][0])
+    # print("x coord nose gear", configs.base.landing_gear.nose.origin[0][0])
+    #
     doc = SUAVE.Methods.Figures_of_Merit.direct_operating_costs(results, configs.base)
     print('doc energy : %.1f' % doc.energy)
     print('doc crew : %.1f' % doc.crew)
@@ -507,10 +512,11 @@ def Baseline(parameters):
     print('doc af mat : %.1f' % doc.af_mat)
     print('doc af per : %.1f' % doc.af_per)
     print('doc eng : %.1f' % doc.eng)
+    print('doc total : %.1f' % doc.total)
 
     results_show(results, configs.base)
 
-    payload_range_run = True
+    payload_range_run = False
     if payload_range_run == True:
         payload_range = payload_range_multiple_cruise(configs.cruise,mission,num_cruise_seg=4,reserves=reserve_fuel_pct)
 
@@ -522,22 +528,22 @@ def sweep():
     This method gives the possiblity to make a parameter study
     '''
 
-    ars = np.linspace(10, 16, 3)
-    altitudes = np.array([36.]) * 1000 * Units.ft
-    X, Y = np.meshgrid(ars, altitudes)
+    ars = np.linspace(16, 22, 4)
+    tcs = np.linspace(0.08, 0.12, 4)
+    X, Y = np.meshgrid(ars, tcs)
     fuels = np.zeros_like(X)
     for i, ar in enumerate(ars):
-        for j, alt in enumerate(altitudes):
+        for j, tc in enumerate(tcs):
             print('AR : %.3f' % ar)
-            print('ALT : %.3f' % (alt/Units.ft))
+            print('TC : %.3f' % tc)
             print('\n')
             parameters = Data()
             parameters.wing_loading = 700.
 
 
             parameters.aspect_ratio = ar
-            parameters.thickness_to_chord = 0.1
-            parameters.design_cruise_altitude = alt
+            parameters.thickness_to_chord = tc
+            parameters.design_cruise_altitude = 38_000 * Units.ft
             parameters.design_cruise_mach = 0.82
             parameters.sweep_quarter_chord = 28 * Units.deg
             parameters.thrust_loading = 0.24
@@ -559,6 +565,7 @@ if __name__ == '__main__':
     parameters.design_cruise_mach = 0.82
     parameters.sweep_quarter_chord = 28 * Units.deg
     parameters.thrust_loading = 0.24
+    parameters.drag_counts = 19e-4
     Baseline(parameters)
 
     #sweep()

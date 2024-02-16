@@ -59,7 +59,7 @@ def main():
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -17e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -17e-4 - 10e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
@@ -141,8 +141,8 @@ def main():
     # plt.show()
     cl_quad = np.linspace(0.0, 0.8, 100)
     cd_quad = 0.0108 + 1/(np.pi*0.796*vehicle.wings.main_wing.aspect_ratio) * cl_quad**2
-    plt.plot(cd_quad, cl_quad, label="quadratic")
-    plt.plot(cd_tot, cl, label="SUAVE")
+    plt.plot(cd_quad, cl_quad, label="quadratic polar")
+    plt.plot(cd_tot, cl, label="SUAVE total", color='blue')
     plt.plot(cd_c, cl, label="compressibility")
     plt.plot(cd_i, cl, label="induced")
     plt.plot(cd_m, cl, label="miscellaneous")
@@ -151,16 +151,21 @@ def main():
     cl_ref = np.array([0., 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6, 0.65, 0.7, 0.75])
     cd_ref = np.array([0.0108, 0.0123, 0.0132, 0.0143, 0.0156, 0.0171, 0.0188, 0.0208, 0.0238, 0.0246, 0.0254, 0.0264, 0.0274,
           0.0288, 0.0366, 0.0530, 0.0947])
-    plt.scatter(cd_ref, cl_ref, label="Airbus")
+    plt.scatter(cd_ref, cl_ref, label="Airbus Data", marker='x', color='r')
     plt.grid('on')
     plt.axis([0, 0.1, 0, 0.8])
+    plt.xlabel('$c_D$')
+    plt.ylabel('$c_L$')
     plt.legend()
     plt.show()
 
-    plt.plot(cl_ref, cl_ref/cd_ref, label="Airbus")
-    plt.plot(cl, cl/cd_tot, label="SUAVE")
+    plt.scatter(cl_ref, cl_ref/cd_ref, label="Airbus Data", marker='x', color='r')
+    plt.plot(cl, cl/cd_tot, label="SUAVE", color='blue')
     plt.legend()
     plt.axis([0., 1., 0., 25.])
+    plt.xlabel('$c_L$')
+    plt.ylabel('$L/D$')
+    plt.grid('on')
     plt.show()
 
     print(cl)

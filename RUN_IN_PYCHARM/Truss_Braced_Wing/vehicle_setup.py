@@ -220,7 +220,7 @@ def vehicle_setup(iteration_setup):
     wing.vertical                = False
     wing.symmetric               = True
 
-    wing.dynamic_pressure_ratio  = 0.8
+    wing.dynamic_pressure_ratio  = 0.73
 
     # Tailplane sizing
     deltaaerocenterhtp = 2
@@ -232,7 +232,7 @@ def vehicle_setup(iteration_setup):
 
         l_ht = wing.origin[0][0] + wing.aerodynamic_center[0] - (vehicle.wings.main_wing.origin[0][0] +
                                                                  vehicle.wings.main_wing.aerodynamic_center[0])
-
+        print('l_ht', l_ht)
         req_area_proj_x_y = vehicle.wings.main_wing.chords.mean_aerodynamic \
                             * vehicle.wings.main_wing.areas.reference \
                             * c_ht \
@@ -298,6 +298,8 @@ def vehicle_setup(iteration_setup):
 
     fuselage.areas.side_projected  = fuselage.heights.maximum * fuselage.lengths.total * 0.7
     fuselage.areas.wetted          = np.pi * (fuselage.width+fuselage.heights.maximum)/2 * fuselage.lengths.total * 0.7
+    #fuselage.areas.wetted          = np.pi * (fuselage.width+fuselage.heights.maximum)/2 * fuselage.lengths.total * 0.85
+    #print('Wetted area:', fuselage.areas.wetted)
     fuselage.areas.front_projected = np.pi * ((fuselage.width+fuselage.heights.maximum)/2)**2 / 4
 
     fuselage.effective_diameter    = (fuselage.width+fuselage.heights.maximum)/2
@@ -501,9 +503,10 @@ def vehicle_setup(iteration_setup):
     fuel                                  = SUAVE.Components.Physical_Component()
     vehicle.fuel                          = fuel
     fuel.mass_properties.mass             = vehicle.mass_properties.max_takeoff-vehicle.mass_properties.max_fuel
-    fuel.origin                           = vehicle.wings.main_wing.origin
-    fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.mass_properties.center_of_gravity
-    fuel.mass_properties.center_of_gravity[0] += 0.04 * vehicle.wings.main_wing.chords.root
+    fuel.origin                           = vehicle.wings.main_wing.origin + vehicle.wings.main_wing.mass_properties.center_of_gravity
+    fuel.origin[0][0]                     += 2. * vehicle.wings.main_wing.chords.root
+    fuel.mass_properties.center_of_gravity= vehicle.wings.main_wing.mass_properties.center_of_gravity * 1
+    #fuel.mass_properties.center_of_gravity[0] += 0.04 * vehicle.wings.main_wing.chords.root
 
     # ------------------------------------------------------------------
     #  Landing Gear

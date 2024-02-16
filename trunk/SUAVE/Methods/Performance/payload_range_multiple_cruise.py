@@ -155,6 +155,9 @@ def payload_range_multiple_cruise(vehicle,mission,num_cruise_seg=4,reserves=0.):
             if num_cruise_seg >= 4:
                 CruiseFuel += results.segments["cruise_4"].conditions.weights.total_mass[0,0] - results.segments["cruise_4"].conditions.weights.total_mass[-1,0]
                 CruiseDist += results.segments["cruise_4"].conditions.frames.inertial.position_vector[-1][0] - results.segments["cruise_4"].conditions.frames.inertial.position_vector[0][0]
+            if num_cruise_seg >= 5:
+                CruiseFuel += results.segments["cruise_5"].conditions.weights.total_mass[0,0] - results.segments["cruise_5"].conditions.weights.total_mass[-1,0]
+                CruiseDist += results.segments["cruise_5"].conditions.frames.inertial.position_vector[-1][0] - results.segments["cruise_5"].conditions.frames.inertial.position_vector[0][0]
             # Current specific range (m/kg)
             CruiseSR    = CruiseDist / CruiseFuel        # [m/kg]
 
@@ -166,6 +169,8 @@ def payload_range_multiple_cruise(vehicle,mission,num_cruise_seg=4,reserves=0.):
                 mission.segments["cruise_3"].distance = (CruiseDist + DeltaDist) / num_cruise_seg
             if num_cruise_seg >= 4:
                 mission.segments["cruise_4"].distance = (CruiseDist + DeltaDist) / num_cruise_seg
+            if num_cruise_seg >= 5:
+                mission.segments["cruise_5"].distance = (CruiseDist + DeltaDist) / num_cruise_seg
 
             # running mission with new distance
             results = mission.evaluate()

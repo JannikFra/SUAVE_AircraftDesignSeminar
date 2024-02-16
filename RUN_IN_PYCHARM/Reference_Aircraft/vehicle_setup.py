@@ -369,6 +369,7 @@ def vehicle_setup(iteration_setup):
 
     fuselage.areas.side_projected  = fuselage.heights.maximum * fuselage.lengths.total * 0.7
     fuselage.areas.wetted          = np.pi * (fuselage.width+fuselage.heights.maximum)/2 * fuselage.lengths.total * 0.7
+    #fuselage.areas.wetted = np.pi * (fuselage.width + fuselage.heights.maximum) / 2 * fuselage.lengths.total * 0.93
     fuselage.areas.front_projected = np.pi * ((fuselage.width+fuselage.heights.maximum)/2)**2 / 4
 
     fuselage.effective_diameter    = (fuselage.width+fuselage.heights.maximum)/2
@@ -551,7 +552,8 @@ def vehicle_setup(iteration_setup):
     propulsor.scale_factors(iteration_setup.mission_iter.design_cruise_altitude,
                             iteration_setup.mission_iter.design_cruise_mach,
                             sea_level_static_thrust,
-                            iteration_setup.mission_iter.throttle_mid_cruise)
+                            iteration_setup.mission_iter.throttle_mid_cruise,
+                            bucket_sfc=0.546)
 
     vehicle.append_component(propulsor)
 

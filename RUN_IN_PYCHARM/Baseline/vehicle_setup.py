@@ -72,8 +72,8 @@ def vehicle_setup(iteration_setup):
     wing.areas.reference         = vehicle.reference_area
     wing.origin                  = iteration_setup.sizing_iter.wing_origin
 
-    wing.transition_x_upper = 0.08
-    wing.transition_x_lower = 0.08
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -174,8 +174,8 @@ def vehicle_setup(iteration_setup):
     wing.origin                  = [[55.337, 0, 2.082]]
     wing.aerodynamic_center      = [1,0,0]
 
-    wing.transition_x_upper = 0.14
-    wing.transition_x_lower = 0.14
+    wing.transition_x_upper = 0.0
+    wing.transition_x_lower = 0.0
 
     wing.vertical                = False
     wing.symmetric               = True
@@ -413,7 +413,7 @@ def vehicle_setup(iteration_setup):
         iteration_setup.mission_iter.design_cruise_altitude, iteration_setup.mission_iter.design_cruise_mach,
         m4_m0=0.9557, LoD_initial_cruise_altitude=24,
     ))
-
+    print('thrust loading', thrust_loading)
     sea_level_static_thrust = thrust_loading * vehicle.mass_properties.max_takeoff * 9.81
     propulsor.engine_length = 4. * (sea_level_static_thrust / 461600) ** 0.5
     bucket_sfc = 0.4498  # 0.4498 According to Offtakes from SFC_Offtakes.py File #0.442

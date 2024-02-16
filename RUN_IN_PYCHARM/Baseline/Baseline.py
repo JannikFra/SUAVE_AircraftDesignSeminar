@@ -25,7 +25,7 @@ import os
 import time
 from SUAVE.Methods.Performance import payload_range
 from RUN_IN_PYCHARM.Baseline.vehicle_setup import vehicle_setup, configs_setup
-from RUN_IN_PYCHARM.Baseline.mission_setup import mission_setup
+from RUN_IN_PYCHARM.Baseline.mission_setup_v2 import mission_setup
 from SUAVE.Input_Output.Results import print_mission_breakdown, print_weight_breakdown
 from SUAVE.Components.Energy.Networks.Turbofan_Raymer import Turbofan_Raymer
 
@@ -225,7 +225,7 @@ def base_analysis(vehicle):
     aerodynamics.settings.drag_coefficient_increment.base = 0
     aerodynamics.settings.drag_coefficient_increment.takeoff = 0
     aerodynamics.settings.drag_coefficient_increment.climb = 0
-    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4#-12e-4
+    aerodynamics.settings.drag_coefficient_increment.cruise = -12e-4 - 5e-4#-12e-4
     aerodynamics.settings.drag_coefficient_increment.descent = 0
     aerodynamics.settings.drag_coefficient_increment.landing = 0
     aerodynamics.settings.recalculate_total_wetted_area = True
